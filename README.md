@@ -23,3 +23,9 @@ Read these documents for help yourself build your first VisualBasic.NET WebAssem
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
 + [How to compile](/#use_compiler)
+
+### Demo
+
+These demo shows you how to programming in VB.NET for WebAssembly:
+
++ [Base64 Encoder/Decoder](/vbscripts/base64.html)
