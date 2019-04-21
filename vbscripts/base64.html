@@ -52,11 +52,12 @@
 
         <p>
           Input any text at here:
-
-          <textarea id="text-input"></textarea>
         </p>
-
-        <p id="base64-output"></p>
+        <p><textarea id="text-input" rows="5" cols="60"></textarea></p>
+        <p>Base64 encode output from VisualBasic.NET WebAssembly application:</p>
+        <p id="base64-output" style="background-color: blanchedalmond;"></p>
+        <p>And this is the raw text decode from the base64 result:</p>
+        <p id="raw-output" style="background-color:azure;"></p>
       </div>
 
       <hr />
@@ -74,15 +75,19 @@
   <script type="text/javascript">
     var displayBase64 = $ts("#base64-output");
     var textInput = $ts("#text-input");
+    var textOutput = $ts("#raw-output");
 
     hljs.initHighlightingOnLoad();
+    textInput.value = "Hello World, vanillavb.app runtime!";
 
     // WebAssembly Demo
     TypeScript.Wasm.RunAssembly("../vbscripts/base64.wasm", {
-      run: encoder => {       
-        textInput.onkeypress = textInput.oninput = function() {
+      run: encoder => {
+        textInput.onkeypress = textInput.oninput = function () {
           displayBase64.innerText = encoder.encode(textInput.value);
+          textOutput.innerText = encoder.decode(displayBase64.innerText);
         }
+        textInput.oninput();
       },
       api: { console: true, text: true, array: true }
     });
