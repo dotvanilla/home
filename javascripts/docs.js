@@ -61,7 +61,7 @@ var vanillavb;
         function initialize() {
             window.onhashchange = app.loadDocument;
             config.renderer = new app.markdown();
-            vbcodeStyle.lineHeight = "6px";
+            vbcodeStyle.lineHeight = "5px";
             TypeScript.logging.log(config);
             if (!Strings.Empty($ts.location.hash())) {
                 app.renderDocument(`/docs/${$ts.location.hash()}.md`);

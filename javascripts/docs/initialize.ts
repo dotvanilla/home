@@ -9,7 +9,7 @@ namespace vanillavb.app {
 
         window.onhashchange = app.loadDocument;
         config.renderer = new markdown();
-        vbcodeStyle.lineHeight = "6px";
+        vbcodeStyle.lineHeight = "5px";
 
         TypeScript.logging.log(config);
 
