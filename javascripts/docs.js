@@ -85,6 +85,10 @@ var vanillavb;
                 $ts.select('.typescript').ForEach((block) => {
                     window.hljs.highlightBlock(block);
                 });
+                let h1 = $ts("#article").getElementsByTagName("h1")[0];
+                if (!isNullOrUndefined(h1)) {
+                    document.title = h1.innerText;
+                }
             };
             $ts.getText(path, renderDocumentInternal);
         }

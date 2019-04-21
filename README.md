@@ -1,4 +1,4 @@
-## Welcome To vanillavb.app
+# Welcome to vanillavb.app
 
 Want run your VisualBasic.NET application in browser?
 
@@ -22,3 +22,4 @@ End Module
 Read these documents for help yourself build your first VisualBasic.NET WebAssembly application:
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
++ [How to compile](/#use_compiler)
