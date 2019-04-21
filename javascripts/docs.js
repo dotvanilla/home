@@ -20,9 +20,7 @@ var vanillavb;
                         + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                         + '</code></pre>';
                 }
-                return '<pre><code class="highlight '
-                    + markedjs.helpers.escape.doescape(lang, true)
-                    + '">'
+                return '<pre><code class="highlight vbnet">'
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>\n';
             }
@@ -42,8 +40,13 @@ var vanillavb;
             config.renderer = new app.markdown();
             vbcodeStyle.lineHeight = "6px";
             TypeScript.logging.log(config);
-            // show home page
-            app.renderDocument("README.md");
+            if (!Strings.Empty($ts.location.hash())) {
+                app.renderDocument(`/docs/${$ts.location.hash()}.md`);
+            }
+            else {
+                // show home page
+                app.renderDocument("README.md");
+            }
         }
         app.initialize = initialize;
         function loadDocument() {

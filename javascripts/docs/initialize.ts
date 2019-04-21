@@ -13,8 +13,12 @@ namespace vanillavb.app {
 
         TypeScript.logging.log(config);
 
-        // show home page
-        app.renderDocument("README.md");
+        if (!Strings.Empty($ts.location.hash())) {
+            app.renderDocument(`/docs/${$ts.location.hash()}.md`);
+        } else {
+            // show home page
+            app.renderDocument("README.md");
+        }
     }
 
     export function loadDocument() {

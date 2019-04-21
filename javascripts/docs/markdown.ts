@@ -21,9 +21,7 @@
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>';
             }
-            return '<pre><code class="highlight '                
-                + markedjs.helpers.escape.doescape(lang, true)
-                + '">'
+            return '<pre><code class="highlight vbnet">'
                 + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                 + '</code></pre>\n';            
         }

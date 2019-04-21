@@ -16,3 +16,9 @@ Module Demo
 
 End Module
 ```
+
+### Guildlines
+
+Read these documents for help yourself build your first VisualBasic.NET WebAssembly application:
+
++ [WebAssembly for VisualBasic.NET](/#webassembly)
