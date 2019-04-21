@@ -9,11 +9,11 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("WebGL-Demo")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
+<Assembly: AssemblyDescription("WebAssembly conversion demonstrating the faster-performing grid of linked-lists.")>
+<Assembly: AssemblyCompany("MIT")>
 <Assembly: AssemblyProduct("WebGL-Demo")>
-<Assembly: AssemblyCopyright("Copyright ©  2019")>
-<Assembly: AssemblyTrademark("")>
+<Assembly: AssemblyCopyright("https://github.com/guybedford/wasm-demo/blob/master/native/demo-opt.c")>
+<Assembly: AssemblyTrademark("vanillavb.app")>
 
 <Assembly: ComVisible(False)>
 
