@@ -101,7 +101,7 @@ pre {
 
 code, kbd, pre, samp {
     font-family: monospace, monospace;
-    font-size: 1em
+    font-size: 0.9em;
 }
 
 button, input, optgroup, select, textarea {
@@ -654,7 +654,10 @@ a {
     font-size: 0.9rem;
     color: #567482;
     background-color: #f3f6fa;
-    border-radius: 0.3rem
+    border-radius: 0.3rem;
+    font-size: 12px;
+    font-family: Consolas; 
+    line-height: 5px;
 }
 
 .main-content pre {
@@ -664,7 +667,7 @@ a {
     font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
     color: #567482;
     word-wrap: normal;
-    background-color: #f3f6fa;
+   /* background-color: #f3f6fa;*/
     border: solid 1px #dce6f0;
     border-radius: 0.3rem
 }
@@ -693,7 +696,7 @@ a {
         padding: 0.8rem;
         overflow: auto;
         font-size: 0.9rem;
-        line-height: 1.45;
+        /*line-height: 1.45;*/
         border-radius: 0.3rem;
         -webkit-overflow-scrolling: touch
     }
@@ -733,6 +736,7 @@ a {
         margin-bottom: 0
     }
 
+    /*
 .main-content table {
     display: block;
     width: 100%;
@@ -750,6 +754,7 @@ a {
         padding: 0.5rem 1rem;
         border: 1px solid #e9ebec
     }
+*/
 
 .main-content dl {
     padding: 0

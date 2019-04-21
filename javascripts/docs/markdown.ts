@@ -21,7 +21,7 @@
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>';
             }
-            return '<pre><code class="'                
+            return '<pre><code class="highlight '                
                 + markedjs.helpers.escape.doescape(lang, true)
                 + '">'
                 + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
