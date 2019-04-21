@@ -38,7 +38,12 @@ var vanillavb;
                         + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                         + '</code></pre>';
                 }
-                return '<pre><code class="highlight vbnet">'
+                else {
+                    /*if (lang == "vbnet") {
+                        lang = "language-vbnet";
+                    }*/
+                }
+                return '<pre><code class="highlight ' + lang + '">'
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>\n';
             }
@@ -76,7 +81,7 @@ var vanillavb;
         function renderDocument(path) {
             let renderDocumentInternal = function (markdown) {
                 $ts("#article").innerHTML = marked(markdown, config);
-                vscode.highlightVB();
+                vscode.highlightVB(vbcodeStyle);
             };
             $ts.getText(path, renderDocumentInternal);
         }

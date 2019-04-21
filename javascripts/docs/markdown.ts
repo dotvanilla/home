@@ -42,8 +42,13 @@
                 return '<pre><code>'
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>';
+            } else {
+                /*if (lang == "vbnet") {
+                    lang = "language-vbnet";
+                }*/
             }
-            return '<pre><code class="highlight vbnet">'
+
+            return '<pre><code class="highlight ' + lang + '">'
                 + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                 + '</code></pre>\n';
         }

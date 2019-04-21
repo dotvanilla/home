@@ -31,7 +31,7 @@ namespace vanillavb.app {
     export function renderDocument(path: string) {
         let renderDocumentInternal = function (markdown: string) {
             $ts("#article").innerHTML = marked(markdown, config);
-            vscode.highlightVB();
+            vscode.highlightVB(vbcodeStyle);
         }
 
         $ts.getText(path, renderDocumentInternal);
