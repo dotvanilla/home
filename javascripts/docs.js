@@ -36,9 +36,11 @@ var vanillavb;
     var app;
     (function (app) {
         let config = markedjs.option.Defaults;
+        let vbcodeStyle = vscode.VisualStudio;
         function initialize() {
             window.onhashchange = app.loadDocument;
             config.renderer = new app.markdown();
+            vbcodeStyle.lineHeight = "6px";
             TypeScript.logging.log(config);
             // show home page
             app.renderDocument("README.md");

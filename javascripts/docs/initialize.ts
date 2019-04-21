@@ -3,11 +3,13 @@
 namespace vanillavb.app {
 
     let config: markedjs.option = markedjs.option.Defaults;
+    let vbcodeStyle: vscode.CSS = vscode.VisualStudio;
 
     export function initialize() {
 
         window.onhashchange = app.loadDocument;
         config.renderer = new markdown();
+        vbcodeStyle.lineHeight = "6px";
 
         TypeScript.logging.log(config);
 

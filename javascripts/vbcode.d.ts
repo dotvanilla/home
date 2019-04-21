@@ -12,6 +12,7 @@ declare namespace vscode {
         type: string;
         directive: string;
         globalFont: CanvasHelper.CSSFont;
+        lineHeight: string;
     }
     function defaultStyle(): CSS;
     function applyStyle(div: string | IHTMLElement, style?: CSS): void;

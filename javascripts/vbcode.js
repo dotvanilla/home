@@ -24,7 +24,8 @@ var vscode;
             globalFont: {
                 fontName: "Consolas",
                 size: { pixel: 11 }
-            }
+            },
+            lineHeight: "11px"
         };
     }
     vscode.defaultStyle = defaultStyle;
@@ -40,7 +41,7 @@ var vscode;
         $ts.select(".line-hash").attr("style", "color: #3c3e3e; text-decoration: none;");
         CanvasHelper.CSSFont.applyCSS(preview, style.globalFont);
         // set additional styles.
-        preview.style.lineHeight = "1.125em;";
+        preview.style.lineHeight = style.lineHeight;
     }
     vscode.applyStyle = applyStyle;
 })(vscode || (vscode = {}));
