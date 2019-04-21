@@ -64,13 +64,13 @@ Dim [module] = Wasm.CreateModule(vb)
 [module].HexDump(True).SaveTo("HelloWorld.dmp")
 ```
 
-> Compiler project source file available at: https://github.com/GCModeller-Cloud/data.ts/tree/878d93e4d011f666d0dc4dbc0062a6fd1685bc9b/TsBuild/Wasm
+> Compiler project source file available at: **https://github.com/dotvanilla/vanilla**
 
 #### 3. Run VB.NET application from javascript environment
 
 Add script reference to ``visualbasic.wasm.js``, and then running VB.NET application on web browser or nodejs from a javascript loader like:
 
-```javascript
+```typescript
 let assmUrl = "vbscript/HelloWorld.wasm";
 
 TypeScript.Wasm.RunAssembly(assmUrl, {

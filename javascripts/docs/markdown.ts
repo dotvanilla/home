@@ -43,8 +43,8 @@
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>';
             } else {
-                /*if (lang == "vbnet") {
-                    lang = "language-vbnet";
+                /*if (lang == "typescript") {
+                    return (<any>window).highlight.highlightAuto(code).value;
                 }*/
             }
 

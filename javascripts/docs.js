@@ -39,8 +39,8 @@ var vanillavb;
                         + '</code></pre>';
                 }
                 else {
-                    /*if (lang == "vbnet") {
-                        lang = "language-vbnet";
+                    /*if (lang == "typescript") {
+                        return (<any>window).highlight.highlightAuto(code).value;
                     }*/
                 }
                 return '<pre><code class="highlight ' + lang + '">'
@@ -82,6 +82,9 @@ var vanillavb;
             let renderDocumentInternal = function (markdown) {
                 $ts("#article").innerHTML = marked(markdown, config);
                 vscode.highlightVB(vbcodeStyle);
+                $ts.select('.typescript').ForEach((block) => {
+                    window.hljs.highlightBlock(block);
+                });
             };
             $ts.getText(path, renderDocumentInternal);
         }

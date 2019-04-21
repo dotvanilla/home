@@ -32,6 +32,9 @@ namespace vanillavb.app {
         let renderDocumentInternal = function (markdown: string) {
             $ts("#article").innerHTML = marked(markdown, config);
             vscode.highlightVB(vbcodeStyle);
+            $ts.select('.typescript').ForEach((block) => {
+                (<any>window).hljs.highlightBlock(block);
+            });
         }
 
         $ts.getText(path, renderDocumentInternal);
