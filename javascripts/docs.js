@@ -6,6 +6,24 @@ var vanillavb;
          * Website markdown to html render
         */
         class markdown extends markedjs.htmlRenderer {
+            image(href, title, text) {
+                href = markedjs.helpers.cleanUrl(this.options.sanitize, this.options.baseUrl, href);
+                if (href === null) {
+                    return text;
+                }
+                else if (!markdown.isFullName(href)) {
+                    href = `/docs/${href}`;
+                }
+                var out = '<img src="' + href + '" alt="' + text + '"';
+                if (title) {
+                    out += ' title="' + title + '"';
+                }
+                out += this.options.xhtml ? '/>' : '>';
+                return out;
+            }
+            static isFullName(href) {
+                return href.toLowerCase().indexOf("://") > -1;
+            }
             code(code, infostring, escaped) {
                 var lang = (infostring || '').match(/\S*/)[0];
                 if (this.options.highlight) {

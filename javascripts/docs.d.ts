@@ -6,6 +6,8 @@ declare namespace vanillavb.app {
      * Website markdown to html render
     */
     class markdown extends markedjs.htmlRenderer {
+        image(href: string, title: string, text: string): string;
+        private static isFullName;
         code(code: string, infostring: string, escaped: boolean): string;
     }
 }
