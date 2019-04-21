@@ -2,11 +2,12 @@
 
 namespace vanillavb.app {
 
-    let render: markedjs.htmlRenderer = new markdown();
+    let config: markedjs.option = markedjs.option.Defaults;
 
     export function initialize() {
 
         window.onhashchange = app.loadDocument;
+        config.renderer = new markdown();
 
         // show home page
         app.renderDocument("README.md");
@@ -20,6 +21,6 @@ namespace vanillavb.app {
     }
 
     export function renderDocument(path: string) {
-
+        $ts.getText(path, markdown => $ts("#article").innerHTML = marked(markdown, config));
     }
 }

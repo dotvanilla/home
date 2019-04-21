@@ -20,9 +20,10 @@ var vanillavb;
 (function (vanillavb) {
     var app;
     (function (app) {
-        let render = new app.markdown();
+        let config = markedjs.option.Defaults;
         function initialize() {
             window.onhashchange = app.loadDocument;
+            config.renderer = new app.markdown();
             // show home page
             app.renderDocument("README.md");
         }
@@ -34,6 +35,7 @@ var vanillavb;
         }
         app.loadDocument = loadDocument;
         function renderDocument(path) {
+            $ts.getText(path, markdown => $ts("#article").innerHTML = marked(markdown, config));
         }
         app.renderDocument = renderDocument;
     })(app = vanillavb.app || (vanillavb.app = {}));
