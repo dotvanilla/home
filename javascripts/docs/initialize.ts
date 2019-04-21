@@ -9,6 +9,8 @@ namespace vanillavb.app {
         window.onhashchange = app.loadDocument;
         config.renderer = new markdown();
 
+        TypeScript.logging.log(config);
+
         // show home page
         app.renderDocument("README.md");
     }
@@ -21,6 +23,11 @@ namespace vanillavb.app {
     }
 
     export function renderDocument(path: string) {
-        $ts.getText(path, markdown => $ts("#article").innerHTML = marked(markdown, config));
+        let renderDocumentInternal = function (markdown: string) {
+            $ts("#article").innerHTML = marked(markdown, config);
+            vscode.highlightVB();
+        }
+
+        $ts.getText(path, renderDocumentInternal);
     }
 }

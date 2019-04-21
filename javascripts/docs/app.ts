@@ -1,9 +1,9 @@
 ﻿/// <reference path="../linq.d.ts" />
 /// <reference path="../marked.d.ts" />
+/// <reference path="../vbcode.d.ts" />
 
-$ts(function () {
+/// <reference path="initialize.ts" />
 
-    vanillavb.app.initialize();
-
-
-})
+$ts.mode = Modes.debug;
+// run web app
+$ts(vanillavb.app.initialize);
