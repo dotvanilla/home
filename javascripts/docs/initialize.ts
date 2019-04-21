@@ -23,7 +23,13 @@ namespace vanillavb.app {
 
     export function loadDocument() {
         let fileName = $ts.location.hash();
-        let path = `/docs/${fileName}.md`;
+        let path: string;
+
+        if (Strings.Empty(fileName)) {
+            path = "README.md";
+        } else {
+            path = `/docs/${fileName}.md`;
+        }
 
         app.renderDocument(path);
     }

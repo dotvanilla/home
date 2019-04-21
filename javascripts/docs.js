@@ -74,7 +74,13 @@ var vanillavb;
         app.initialize = initialize;
         function loadDocument() {
             let fileName = $ts.location.hash();
-            let path = `/docs/${fileName}.md`;
+            let path;
+            if (Strings.Empty(fileName)) {
+                path = "README.md";
+            }
+            else {
+                path = `/docs/${fileName}.md`;
+            }
             app.renderDocument(path);
         }
         app.loadDocument = loadDocument;
