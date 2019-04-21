@@ -22,8 +22,20 @@ var vanillavb;
     (function (app) {
         let render = new app.markdown();
         function initialize() {
+            window.onhashchange = app.loadDocument;
+            // show home page
+            app.renderDocument("README.md");
         }
         app.initialize = initialize;
+        function loadDocument() {
+            let fileName = $ts.location.hash();
+            let path = `/docs/${fileName}.md`;
+            app.renderDocument(path);
+        }
+        app.loadDocument = loadDocument;
+        function renderDocument(path) {
+        }
+        app.renderDocument = renderDocument;
     })(app = vanillavb.app || (vanillavb.app = {}));
 })(vanillavb || (vanillavb = {}));
 //# sourceMappingURL=docs.js.map

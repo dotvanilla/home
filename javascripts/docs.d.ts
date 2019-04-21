@@ -9,4 +9,6 @@ declare namespace vanillavb.app {
 }
 declare namespace vanillavb.app {
     function initialize(): void;
+    function loadDocument(): void;
+    function renderDocument(path: string): void;
 }
