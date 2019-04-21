@@ -29,3 +29,4 @@ Read these documents for help yourself build your first VisualBasic.NET WebAssem
 These demo shows you how to programming in VB.NET for WebAssembly:
 
 + [Base64 Encoder/Decoder](/vbscripts/base64.html)
++ [VB.NET programming with WebGL](/vbscripts/webgl.html)
