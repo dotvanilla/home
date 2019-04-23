@@ -9,7 +9,7 @@
    + Supports multiple VisualBasic.NET source files in your vbproj
    + WebAssembly file output is located at the file location that defined in your vbproj file with given profile(like ``Debug|AnyCPU`` or ``Release|AnyCPU``).
 + Implementation:
-   1. ``&lt;Extension>`` method
+   1. ``<Extension>`` method
    2. Sub Program (Function with no returns)
    3. ``Array``/``List``/``Dictionary`` (map to javascript array and javascript object)
    4. String class methods
