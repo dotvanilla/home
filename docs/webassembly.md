@@ -76,7 +76,7 @@ let assmUrl = "vbscript/HelloWorld.wasm";
 TypeScript.Wasm.RunAssembly(assmUrl, {
     // run app from a public method which its name is
     // RunApp or something else
-    run: VB => VB.instance.exports.RunApp(),
+    run: VB => VB.RunApp(),
     // some build-in javascript api that expose to VB.NET application
     api: { document: true, console: true },
     // Other javascript api expose to VB.NET application, like jquery, bootstrap, etc
