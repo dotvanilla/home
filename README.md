@@ -1,4 +1,4 @@
-# Welcome to vanillavb.app
+# Welcome to .vanilla Framework
 
 Want run your VisualBasic.NET application in browser? Just follow this quick hello world example:
 
