@@ -1,8 +1,8 @@
 # Welcome to vanillavb.app
 
-Want run your VisualBasic.NET application in browser?
+Want run your VisualBasic.NET application in browser? Just follow this quick hello world example:
 
-
+First you should have a VisualBasic.NET for compile, you can create a standard vbproj in VisualStudio target .NET Framework 4.0 at least, and then write this HelloWorld demo, and then save it. 
 
 ```vbnet
 Module Demo
@@ -16,6 +16,32 @@ Module Demo
 
 End Module
 ```
+
+Now, you can compile your VisualBasic.NEt application for target WebAssembly, by using vanilla compiler:
+
+```bash
+# compile your project in the commandline
+# and you should add the vanilla folder to your path environment variables.
+vanilla /path/to/app.vbproj
+```
+
+Just simple enough! Finally, using this loader javascript to run your VisualBasic.NEt application:
+
+```javascript
+var assmUrl = "vbscript/HelloWorld.wasm";
+
+TypeScript.Wasm.RunAssembly(assmUrl, {
+    // run app from a public method which its name is
+    // RunApp or something else
+    run: VB => VB.RunApp(),
+    // some build-in javascript api that expose to VB.NET application
+    api: { console: true },
+    // Other javascript api expose to VB.NET application, like jquery, bootstrap, etc
+    imports: {}
+});
+```
+
+Hit ``F12`` on your keyboard to open developer console of your web browser, then you can see a ``Hello World!`` message. 
 
 ### Guildlines
 
