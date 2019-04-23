@@ -15,6 +15,7 @@
    4. String class methods
    5. System.Object type as function parameter
    6. Optional function parameter
+   7. String interpolation syntax
 
 ### 2019-04-14 *v0.5.136-alpha*
 
