@@ -30,3 +30,9 @@ These demo shows you how to programming in VB.NET for WebAssembly:
 
 + [Base64 Encoder/Decoder](/vbscripts/base64.html)
 + [VB.NET programming with WebGL](/vbscripts/webgl.html)
+
+### Release Notes
+
+Find changes and update content of the ``vanillavb.app`` runtime at this document:
+
+> [Vanilla Release Note](/#release_notes)
