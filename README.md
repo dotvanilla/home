@@ -25,7 +25,7 @@ Now, you can compile your VisualBasic.NEt application for target WebAssembly, by
 vanilla /path/to/app.vbproj
 ```
 
-Just simple enough! Finally, using this loader javascript to run your VisualBasic.NEt application:
+Just simple enough! Finally, add script reference to ``visualbasic.wasm.js``, then using this loader javascript to run your VisualBasic.NEt application:
 
 ```javascript
 var assmUrl = "vbscript/HelloWorld.wasm";
