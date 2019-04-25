@@ -1,0 +1,2 @@
+# Vanilla compiler design note
+
