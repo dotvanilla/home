@@ -1,4 +1,4 @@
-# Welcome to vanillavb.app
+# Welcome to .vanilla Framework
 
 Want run your VisualBasic.NET application in browser? Just follow this quick hello world example:
 
@@ -49,6 +49,7 @@ Read these documents for help yourself build your first VisualBasic.NET WebAssem
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
 + [How to compile](/#use_compiler)
++ [Vanilla compiler design note](/#compiler_design_notes)
 
 ### Demo
 
