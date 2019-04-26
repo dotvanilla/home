@@ -31,7 +31,7 @@ Important Note: **All of the memory pointer that point to the object in javascri
 If you have declared a class/structure in VisualBasic.NET code, then the property name and function name that declared in VB source file will be generated automatic in the memory of the WebAssembly. The memory layout of the class declaration looks like:
 
 ```R
-class_name parents parent_id parent_id slot_counts [field_name type] [field_name type] ... [method_name/property_name type]
+class_name parents parent_id parent_id slot_counts [field_name type] [field_name type] ... method_counts [method_name/property_name type]
 ```
 
 Here is the details about the memory layout:
@@ -52,4 +52,11 @@ So with the class meta data that we are able to create a javascript by reading t
 
 Suppose we have the ``class_id`` now, then we can using this ``class_id`` as memory pointer to read the class declare meta data in the memory:
 
-+ 
+1. read string to get ``class_name``
+2. read next 4 bytes to get ``parents`` counts and then skip ``parents * 4`` bytes.
+3. now we can read the next 4 bytes to get ``slot_counts``
+4. now read the ``field_name`` string
+5. now read the class instance field value: if the value type is primitive type, then using the value directly as the property value in javascript object, else get class object recursivly by use the value as memory pointer.
+6. when loop end of the fields, then we are able to get the class methods.
+7. now read the 4 byts to get ``method_counts``
+8. read method name for create a javascript function base on the exportted WebAssembly function.
