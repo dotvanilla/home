@@ -24,3 +24,32 @@ The memory pointer is a kind of type alias of ``i32``, which its alias name in v
 
 Important Note: **All of the memory pointer that point to the object in javascript runtime is negative value, and all of the memory pointer that point to the object in WebAssembly runtime is positive value**. So that you can using memory pointer its i32 sign result value to distinguish target object is comes from javascript runtime or WebAssembly runtime.
 
+## WebAssembly Object to JavaScript Object
+
+### The class declare meta
+
+If you have declared a class/structure in VisualBasic.NET code, then the property name and function name that declared in VB source file will be generated automatic in the memory of the WebAssembly. The memory layout of the class declaration looks like:
+
+```R
+class_name parents parent_id parent_id slot_counts [field_name type] [field_name type] ... [method_name/property_name type]
+```
+
+Here is the details about the memory layout:
+
++ ``class_name`` (string) The user class name label
++ ``parents`` (i32) The class its parent count, if the class didn't inherits from any base class, then this value is zero, which point to the ``System.Object`` class.
++ ``parent_id`` (i32) The ``class_id`` of the parent class. The ``class_id`` is actually the initial position of the class_name string. The count of the ``parent_id`` is equals to the ``parents`` value.
++ ``slot_counts`` (i32) The field numbers in this class, includes its parent class.
++ ``field_name`` (string) The field name
++ ``type`` (i32) 1 means i32, 2 means i64, 3 means f32, 4 means f64 and other value is the ``class_id``
++ ``method_name/property_name`` (string) The name of the methods and the properties. Due to the reason of property is a kind of method syntax sugar in VisualBasic.NET, so that property and method was place in the same group in WebAssembly.
+
+Important Note: **All of the string in WebAssembly memory is ZERO terminated**.
+
+### Create javascript object from WebAssembly
+
+So with the class meta data that we are able to create a javascript by reading the WebAssembly memory, for example, suppose we have a class object instance its memory pointer value, so we can read its ``class_id`` by read the 4 bytes in the begining position of the class object instance.
+
+Suppose we have the ``class_id`` now, then we can using this ``class_id`` as memory pointer to read the class declare meta data in the memory:
+
++ 
