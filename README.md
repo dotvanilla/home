@@ -49,7 +49,12 @@ Read these documents for help yourself build your first VisualBasic.NET WebAssem
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
 + [How to compile](/#use_compiler)
+
+Documents about how to develop Vanilla compiler:
+
 + [Vanilla compiler design note](/#compiler_design_notes)
++ [Class implementation in WebAssembly](/#class_impl)
++ [Array implementation in WebAssembly](/#array_impl)
 
 ### Demo
 
