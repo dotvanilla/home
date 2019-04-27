@@ -15,7 +15,7 @@ class_id slot_count (flag slot1)  (flag slot2)  (flag slot3) ...
 Here is the details about the memory layout:
 
 + ``class_id`` (i32) The class object its hash id in generated webassembly, so if two object instance its ``class_id`` value equals to each other, that means they have the exactly identical type definition. Comparison between the class_id is equivalent to type comparison in VisualBasic: ``a.GetType() Is b.GetType()``
-+ ``flag`` (byte) The field/property data type flag: (0) byte, (1) i32, (2) i64, (3) f32, (4) f64 and (5) reference
++ ``flag`` (byte) The field/property data type flag: (0) object/any, (1) i32, (2) i64, (3) f32, (4) f64 and (5) reference
 + ``slot`` (i32/i64/f32/f64) The slots hold the class field value. If the field type in VisualBasic is not WebAssembly's primitive type, then a memory pointer will be used as its slot value. Due to the reason of memory pointer is also ``i32`` type in WebAssembly, so that the ``flag`` byte will be used for distinguish the i32 and memory pointer: if the ``flag`` byte equals to 1, means the slot value is ``i32``, else if the ``flag`` byte equals to 5, that means the slot value is a memory pointer.
 
 ## Using memory pointer
