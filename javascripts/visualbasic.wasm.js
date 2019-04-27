@@ -605,18 +605,21 @@ var vanilla;
                 }
             }
             else {
-                let host = window;
-                if (typeof TypeScript != "object") {
-                    host.TypeScript = {};
-                }
-                if (typeof TypeScript.logging != "object") {
-                    host.TypeScript.logging = {};
-                }
-                host.TypeScript.logging.outputEverything = opt;
+                setConfigDebugger(opt);
             }
             return false;
         }
         Wasm.showDebugMessage = showDebugMessage;
+        function setConfigDebugger(opt) {
+            let host = window;
+            if (typeof TypeScript != "object") {
+                host.TypeScript = {};
+            }
+            if (typeof TypeScript.logging != "object") {
+                host.TypeScript.logging = {};
+            }
+            host.TypeScript.logging.outputEverything = opt;
+        }
         function exportWasmApi(assm) {
             let exports = assm.instance.exports;
             let api = {
