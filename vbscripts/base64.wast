@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 4/27/2019 9:37:32 PM
+    ;; build: 4/27/2019 10:37:25 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -275,7 +275,7 @@
     (block $block_9e020000 
         (loop $loop_9f020000
     
-                    (br_if $block_9e020000 (i32.lt_s (get_local $n) (i32.sub (call $string_length (get_local $text)) (i32.const 1))))
+                    (br_if $block_9e020000 (i32.gt_s (get_local $n) (i32.sub (call $string_length (get_local $text)) (i32.const 1))))
             (set_local $r (call $charCodeAt (get_local $text) (get_local $n)))
             (call $print (get_local $r))
             
