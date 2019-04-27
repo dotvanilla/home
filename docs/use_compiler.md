@@ -18,5 +18,32 @@ vanilla /path/to/file.vbproj [/out /path/to/out.wasm]
 
 ## 2. Step By Step Example
 
+### Setting up application properties
+
 ![](edit_info.PNG)
+
+1. The assembly name property config value will renames the output WebAssembly file.
+2. In order to used Linq in WebAssembly or some advanced custom attribute feature, you should target your vbproj at least .NET Framework 4.0
+3. You also can edit assembly information for your WebAssembly application
+
+### Setting up build output
+
 ![](config_output.PNG)
+
+Now switch to the **Compile** tab page, then 
+
+1. you can switch the project profile for ``Debug|AnyCPU`` or ``Release|AnyCPU`` or others profile
+2. Now you can config the WebAssembly output directory by **Browse** to the destination directory.
+
+### Run compiler from CommandLine
+
+![](run_compiler.PNG)
+
+Now open ``cmd``, (please makre sure you have add vanilla to your path environment).
+
+1. type the compiler program name: ``vanilla``
+2. and then type a whitespace, at last press ``<Shift>`` + Mouse right click on the vbproj file to copy full path, and then paste onto the command line input
+
+![](vbproj_path.png)
+
+3. Hit ``<Enter>``, job done.
