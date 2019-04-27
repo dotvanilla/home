@@ -58,12 +58,12 @@ Module utf8
 
         text = text.Replace(regexp("rn", "g"), "n")
 
-        print($"text length={text.Length}")
+        'print($"text length={text.Length}")
 
         For n As Integer = 0 To text.Length - 1
             Dim r = charCodeAt(text, n)
 
-            Call print(r)
+            'Call print(r)
 
             If (r < 128) Then
                 chars.Add(fromCharCode(r))
@@ -77,8 +77,8 @@ Module utf8
             End If
         Next
 
-        print("View chars after utf8 encode:")
-        print(chars)
+        ' print("View chars after utf8 encode:")
+        ' print(chars)
 
         Return chars.Join("")
     End Function

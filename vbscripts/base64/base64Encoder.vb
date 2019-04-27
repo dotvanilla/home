@@ -58,7 +58,7 @@ Public Module base64Encoder
     Dim keyStr As String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
     Declare Function isNaN Lib "Math" Alias "isNaN" (x As Integer) As Boolean
-    Declare Sub print Lib "console" Alias "log" (obj As Object)
+    ' Declare Sub print Lib "console" Alias "log" (obj As Object)
 
     ''' <summary>
     ''' 将任意文本编码为base64字符串
@@ -70,11 +70,11 @@ Public Module base64Encoder
         Dim n, r, i, s, o, u, a As Integer
         Dim f = 0
 
-        Call print($"raw text input: {text}")
+        'Call print($"raw text input: {text}")
 
         text = text.utf8_encode()
 
-        Call print($"utf8 encode result: {text}")
+        'Call print($"utf8 encode result: {text}")
 
         Do While (f < text.Length)
             n = text.charCodeAt(f)
