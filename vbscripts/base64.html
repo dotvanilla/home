@@ -81,6 +81,7 @@
     textInput.value = "Hello World, vanillavb.app runtime!";
 
     // WebAssembly Demo
+	vanilla.Wasm.showDebugMessage(true);
     vanilla.Wasm.RunAssembly("../vbscripts/base64.wasm", {
       run: encoder => {
 		var handleInput = function () {
@@ -90,9 +91,7 @@
 	  
         textInput.onkeypress = handleInput;
 		textInput.oninput = handleInput;
-        textInput.oninput();
-		
-		console.log(encoder.AssemblyInfo);
+        textInput.oninput();	
       },
       api: { console: true, text: true, array: true }
     });
