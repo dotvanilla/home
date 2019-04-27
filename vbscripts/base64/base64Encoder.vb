@@ -105,7 +105,7 @@ Public Module base64Encoder
         Dim n, r, i As Integer
         Dim s, o, u, a As Integer
         Dim f = 0
-        Dim symbolsNotallowed As Integer = regexp("[^A-Za-z0-9+/=]", "g")
+        Dim symbolsNotallowed As String = regexp("[^A-Za-z0-9+/=]", "g")
 
         base64 = base64.Replace(symbolsNotallowed, "")
 
