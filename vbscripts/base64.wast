@@ -33,6 +33,8 @@
     (func $charAt (import "string" "charAt") (param $text i32) (param $index i32) (result i32))
     ;; Declare Function Join Lib "string" Alias "join" (array As list, delimiter As string) As string
     (func $Join (import "string" "join") (param $array i32) (param $delimiter i32) (result i32))
+    ;; Declare Function i32.toString Lib "string" Alias "toString" (x As i32) As string
+    (func $i32.toString (import "string" "toString") (param $x i32) (result i32))
     ;; Declare Function array.new Lib "Array" Alias "create" (size As i32) As array
     (func $array.new (import "Array" "create") (param $size i32) (result i32))
     ;; Declare Function array.push Lib "Array" Alias "push" (array As array, element As any) As array
@@ -50,62 +52,68 @@
     ;; String from 1 with 65 bytes in memory
     (data (i32.const 1) "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\00")
 
-    ;; String from 67 with 0 bytes in memory
-    (data (i32.const 67) "\00")
+    ;; String from 67 with 16 bytes in memory
+    (data (i32.const 67) "raw text input: \00")
 
-    ;; String from 68 with 0 bytes in memory
-    (data (i32.const 68) "\00")
+    ;; String from 84 with 20 bytes in memory
+    (data (i32.const 84) "utf8 encode result: \00")
 
-    ;; String from 69 with 15 bytes in memory
-    (data (i32.const 69) "[^A-Za-z0-9+/=]\00")
+    ;; String from 105 with 0 bytes in memory
+    (data (i32.const 105) "\00")
 
-    ;; String from 85 with 1 bytes in memory
-    (data (i32.const 85) "g\00")
+    ;; String from 106 with 0 bytes in memory
+    (data (i32.const 106) "\00")
 
-    ;; String from 87 with 0 bytes in memory
-    (data (i32.const 87) "\00")
+    ;; String from 107 with 15 bytes in memory
+    (data (i32.const 107) "[^A-Za-z0-9+/=]\00")
 
-    ;; String from 88 with 2 bytes in memory
-    (data (i32.const 88) "rn\00")
+    ;; String from 123 with 1 bytes in memory
+    (data (i32.const 123) "g\00")
 
-    ;; String from 91 with 1 bytes in memory
-    (data (i32.const 91) "g\00")
+    ;; String from 125 with 0 bytes in memory
+    (data (i32.const 125) "\00")
 
-    ;; String from 93 with 1 bytes in memory
-    (data (i32.const 93) "n\00")
+    ;; String from 126 with 2 bytes in memory
+    (data (i32.const 126) "rn\00")
 
-    ;; String from 95 with 0 bytes in memory
-    (data (i32.const 95) "\00")
+    ;; String from 129 with 1 bytes in memory
+    (data (i32.const 129) "g\00")
 
-    ;; String from 96 with 0 bytes in memory
-    (data (i32.const 96) "\00")
+    ;; String from 131 with 1 bytes in memory
+    (data (i32.const 131) "n\00")
 
-    ;; String from 97 with 14 bytes in memory
-    (data (i32.const 97) "base64 Encoder\00")
+    ;; String from 133 with 0 bytes in memory
+    (data (i32.const 133) "\00")
 
-    ;; String from 112 with 53 bytes in memory
-    (data (i32.const 112) "base64 Encoder written in VisualBasic.NET WebAssembly\00")
+    ;; String from 134 with 0 bytes in memory
+    (data (i32.const 134) "\00")
 
-    ;; String from 166 with 3 bytes in memory
-    (data (i32.const 166) "MIT\00")
+    ;; String from 135 with 14 bytes in memory
+    (data (i32.const 135) "base64 Encoder\00")
 
-    ;; String from 170 with 6 bytes in memory
-    (data (i32.const 170) "base64\00")
+    ;; String from 150 with 53 bytes in memory
+    (data (i32.const 150) "base64 Encoder written in VisualBasic.NET WebAssembly\00")
 
-    ;; String from 177 with 32 bytes in memory
-    (data (i32.const 177) "Copyright © I@xieguigang.me 2019\00")
+    ;; String from 204 with 3 bytes in memory
+    (data (i32.const 204) "MIT\00")
 
-    ;; String from 210 with 19 bytes in memory
-    (data (i32.const 210) "VisualBasic.wasm.js\00")
+    ;; String from 208 with 6 bytes in memory
+    (data (i32.const 208) "base64\00")
 
-    ;; String from 230 with 36 bytes in memory
-    (data (i32.const 230) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
+    ;; String from 215 with 32 bytes in memory
+    (data (i32.const 215) "Copyright © I@xieguigang.me 2019\00")
 
-    ;; String from 267 with 12 bytes in memory
-    (data (i32.const 267) "2.0.344.4444\00")
+    ;; String from 248 with 19 bytes in memory
+    (data (i32.const 248) "VisualBasic.wasm.js\00")
 
-    ;; String from 280 with 10 bytes in memory
-    (data (i32.const 280) "1.12.0.235\00")
+    ;; String from 268 with 36 bytes in memory
+    (data (i32.const 268) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
+
+    ;; String from 305 with 12 bytes in memory
+    (data (i32.const 305) "2.0.344.4444\00")
+
+    ;; String from 318 with 10 bytes in memory
+    (data (i32.const 318) "1.12.0.235\00")
     
     (global $keyStr (mut i32) (i32.const 1))
 
@@ -150,7 +158,9 @@
     (local $f i32)
     (set_local $base64 (call $array.new (i32.const -1)))
     (set_local $f (i32.const 0))
+    (call $print (call $string_add (i32.const 67) (call $i32.toString (get_local $text))))
     (set_local $text (call $utf8_encode (get_local $text)))
+    (call $print (call $string_add (i32.const 84) (call $i32.toString (get_local $text))))
     ;; Do While (f < text.Length)
     ;; Start Do While Block block_9a020000
     
@@ -184,7 +194,7 @@
         )
     )
     ;; End Loop loop_9b020000
-    (return (call $Join (get_local $base64) (i32.const 67)))
+    (return (call $Join (get_local $base64) (i32.const 105)))
     )
     (func $decode (param $base64 i32) (result i32)
         ;; Public Function decode(base64 As string) As string
@@ -198,10 +208,10 @@
     (local $a i32)
     (local $f i32)
     (local $symbolsNotallowed i32)
-    (set_local $text (i32.const 68))
+    (set_local $text (i32.const 106))
     (set_local $f (i32.const 0))
-    (set_local $symbolsNotallowed (call $regexp (i32.const 69) (i32.const 85)))
-    (set_local $base64 (call $string_replace (get_local $base64) (get_local $symbolsNotallowed) (i32.const 87)))
+    (set_local $symbolsNotallowed (call $regexp (i32.const 107) (i32.const 123)))
+    (set_local $base64 (call $string_replace (get_local $base64) (get_local $symbolsNotallowed) (i32.const 125)))
     ;; Do While (f < base64.Length)
     ;; Start Do While Block block_9c020000
     
@@ -251,7 +261,7 @@
     (local $n i32)
     (local $r i32)
     (set_local $chars (call $array.new (i32.const -1)))
-    (set_local $text (call $string_replace (get_local $text) (call $regexp (i32.const 88) (i32.const 91)) (i32.const 93)))
+    (set_local $text (call $string_replace (get_local $text) (call $regexp (i32.const 126) (i32.const 129)) (i32.const 131)))
     (set_local $n (i32.const 0))
     ;; For n As Integer = 0 To text.Length - 1
     
@@ -276,7 +286,7 @@
     
         )
     )
-    (return (call $Join (get_local $chars) (i32.const 95)))
+    (return (call $Join (get_local $chars) (i32.const 133)))
     )
     (func $utf8_decode (param $text i32) (result i32)
         ;; Public Function utf8_decode(text As string) As string
@@ -315,7 +325,7 @@
         )
     )
     ;; End Loop loop_a1020000
-    (return (call $Join (get_local $t) (i32.const 96)))
+    (return (call $Join (get_local $t) (i32.const 134)))
     )
     
     
@@ -324,46 +334,46 @@
     (func $AssemblyTitle  (result i32)
         ;; Public Function AssemblyTitle() As string
         
-    (return (i32.const 97))
+    (return (i32.const 135))
     )
     (func $AssemblyDescription  (result i32)
         ;; Public Function AssemblyDescription() As string
         
-    (return (i32.const 112))
+    (return (i32.const 150))
     )
     (func $AssemblyCompany  (result i32)
         ;; Public Function AssemblyCompany() As string
         
-    (return (i32.const 166))
+    (return (i32.const 204))
     )
     (func $AssemblyProduct  (result i32)
         ;; Public Function AssemblyProduct() As string
         
-    (return (i32.const 170))
+    (return (i32.const 208))
     )
     (func $AssemblyCopyright  (result i32)
         ;; Public Function AssemblyCopyright() As string
         
-    (return (i32.const 177))
+    (return (i32.const 215))
     )
     (func $AssemblyTrademark  (result i32)
         ;; Public Function AssemblyTrademark() As string
         
-    (return (i32.const 210))
+    (return (i32.const 248))
     )
     (func $Guid  (result i32)
         ;; Public Function Guid() As string
         
-    (return (i32.const 230))
+    (return (i32.const 268))
     )
     (func $AssemblyVersion  (result i32)
         ;; Public Function AssemblyVersion() As string
         
-    (return (i32.const 267))
+    (return (i32.const 305))
     )
     (func $AssemblyFileVersion  (result i32)
         ;; Public Function AssemblyFileVersion() As string
         
-    (return (i32.const 280))
+    (return (i32.const 318))
     )
     )

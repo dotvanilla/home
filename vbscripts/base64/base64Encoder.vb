@@ -70,7 +70,11 @@ Public Module base64Encoder
         Dim n, r, i, s, o, u, a As Integer
         Dim f = 0
 
+        Call print($"raw text input: {text}")
+
         text = text.utf8_encode()
+
+        Call print($"utf8 encode result: {text}")
 
         Do While (f < text.Length)
             n = text.charCodeAt(f)
