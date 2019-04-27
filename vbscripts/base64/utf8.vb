@@ -58,6 +58,8 @@ Module utf8
 
         text = text.Replace(regexp("rn", "g"), "n")
 
+        print($"text length={text.Length}")
+
         For n As Integer = 0 To text.Length - 1
             Dim r = charCodeAt(text, n)
 

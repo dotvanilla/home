@@ -82,38 +82,41 @@
     ;; String from 131 with 1 bytes in memory
     (data (i32.const 131) "n\00")
 
-    ;; String from 133 with 0 bytes in memory
-    (data (i32.const 133) "\00")
+    ;; String from 133 with 12 bytes in memory
+    (data (i32.const 133) "text length=\00")
 
-    ;; String from 134 with 0 bytes in memory
-    (data (i32.const 134) "\00")
+    ;; String from 146 with 0 bytes in memory
+    (data (i32.const 146) "\00")
 
-    ;; String from 135 with 14 bytes in memory
-    (data (i32.const 135) "base64 Encoder\00")
+    ;; String from 147 with 0 bytes in memory
+    (data (i32.const 147) "\00")
 
-    ;; String from 150 with 53 bytes in memory
-    (data (i32.const 150) "base64 Encoder written in VisualBasic.NET WebAssembly\00")
+    ;; String from 148 with 14 bytes in memory
+    (data (i32.const 148) "base64 Encoder\00")
 
-    ;; String from 204 with 3 bytes in memory
-    (data (i32.const 204) "MIT\00")
+    ;; String from 163 with 53 bytes in memory
+    (data (i32.const 163) "base64 Encoder written in VisualBasic.NET WebAssembly\00")
 
-    ;; String from 208 with 6 bytes in memory
-    (data (i32.const 208) "base64\00")
+    ;; String from 217 with 3 bytes in memory
+    (data (i32.const 217) "MIT\00")
 
-    ;; String from 215 with 32 bytes in memory
-    (data (i32.const 215) "Copyright © I@xieguigang.me 2019\00")
+    ;; String from 221 with 6 bytes in memory
+    (data (i32.const 221) "base64\00")
 
-    ;; String from 248 with 19 bytes in memory
-    (data (i32.const 248) "VisualBasic.wasm.js\00")
+    ;; String from 228 with 32 bytes in memory
+    (data (i32.const 228) "Copyright © I@xieguigang.me 2019\00")
 
-    ;; String from 268 with 36 bytes in memory
-    (data (i32.const 268) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
+    ;; String from 261 with 19 bytes in memory
+    (data (i32.const 261) "VisualBasic.wasm.js\00")
 
-    ;; String from 305 with 12 bytes in memory
-    (data (i32.const 305) "2.0.344.4444\00")
+    ;; String from 281 with 36 bytes in memory
+    (data (i32.const 281) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
 
-    ;; String from 318 with 10 bytes in memory
-    (data (i32.const 318) "1.12.0.235\00")
+    ;; String from 318 with 12 bytes in memory
+    (data (i32.const 318) "2.0.344.4444\00")
+
+    ;; String from 331 with 10 bytes in memory
+    (data (i32.const 331) "1.12.0.235\00")
     
     (global $keyStr (mut i32) (i32.const 1))
 
@@ -262,6 +265,7 @@
     (local $r i32)
     (set_local $chars (call $array_new (i32.const -1)))
     (set_local $text (call $string_replace (get_local $text) (call $regexp (i32.const 126) (i32.const 129)) (i32.const 131)))
+    (call $print (call $string_add (i32.const 133) (call $i32_toString (call $string_length (get_local $text)))))
     (set_local $n (i32.const 0))
     ;; For n As Integer = 0 To text.Length - 1
     
@@ -286,7 +290,7 @@
     
         )
     )
-    (return (call $Join (get_local $chars) (i32.const 133)))
+    (return (call $Join (get_local $chars) (i32.const 146)))
     )
     (func $utf8_decode (param $text i32) (result i32)
         ;; Public Function utf8_decode(text As string) As string
@@ -325,7 +329,7 @@
         )
     )
     ;; End Loop loop_a1020000
-    (return (call $Join (get_local $t) (i32.const 134)))
+    (return (call $Join (get_local $t) (i32.const 147)))
     )
     
     
@@ -334,46 +338,46 @@
     (func $AssemblyTitle  (result i32)
         ;; Public Function AssemblyTitle() As string
         
-    (return (i32.const 135))
+    (return (i32.const 148))
     )
     (func $AssemblyDescription  (result i32)
         ;; Public Function AssemblyDescription() As string
         
-    (return (i32.const 150))
+    (return (i32.const 163))
     )
     (func $AssemblyCompany  (result i32)
         ;; Public Function AssemblyCompany() As string
         
-    (return (i32.const 204))
+    (return (i32.const 217))
     )
     (func $AssemblyProduct  (result i32)
         ;; Public Function AssemblyProduct() As string
         
-    (return (i32.const 208))
+    (return (i32.const 221))
     )
     (func $AssemblyCopyright  (result i32)
         ;; Public Function AssemblyCopyright() As string
         
-    (return (i32.const 215))
+    (return (i32.const 228))
     )
     (func $AssemblyTrademark  (result i32)
         ;; Public Function AssemblyTrademark() As string
         
-    (return (i32.const 248))
+    (return (i32.const 261))
     )
     (func $Guid  (result i32)
         ;; Public Function Guid() As string
         
-    (return (i32.const 268))
+    (return (i32.const 281))
     )
     (func $AssemblyVersion  (result i32)
         ;; Public Function AssemblyVersion() As string
         
-    (return (i32.const 305))
+    (return (i32.const 318))
     )
     (func $AssemblyFileVersion  (result i32)
         ;; Public Function AssemblyFileVersion() As string
         
-    (return (i32.const 318))
+    (return (i32.const 331))
     )
     )
