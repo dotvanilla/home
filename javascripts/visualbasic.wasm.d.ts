@@ -7,7 +7,11 @@ declare namespace WebAssembly {
         function push(array: number, obj: number): number;
         function pop(array: number): number;
         function indexOf(array: number, obj: number): number;
-        function create(): number;
+        /**
+         * @param size If this parameter is a negative value, then an empty
+         *      will be returns.
+        */
+        function create(size: number): number;
         function get(array: number, index: number): number;
         function set(array: number, index: number, value: number): number;
         function length(array: number): number;
@@ -33,7 +37,7 @@ declare namespace WebAssembly {
         /**
          * Load WebAssembly memory buffer into Javascript runtime.
         */
-        function load(bytes: TypeScript.WasmMemory): void;
+        function load(bytes: vanilla.WasmMemory): void;
         function printTextCache(): void;
         /**
          * Read text data from WebAssembly runtime its memory block
@@ -71,6 +75,9 @@ declare namespace WebAssembly {
         function warn(message: number): void;
         function info(message: number): void;
         function error(message: number): void;
+        function table(obj: number): void;
+        function trace(message: number): void;
+        function debug(message: number): void;
     }
 }
 declare namespace WebAssembly {
@@ -81,6 +88,13 @@ declare namespace WebAssembly {
         function createElement(tag: number): number;
         function setAttribute(node: number, attr: number, value: number): void;
         function appendChild(parent: number, node: number): void;
+    }
+}
+declare namespace WebAssembly {
+    /**
+     * Url location api
+    */
+    module Location {
     }
 }
 declare namespace WebAssembly {
@@ -131,7 +145,7 @@ declare namespace WebAssembly {
         function indexOf(input: number, find: number): number;
     }
 }
-declare namespace TypeScript {
+declare namespace vanilla {
     interface WebAssembly {
         instantiate(module: Uint8Array, dependencies: object): IWasm;
     }
@@ -145,12 +159,36 @@ declare namespace TypeScript {
         buffer: ArrayBuffer;
     }
 }
-declare namespace TypeScript {
+declare namespace vanilla {
+    /**
+     * The VisualBasic.NET application AssemblyInfo
+    */
+    class AssemblyInfo {
+        AssemblyTitle: string;
+        AssemblyDescription: string;
+        AssemblyCompany: string;
+        AssemblyProduct: string;
+        AssemblyCopyright: string;
+        AssemblyTrademark: string;
+        Guid: string;
+        AssemblyVersion: string;
+        AssemblyFileVersion: string;
+        constructor(AssemblyTitle: string, AssemblyDescription: string, AssemblyCompany: string, AssemblyProduct: string, AssemblyCopyright: string, AssemblyTrademark: string, Guid: string, AssemblyVersion: string, AssemblyFileVersion: string);
+        toString(): string;
+        static readAssemblyInfo(assm: IWasm): AssemblyInfo;
+    }
+}
+declare namespace vanilla {
+    interface RunDelegate {
+        (assm: {
+            AssemblyInfo: AssemblyInfo;
+        }): void;
+    }
     interface Config {
         /**
          * A lambda function for run your VisualBasic.NET application.
         */
-        run: Delegate.Sub;
+        run: RunDelegate;
         /**
          * Your custom javascript api that imports for your VisualBasic app, like:
          *
@@ -197,14 +235,24 @@ declare namespace TypeScript {
         array?: boolean;
     }
 }
-declare namespace TypeScript {
-    interface IWasmFunc {
-        (): void;
+declare namespace vanilla.Wasm {
+    module FunctionApi {
+        interface IWasmFunc {
+            (...param: any[]): void;
+            /**
+             * 当前的这个函数在WebAssembly导出来的函数的申明原型
+            */
+            WasmPrototype: () => any;
+        }
         /**
-         * 当前的这个函数在WebAssembly导出来的函数的申明原型
+         * 主要是创建一个对参数的封装函数，因为WebAssembly之中只有4中基础的数值类型
+         * 所以字符串，对象之类的都需要在这里进行封装之后才能够被传递进入WebAssembly
+         * 运行时环境之中
         */
-        WasmPrototype: () => any;
+        function buildApiFunc(func: object): IWasmFunc;
     }
+}
+declare namespace vanilla {
     /**
      * The web assembly helper
     */
@@ -219,12 +267,13 @@ declare namespace TypeScript {
          *
         */
         function RunAssembly(module: string, opts: Config): void;
+        function showDebugMessage(): boolean;
     }
 }
-declare namespace TypeScript {
+declare namespace vanilla {
     class memoryReader {
         protected buffer: ArrayBuffer;
-        constructor(bytechunks: TypeScript.WasmMemory);
+        constructor(bytechunks: WasmMemory);
         sizeOf(intPtr: number): number;
     }
     /**
@@ -242,6 +291,8 @@ declare namespace TypeScript {
         readTextRaw(offset: number, length: number): string;
         readText(intPtr: number): string;
     }
+}
+declare namespace vanilla {
     class arrayReader extends memoryReader {
         /**
          * @param memory The memory buffer
