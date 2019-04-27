@@ -63,7 +63,7 @@ Module utf8
         For n As Integer = 0 To text.Length - 1
             Dim r = charCodeAt(text, n)
 
-            ' Call print(chars)
+            Call print(r)
 
             If (r < 128) Then
                 chars.Add(fromCharCode(r))
@@ -76,6 +76,9 @@ Module utf8
                 chars.Add(fromCharCode(r And 63 Or 128))
             End If
         Next
+
+        print("View chars after utf8 encode:")
+        print(chars)
 
         Return chars.Join("")
     End Function
