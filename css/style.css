@@ -79,7 +79,17 @@ sub {
 }
 
 img {
-    border: 0
+    background-color: #FFF;
+    border-radius: 3px;
+    border: 1px solid #CCC;
+    box-shadow: 2px 2px 12px -5px #999;
+    margin: 0 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    text-align: center;
+    max-width: 65%;
+    overflow: auto;
+    vertical-align: middle;
 }
 
 svg:not(:root) {
