@@ -1,5 +1,16 @@
 # Release history
 
+### 2019-04-30 *v0.7.154-alpha*
+
+##### Release Object Builder
+
++ Declare ``Class/Structure`` in VisualBasic.NET source.
+   1. Add supports for class/structure object in WebAssembly runtime
+   2. Build class inherits and interface implementation is not working, these feature will implemented in feature works.
++ Class object memory access in WebAssembly runtime.
+   1. Read document [Class implementation in WebAssembly](/#class_impl) to knows how it works.
++ Export WebAssembly class object into javascript runtime
+
 ### 2019-04-26 *v0.6.633-alpha*
 
 ##### Compile Your VisualBasic.NET project
@@ -11,7 +22,7 @@
 + Implementation:
    1. ``<Extension>`` method
    2. Sub Program (Function with no returns)
-   3. ``Array``/``List``/``Dictionary`` (map to javascript array and javascript object)
+   3. ``Array``/``List``/``Dictionary`` (map to javascript ``array`` and javascript ``object``)
    4. String class methods
    5. ``System.Object`` type as function parameter
    6. Optional function parameter and named parameter sequence
@@ -24,7 +35,7 @@
 + Compile a single VisualBasic.NET source file
 + Implementation: 
    1. Function and function calls
-   2. Primitive data types: integer/short/single/double/boolean/string
+   2. Primitive data types: ``integer``/``short``/``single``/``double``/``boolean``/``string``
    3. Programming structure: ``For .. To``, ``Do While Loop``, ``If Then Else``
    4. Javascript Api imports: ``Declare Function Lib Alias ...``
    5. ``Enum`` Type
