@@ -5,10 +5,22 @@ Wanna run your VisualBasic.NET application in a browser? Please follow this quic
 First you should have a VisualBasic.NET project for compile into WebAssembly. You can create a standard vbproj in VisualStudio and should target .NET Framework 4.0 at least, and then copy this ``HelloWorld`` demo, and then save it. 
 
 ```vbnet
+' A WebAssembly application should contains one code module at least.
 Module Demo
 
+    ''' <summary>
+    ''' Imports a external api function from javascript runtime
+    ''' </summary>
+    ''' <param name="text">The text message for display on the webbrowser debugger console</param>
+    ''' <returns></returns>
     Declare Function Print Lib "console" Alias "log" (text As String) As Integer
 
+    ''' <summary>
+    ''' Write the app logic code in any function, and then mark it Public 
+    ''' Then this public function will be export from your WebAssembly to 
+    ''' javascript runtime.
+    ''' </summary>
+    ''' <returns></returns>
     Public Function HelloWorld() As Integer 
         Call Print("Hello World!")
         Return 0
