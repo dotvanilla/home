@@ -1,14 +1,26 @@
 # Welcome to .vanilla Framework
 
-Want run your VisualBasic.NET application in browser? Just follow this quick hello world example:
+Wanna run your VisualBasic.NET application in a browser? Please follow this quick **hello world** example:
 
-First you should have a VisualBasic.NET for compile, you can create a standard vbproj in VisualStudio target .NET Framework 4.0 at least, and then write this HelloWorld demo, and then save it. 
+First you should have a VisualBasic.NET project for compile into WebAssembly. You can create a standard vbproj in VisualStudio and should target .NET Framework 4.0 at least, and then copy this ``HelloWorld`` demo, and then save it. 
 
 ```vbnet
+' A WebAssembly application should contains one code module at least.
 Module Demo
 
+    ''' <summary>
+    ''' Imports a external api function from javascript runtime
+    ''' </summary>
+    ''' <param name="text">The text message for display on the webbrowser debugger console</param>
+    ''' <returns></returns>
     Declare Function Print Lib "console" Alias "log" (text As String) As Integer
 
+    ''' <summary>
+    ''' Write the app logic code in any function, and then mark it Public 
+    ''' Then this public function will be export from your WebAssembly to 
+    ''' javascript runtime.
+    ''' </summary>
+    ''' <returns></returns>
     Public Function HelloWorld() As Integer 
         Call Print("Hello World!")
         Return 0
@@ -17,7 +29,7 @@ Module Demo
 End Module
 ```
 
-Now, you can compile your VisualBasic.NEt application for target WebAssembly, by using vanilla compiler:
+Now, you can compile your VisualBasic.NET application for target WebAssembly platform, by use ``vanilla`` compiler:
 
 ```bash
 # compile your project in the commandline
@@ -25,15 +37,15 @@ Now, you can compile your VisualBasic.NEt application for target WebAssembly, by
 vanilla /path/to/app.vbproj
 ```
 
-Just simple enough! Finally, add script reference to ``visualbasic.wasm.js``, then using this loader javascript to run your VisualBasic.NEt application:
+Just simply enough! Finally, add script reference to ``visualbasic.wasm.js`` in your web application, and then using this loader javascript code to run your VisualBasic.NET application in web browser or nodejs environment:
 
 ```javascript
 var assmUrl = "vbscript/HelloWorld.wasm";
 
-TypeScript.Wasm.RunAssembly(assmUrl, {
+vanilla.Wasm.RunAssembly(assmUrl, {
     // run app from a public method which its name is
-    // RunApp or something else
-    run: VB => VB.RunApp(),
+    // HelloWorld or something else
+    run: VB => VB.HelloWorld(),
     // some build-in javascript api that expose to VB.NET application
     api: { console: true },
     // Other javascript api expose to VB.NET application, like jquery, bootstrap, etc
@@ -41,7 +53,7 @@ TypeScript.Wasm.RunAssembly(assmUrl, {
 });
 ```
 
-Hit ``F12`` on your keyboard to open developer console of your web browser, then you can see a ``Hello World!`` message. 
+Hit ``F12`` on your keyboard to open developer console of your web browser, then you will see the ``Hello World!`` message from your VB.NET application.
 
 ### Guildlines
 
