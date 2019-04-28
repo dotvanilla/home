@@ -1,4 +1,50 @@
-﻿''' <summary>
+﻿#Region "Microsoft.VisualBasic::30b83a0c3b931173d3a3e0aadb1dcdf3, vbscripts\base64\base64Encoder.vb"
+
+    ' Author:
+    ' 
+    '       xieguigang (I@xieguigang.me)
+    '       asuka (evia@lilithaf.me)
+    '       wasm project (developer@vanillavb.app)
+    ' 
+    ' Copyright (c) 2019 developer@vanillavb.app, VanillaBasic(https://vanillavb.app)
+    ' 
+    ' 
+    ' MIT License
+    ' 
+    ' 
+    ' Permission is hereby granted, free of charge, to any person obtaining a copy
+    ' of this software and associated documentation files (the "Software"), to deal
+    ' in the Software without restriction, including without limitation the rights
+    ' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    ' copies of the Software, and to permit persons to whom the Software is
+    ' furnished to do so, subject to the following conditions:
+    ' 
+    ' The above copyright notice and this permission notice shall be included in all
+    ' copies or substantial portions of the Software.
+    ' 
+    ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    ' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    ' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    ' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    ' SOFTWARE.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    ' Module base64Encoder
+    ' 
+    '     Function: decode, encode
+    ' 
+    ' /********************************************************************************/
+
+#End Region
+
+''' <summary>
 ''' A demo of VB.NET general programming features in WebAssembly
 ''' 
 ''' 1. extension function is supported
@@ -12,7 +58,7 @@ Public Module base64Encoder
     Dim keyStr As String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
     Declare Function isNaN Lib "Math" Alias "isNaN" (x As Integer) As Boolean
-    Declare Sub print Lib "console" Alias "log" (obj As Object)
+    ' Declare Sub print Lib "console" Alias "log" (obj As Object)
 
     ''' <summary>
     ''' 将任意文本编码为base64字符串
@@ -24,7 +70,11 @@ Public Module base64Encoder
         Dim n, r, i, s, o, u, a As Integer
         Dim f = 0
 
+        'Call print($"raw text input: {text}")
+
         text = text.utf8_encode()
+
+        'Call print($"utf8 encode result: {text}")
 
         Do While (f < text.Length)
             n = text.charCodeAt(f)
@@ -59,7 +109,7 @@ Public Module base64Encoder
         Dim n, r, i As Integer
         Dim s, o, u, a As Integer
         Dim f = 0
-        Dim symbolsNotallowed As Integer = regexp("[^A-Za-z0-9+/=]", "g")
+        Dim symbolsNotallowed As String = regexp("[^A-Za-z0-9+/=]", "g")
 
         base64 = base64.Replace(symbolsNotallowed, "")
 
@@ -91,3 +141,4 @@ Public Module base64Encoder
         Return text
     End Function
 End Module
+

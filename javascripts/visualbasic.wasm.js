@@ -1,4 +1,4 @@
-/// <reference path="../modules/linq.d.ts" />
+/// <reference path="../../modules/linq.d.ts" />
 var WebAssembly;
 (function (WebAssembly) {
     /**
@@ -22,8 +22,17 @@ var WebAssembly;
             return a.indexOf(obj);
         }
         JsArray.indexOf = indexOf;
-        function create() {
-            return WebAssembly.ObjectManager.addObject([]);
+        /**
+         * @param size If this parameter is a negative value, then an empty
+         *      will be returns.
+        */
+        function create(size) {
+            if (!size || size == undefined || size <= 0) {
+                return WebAssembly.ObjectManager.addObject([]);
+            }
+            else {
+                return WebAssembly.ObjectManager.addObject(new Array(size));
+            }
         }
         JsArray.create = create;
         function get(array, index) {
@@ -85,7 +94,7 @@ var WebAssembly;
          * Load WebAssembly memory buffer into Javascript runtime.
         */
         function load(bytes) {
-            streamReader = new TypeScript.stringReader(bytes);
+            streamReader = new vanilla.stringReader(bytes);
             hashCode += 100;
         }
         ObjectManager.load = load;
@@ -93,6 +102,10 @@ var WebAssembly;
             console.table(textCache);
         }
         ObjectManager.printTextCache = printTextCache;
+        function printObjectCache() {
+            console.table(hashTable);
+        }
+        ObjectManager.printObjectCache = printObjectCache;
         /**
          * Read text data from WebAssembly runtime its memory block
          *
@@ -208,10 +221,25 @@ var WebAssembly;
             console.error(Any(message));
         }
         Console.error = error;
+        function table(obj) {
+            console.table(Any(obj));
+        }
+        Console.table = table;
+        function trace(message) {
+            console.trace(Any(message));
+        }
+        Console.trace = trace;
+        function debug(message) {
+            console.debug(Any(message));
+        }
+        Console.debug = debug;
         function Any(intPtr) {
             if (intPtr < 0) {
                 // 可能是一个指针，因为在这里指针都是小于零的
-                if (WebAssembly.ObjectManager.isNull(intPtr)) {
+                if (WebAssembly.ObjectManager.isText(intPtr)) {
+                    return WebAssembly.ObjectManager.readText(intPtr);
+                }
+                else if (WebAssembly.ObjectManager.isNull(intPtr)) {
                     // 是一个负数
                     return intPtr;
                 }
@@ -281,7 +309,7 @@ var WebAssembly;
         function Mid(text, from, length) {
             let string = WebAssembly.ObjectManager.readText(text);
             let substr = string.substr(from - 1, length);
-            return WebAssembly.ObjectManager.addObject(substr);
+            return WebAssembly.ObjectManager.addText(substr);
         }
         Strings.Mid = Mid;
         function Len(text) {
@@ -296,7 +324,7 @@ var WebAssembly;
             else {
                 string = "";
             }
-            return WebAssembly.ObjectManager.addObject(string);
+            return WebAssembly.ObjectManager.addText(string);
         }
         Strings.UCase = UCase;
         function LCase(text) {
@@ -307,7 +335,7 @@ var WebAssembly;
             else {
                 string = "";
             }
-            return WebAssembly.ObjectManager.addObject(string);
+            return WebAssembly.ObjectManager.addText(string);
         }
         Strings.LCase = LCase;
     })(Strings = WebAssembly.Strings || (WebAssembly.Strings = {}));
@@ -432,8 +460,100 @@ var WebAssembly;
         JsString.indexOf = indexOf;
     })(JsString = WebAssembly.JsString || (WebAssembly.JsString = {}));
 })(WebAssembly || (WebAssembly = {}));
-var TypeScript;
-(function (TypeScript) {
+var vanilla;
+(function (vanilla) {
+    /**
+     * The VisualBasic.NET application AssemblyInfo
+    */
+    class AssemblyInfo {
+        constructor(AssemblyTitle, AssemblyDescription, AssemblyCompany, AssemblyProduct, AssemblyCopyright, AssemblyTrademark, Guid, AssemblyVersion, AssemblyFileVersion) {
+            this.AssemblyTitle = AssemblyTitle;
+            this.AssemblyDescription = AssemblyDescription;
+            this.AssemblyCompany = AssemblyCompany;
+            this.AssemblyProduct = AssemblyProduct;
+            this.AssemblyCopyright = AssemblyCopyright;
+            this.AssemblyTrademark = AssemblyTrademark;
+            this.Guid = Guid;
+            this.AssemblyVersion = AssemblyVersion;
+            this.AssemblyFileVersion = AssemblyFileVersion;
+        }
+        toString() {
+            return this.AssemblyTitle;
+        }
+        static readAssemblyInfo(assm) {
+            let webassm = assm.instance.exports;
+            return new AssemblyInfo(WebAssembly.ObjectManager.readText(webassm.AssemblyTitle()), WebAssembly.ObjectManager.readText(webassm.AssemblyDescription()), WebAssembly.ObjectManager.readText(webassm.AssemblyCompany()), WebAssembly.ObjectManager.readText(webassm.AssemblyProduct()), WebAssembly.ObjectManager.readText(webassm.AssemblyCopyright()), WebAssembly.ObjectManager.readText(webassm.AssemblyTrademark()), WebAssembly.ObjectManager.readText(webassm.Guid()), WebAssembly.ObjectManager.readText(webassm.AssemblyVersion()), WebAssembly.ObjectManager.readText(webassm.AssemblyFileVersion()));
+        }
+    }
+    vanilla.AssemblyInfo = AssemblyInfo;
+})(vanilla || (vanilla = {}));
+var vanilla;
+(function (vanilla) {
+    var Wasm;
+    (function (Wasm) {
+        let FunctionApi;
+        (function (FunctionApi) {
+            /**
+             * 主要是创建一个对参数的封装函数，因为WebAssembly之中只有4中基础的数值类型
+             * 所以字符串，对象之类的都需要在这里进行封装之后才能够被传递进入WebAssembly
+             * 运行时环境之中
+            */
+            function buildApiFunc(func) {
+                let ObjMgr = WebAssembly.ObjectManager;
+                let api = function () {
+                    let intptr = func.apply(this, buildArguments(arguments));
+                    let result;
+                    if (ObjMgr.isText(intptr)) {
+                        result = ObjMgr.readText(intptr);
+                    }
+                    else if (!ObjMgr.isNull(intptr)) {
+                        result = ObjMgr.getObject(intptr);
+                    }
+                    else {
+                        result = intptr;
+                    }
+                    if (Wasm.showDebugMessage()) {
+                        console.log("Strings in WebAssembly memory:");
+                        WebAssembly.ObjectManager.printTextCache();
+                        console.log("Objects in WebAssembly memory:");
+                        WebAssembly.ObjectManager.printObjectCache();
+                    }
+                    return result;
+                };
+                api.WasmPrototype = func;
+                return api;
+            }
+            FunctionApi.buildApiFunc = buildApiFunc;
+            function buildArguments(args) {
+                let params = [];
+                let value;
+                for (var i = 0; i < args.length; i++) {
+                    value = args[i];
+                    if (!value || typeof value == "undefined") {
+                        // zero intptr means nothing or value 0
+                        value = 0;
+                    }
+                    else if (typeof value == "string") {
+                        value = WebAssembly.ObjectManager.addText(value);
+                    }
+                    else if (typeof value == "object") {
+                        value = WebAssembly.ObjectManager.addObject(value);
+                    }
+                    else if (typeof value == "boolean") {
+                        value = value ? 1 : 0;
+                    }
+                    else {
+                        // do nothing
+                    }
+                    params.push(value);
+                }
+                return params;
+            }
+        })(FunctionApi = Wasm.FunctionApi || (Wasm.FunctionApi = {}));
+    })(Wasm = vanilla.Wasm || (vanilla.Wasm = {}));
+})(vanilla || (vanilla = {}));
+var vanilla;
+(function (vanilla) {
     /**
      * The web assembly helper
     */
@@ -465,21 +585,50 @@ var TypeScript;
                 .then(buffer => new Uint8Array(buffer))
                 .then(module => ExecuteInternal(module, opts))
                 .then(assembly => {
-                if (typeof TypeScript.logging == "object" && TypeScript.logging.outputEverything) {
+                let exportAssm = exportWasmApi(assembly);
+                if (showDebugMessage()) {
                     console.log("Load external WebAssembly module success!");
                     console.log(assembly);
+                    console.log("VisualBasic.NET Project AssemblyInfo:");
+                    console.log(exportAssm.AssemblyInfo);
                 }
-                opts.run(exportWasmApi(assembly));
+                opts.run(exportAssm);
             });
         }
         Wasm.RunAssembly = RunAssembly;
+        function showDebugMessage(opt) {
+            if (typeof opt != "boolean") {
+                if (typeof TypeScript == "object") {
+                    if (typeof TypeScript.logging == "object" && TypeScript.logging.outputEverything) {
+                        return true;
+                    }
+                }
+            }
+            else {
+                setConfigDebugger(opt);
+            }
+            return false;
+        }
+        Wasm.showDebugMessage = showDebugMessage;
+        function setConfigDebugger(opt) {
+            let host = window;
+            if (typeof TypeScript != "object") {
+                host.TypeScript = {};
+            }
+            if (typeof TypeScript.logging != "object") {
+                host.TypeScript.logging = {};
+            }
+            host.TypeScript.logging.outputEverything = opt;
+        }
         function exportWasmApi(assm) {
             let exports = assm.instance.exports;
-            let api = {};
+            let api = {
+                AssemblyInfo: vanilla.AssemblyInfo.readAssemblyInfo(assm)
+            };
             for (let name in exports) {
                 let obj = exports[name];
                 if (typeof obj == "function") {
-                    obj = buildFunc(obj);
+                    obj = Wasm.FunctionApi.buildApiFunc(obj);
                 }
                 else {
                     // do nothing
@@ -487,55 +636,6 @@ var TypeScript;
                 api[name] = obj;
             }
             return api;
-        }
-        /**
-         * 主要是创建一个对参数的封装函数，因为WebAssembly之中只有4中基础的数值类型
-         * 所以字符串，对象之类的都需要在这里进行封装之后才能够被传递进入WebAssembly
-         * 运行时环境之中
-        */
-        function buildFunc(func) {
-            let ObjMgr = WebAssembly.ObjectManager;
-            let api = function () {
-                let intptr = func.apply(this, buildArguments(arguments));
-                let result;
-                if (ObjMgr.isText(intptr)) {
-                    result = ObjMgr.readText(intptr);
-                }
-                else if (!ObjMgr.isNull(intptr)) {
-                    result = ObjMgr.getObject(intptr);
-                }
-                else {
-                    result = intptr;
-                }
-                return result;
-            };
-            api.WasmPrototype = func;
-            return api;
-        }
-        function buildArguments(args) {
-            let params = [];
-            let value;
-            for (var i = 0; i < args.length; i++) {
-                value = args[i];
-                if (!value || typeof value == "undefined") {
-                    // zero intptr means nothing or value 0
-                    value = 0;
-                }
-                else if (typeof value == "string") {
-                    value = WebAssembly.ObjectManager.addText(value);
-                }
-                else if (typeof value == "object") {
-                    value = WebAssembly.ObjectManager.addObject(value);
-                }
-                else if (typeof value == "boolean") {
-                    value = value ? 1 : 0;
-                }
-                else {
-                    // do nothing
-                }
-                params.push(value);
-            }
-            return params;
         }
         function createBytes(opts) {
             let page = opts.page || { init: 10, max: 2048 };
@@ -601,10 +701,10 @@ var TypeScript;
             }
             return dependencies;
         }
-    })(Wasm = TypeScript.Wasm || (TypeScript.Wasm = {}));
-})(TypeScript || (TypeScript = {}));
-var TypeScript;
-(function (TypeScript) {
+    })(Wasm = vanilla.Wasm || (vanilla.Wasm = {}));
+})(vanilla || (vanilla = {}));
+var vanilla;
+(function (vanilla) {
     class memoryReader {
         constructor(bytechunks) {
             this.buffer = bytechunks.buffer;
@@ -615,7 +715,7 @@ var TypeScript;
             return size;
         }
     }
-    TypeScript.memoryReader = memoryReader;
+    vanilla.memoryReader = memoryReader;
     /**
      * Read string helper from WebAssembly memory.
     */
@@ -639,8 +739,12 @@ var TypeScript;
             return this.readTextRaw(intPtr, this.sizeOf(intPtr));
         }
     }
-    TypeScript.stringReader = stringReader;
-    class arrayReader extends memoryReader {
+    vanilla.stringReader = stringReader;
+})(vanilla || (vanilla = {}));
+/// <reference path="memoryReader.ts" />
+var vanilla;
+(function (vanilla) {
+    class arrayReader extends vanilla.memoryReader {
         /**
          * @param memory The memory buffer
         */
@@ -703,6 +807,6 @@ var TypeScript;
             return view.getInt32(0);
         }
     }
-    TypeScript.arrayReader = arrayReader;
-})(TypeScript || (TypeScript = {}));
+    vanilla.arrayReader = arrayReader;
+})(vanilla || (vanilla = {}));
 //# sourceMappingURL=visualbasic.wasm.js.map

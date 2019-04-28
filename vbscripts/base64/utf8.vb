@@ -1,4 +1,50 @@
-﻿Imports System.Runtime.CompilerServices
+﻿#Region "Microsoft.VisualBasic::3b19d74fb2231e8be299d89d5d603b59, vbscripts\base64\utf8.vb"
+
+    ' Author:
+    ' 
+    '       xieguigang (I@xieguigang.me)
+    '       asuka (evia@lilithaf.me)
+    '       wasm project (developer@vanillavb.app)
+    ' 
+    ' Copyright (c) 2019 developer@vanillavb.app, VanillaBasic(https://vanillavb.app)
+    ' 
+    ' 
+    ' MIT License
+    ' 
+    ' 
+    ' Permission is hereby granted, free of charge, to any person obtaining a copy
+    ' of this software and associated documentation files (the "Software"), to deal
+    ' in the Software without restriction, including without limitation the rights
+    ' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    ' copies of the Software, and to permit persons to whom the Software is
+    ' furnished to do so, subject to the following conditions:
+    ' 
+    ' The above copyright notice and this permission notice shall be included in all
+    ' copies or substantial portions of the Software.
+    ' 
+    ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    ' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    ' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    ' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    ' SOFTWARE.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    ' Module utf8
+    ' 
+    '     Function: utf8_decode, utf8_encode
+    ' 
+    ' /********************************************************************************/
+
+#End Region
+
+Imports System.Runtime.CompilerServices
 
 Module utf8
 
@@ -12,10 +58,12 @@ Module utf8
 
         text = text.Replace(regexp("rn", "g"), "n")
 
+        'print($"text length={text.Length}")
+
         For n As Integer = 0 To text.Length - 1
             Dim r = charCodeAt(text, n)
 
-            ' Call print(chars)
+            'Call print(r)
 
             If (r < 128) Then
                 chars.Add(fromCharCode(r))
@@ -28,6 +76,9 @@ Module utf8
                 chars.Add(fromCharCode(r And 63 Or 128))
             End If
         Next
+
+        ' print("View chars after utf8 encode:")
+        ' print(chars)
 
         Return chars.Join("")
     End Function
@@ -65,3 +116,4 @@ Module utf8
         Return t.Join("")
     End Function
 End Module
+

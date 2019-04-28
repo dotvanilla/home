@@ -5,39 +5,39 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 4/21/2019 3:26:43 AM
+    ;; build: 4/27/2019 10:37:25 PM
+    ;; 
+    ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
     ;; imports must occur before all non-import definitions
 
     ;; Declare Function isNaN Lib "Math" Alias "isNaN" (x As i32) As boolean
     (func $isNaN (import "Math" "isNaN") (param $x i32) (result i32))
-    ;; Declare Function print Lib "console" Alias "log" (obj As System.Object) As void
-    (func $print (import "console" "log") (param $obj i32) )
-    ;; Declare Function string_replace Lib "string" Alias "replace" (input As char*, find As i32, replacement As char*) As i32
+    ;; Declare Function string_replace Lib "string" Alias "replace" (input As string, find As intptr, replacement As string) As string
     (func $string_replace (import "string" "replace") (param $input i32) (param $find i32) (param $replacement i32) (result i32))
-    ;; Declare Function string_add Lib "string" Alias "add" (a As char*, b As char*) As char*
+    ;; Declare Function string_add Lib "string" Alias "add" (a As string, b As string) As string
     (func $string_add (import "string" "add") (param $a i32) (param $b i32) (result i32))
-    ;; Declare Function string_length Lib "string" Alias "length" (text As char*) As i32
+    ;; Declare Function string_length Lib "string" Alias "length" (text As string) As i32
     (func $string_length (import "string" "length") (param $text i32) (result i32))
-    ;; Declare Function string_indexOf Lib "string" Alias "indexOf" (input As char*, find As char*) As i32
+    ;; Declare Function string_indexOf Lib "string" Alias "indexOf" (input As string, find As string) As i32
     (func $string_indexOf (import "string" "indexOf") (param $input i32) (param $find i32) (result i32))
-    ;; Declare Function regexp Lib "RegExp" Alias "regexp" (pattern As char*, flag As char*) As i32
+    ;; Declare Function regexp Lib "RegExp" Alias "regexp" (pattern As string, flag As string) As string
     (func $regexp (import "RegExp" "regexp") (param $pattern i32) (param $flag i32) (result i32))
-    ;; Declare Function fromCharCode Lib "string" Alias "fromCharCode" (c As i32) As char
+    ;; Declare Function fromCharCode Lib "string" Alias "fromCharCode" (c As i32) As string
     (func $fromCharCode (import "string" "fromCharCode") (param $c i32) (result i32))
-    ;; Declare Function charCodeAt Lib "string" Alias "charCodeAt" (text As char*, index As i32) As i32
+    ;; Declare Function charCodeAt Lib "string" Alias "charCodeAt" (text As string, index As i32) As i32
     (func $charCodeAt (import "string" "charCodeAt") (param $text i32) (param $index i32) (result i32))
-    ;; Declare Function charAt Lib "string" Alias "charAt" (text As char*, index As i32) As char*
+    ;; Declare Function charAt Lib "string" Alias "charAt" (text As string, index As i32) As string
     (func $charAt (import "string" "charAt") (param $text i32) (param $index i32) (result i32))
-    ;; Declare Function Join Lib "string" Alias "join" (array As System.Array, delimiter As char*) As char*
+    ;; Declare Function Join Lib "string" Alias "join" (array As list, delimiter As string) As string
     (func $Join (import "string" "join") (param $array i32) (param $delimiter i32) (result i32))
-    ;; Declare Function new_array Lib "Array" Alias "create" () As i32
-    (func $new_array (import "Array" "create")  (result i32))
-    ;; Declare Function array_push Lib "Array" Alias "push" (array As i32, element As object) As i32
+    ;; Declare Function array_new Lib "Array" Alias "create" (size As i32) As array
+    (func $array_new (import "Array" "create") (param $size i32) (result i32))
+    ;; Declare Function array_push Lib "Array" Alias "push" (array As array, element As any) As array
     (func $array_push (import "Array" "push") (param $array i32) (param $element i32) (result i32))
-    ;; Declare Function array_get Lib "Array" Alias "get" (array As i32, index As i32) As i32
+    ;; Declare Function array_get Lib "Array" Alias "get" (array As array, index As i32) As any
     (func $array_get (import "Array" "get") (param $array i32) (param $index i32) (result i32))
-    ;; Declare Function array_length Lib "Array" Alias "length" (array As i32) As i32
+    ;; Declare Function array_length Lib "Array" Alias "length" (array As array) As i32
     (func $array_length (import "Array" "length") (param $array i32) (result i32))
     
     ;; Only allows one memory block in each module
@@ -136,7 +136,7 @@
     ;; functions in [base64Encoder]
     
     (func $encode (param $text i32) (result i32)
-        ;; Public Function encode(text As char*) As char*
+        ;; Public Function encode(text As string) As string
         (local $base64 i32)
     (local $n i32)
     (local $r i32)
@@ -146,7 +146,7 @@
     (local $u i32)
     (local $a i32)
     (local $f i32)
-    (set_local $base64 (call $new_array ))
+    (set_local $base64 (call $array_new (i32.const -1)))
     (set_local $f (i32.const 0))
     (set_local $text (call $utf8_encode (get_local $text)))
     ;; Do While (f < text.Length)
@@ -185,7 +185,7 @@
     (return (call $Join (get_local $base64) (i32.const 67)))
     )
     (func $decode (param $base64 i32) (result i32)
-        ;; Public Function decode(base64 As char*) As char*
+        ;; Public Function decode(base64 As string) As string
         (local $text i32)
     (local $n i32)
     (local $r i32)
@@ -244,11 +244,11 @@
     ;; functions in [utf8]
     
     (func $utf8_encode (param $text i32) (result i32)
-        ;; Public Function utf8_encode(text As char*) As char*
+        ;; Public Function utf8_encode(text As string) As string
         (local $chars i32)
     (local $n i32)
     (local $r i32)
-    (set_local $chars (call $new_array ))
+    (set_local $chars (call $array_new (i32.const -1)))
     (set_local $text (call $string_replace (get_local $text) (call $regexp (i32.const 88) (i32.const 91)) (i32.const 93)))
     (set_local $n (i32.const 0))
     ;; For n As Integer = 0 To text.Length - 1
@@ -277,13 +277,13 @@
     (return (call $Join (get_local $chars) (i32.const 95)))
     )
     (func $utf8_decode (param $text i32) (result i32)
-        ;; Public Function utf8_decode(text As char*) As char*
+        ;; Public Function utf8_decode(text As string) As string
         (local $t i32)
     (local $n i32)
     (local $r i32)
     (local $c2 i32)
     (local $c3 i32)
-    (set_local $t (call $new_array ))
+    (set_local $t (call $array_new (i32.const -1)))
     (set_local $n (i32.const 0))
     (set_local $r (i32.const 0))
     (set_local $c2 (i32.const 0))
@@ -320,47 +320,47 @@
     ;; functions in [AssemblyInfo]
     
     (func $AssemblyTitle  (result i32)
-        ;; Public Function AssemblyTitle() As char*
+        ;; Public Function AssemblyTitle() As string
         
     (return (i32.const 97))
     )
     (func $AssemblyDescription  (result i32)
-        ;; Public Function AssemblyDescription() As char*
+        ;; Public Function AssemblyDescription() As string
         
     (return (i32.const 112))
     )
     (func $AssemblyCompany  (result i32)
-        ;; Public Function AssemblyCompany() As char*
+        ;; Public Function AssemblyCompany() As string
         
     (return (i32.const 166))
     )
     (func $AssemblyProduct  (result i32)
-        ;; Public Function AssemblyProduct() As char*
+        ;; Public Function AssemblyProduct() As string
         
     (return (i32.const 170))
     )
     (func $AssemblyCopyright  (result i32)
-        ;; Public Function AssemblyCopyright() As char*
+        ;; Public Function AssemblyCopyright() As string
         
     (return (i32.const 177))
     )
     (func $AssemblyTrademark  (result i32)
-        ;; Public Function AssemblyTrademark() As char*
+        ;; Public Function AssemblyTrademark() As string
         
     (return (i32.const 210))
     )
     (func $Guid  (result i32)
-        ;; Public Function Guid() As char*
+        ;; Public Function Guid() As string
         
     (return (i32.const 230))
     )
     (func $AssemblyVersion  (result i32)
-        ;; Public Function AssemblyVersion() As char*
+        ;; Public Function AssemblyVersion() As string
         
     (return (i32.const 267))
     )
     (func $AssemblyFileVersion  (result i32)
-        ;; Public Function AssemblyFileVersion() As char*
+        ;; Public Function AssemblyFileVersion() As string
         
     (return (i32.const 280))
     )

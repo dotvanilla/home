@@ -15,3 +15,6 @@ Except the 4 primitive type in WebAssembly, there are some type alias in Vanilla
 | list       | ``List(Of ...)``                  | ``i32``     | ``array``          |
 | table      | ``Dictionary(Of String, ...)``    | ``i32``     | ``object``         |
 | boolean    | ``Boolean``                       | ``i32``     | ``boolean``        |
+| void       | ``System.Void``                   | none        | none               |
+
+> A ``void`` type in compiler type alias is apply for solve the S-Expression stack problem in a block or a function returns no value. The Vanilla compiler depend on this ``void`` type to decide add a ``drop`` operator on the S-Expression or not. For more details information about such design, please read this github issue: **https://github.com/WebAssembly/wabt/issues/1067**.  

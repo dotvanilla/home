@@ -81,13 +81,17 @@
     textInput.value = "Hello World, vanillavb.app runtime!";
 
     // WebAssembly Demo
-    TypeScript.Wasm.RunAssembly("../vbscripts/base64.wasm", {
+	vanilla.Wasm.showDebugMessage(true);
+    vanilla.Wasm.RunAssembly("../vbscripts/base64.wasm", {
       run: encoder => {
-        textInput.onkeypress = textInput.oninput = function () {
+		var handleInput = function () {
           displayBase64.innerText = encoder.encode(textInput.value);
           textOutput.innerText = encoder.decode(displayBase64.innerText);
         }
-        textInput.oninput();
+	  
+        textInput.onkeypress = handleInput;
+		textInput.oninput = handleInput;
+        textInput.oninput();	
       },
       api: { console: true, text: true, array: true }
     });
