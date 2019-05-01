@@ -73,10 +73,10 @@ Add script reference to ``visualbasic.wasm.js``, and then running VB.NET applica
 ```typescript
 let assmUrl = "vbscript/HelloWorld.wasm";
 
-TypeScript.Wasm.RunAssembly(assmUrl, {
+vanilla.Wasm.RunAssembly(assmUrl, {
     // run app from a public method which its name is
     // RunApp or something else
-    run: VB => VB.RunApp(),
+    run: app => app.Demo.HelloWorld(),
     // some build-in javascript api that expose to VB.NET application
     api: { document: true, console: true },
     // Other javascript api expose to VB.NET application, like jquery, bootstrap, etc
