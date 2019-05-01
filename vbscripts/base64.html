@@ -81,13 +81,19 @@
     textInput.value = "Hello World, vanillavb.app runtime!";
 
     // WebAssembly Demo
-	vanilla.Wasm.showDebugMessage(true);
+	vanilla.Wasm.showDebugMessage(false);
     vanilla.Wasm.RunAssembly("../vbscripts/base64.wasm", {
       run: encoder => {
+	    var base64 = encoder.base64Encoder;
 		var handleInput = function () {
-          displayBase64.innerText = encoder.encode(textInput.value);
-          textOutput.innerText = encoder.decode(displayBase64.innerText);
+          displayBase64.innerText = base64.encode(textInput.value);
+          textOutput.innerText = base64.decode(displayBase64.innerText);
         }
+	  
+	    console.log("WebAssembly structure is keeps the same as your VB.NET source file:");
+		console.log(encoder);
+	    console.log("Here is the application info get from AssemblyInfo.vb file:");
+		console.log(encoder.AssemblyInfo);
 	  
         textInput.onkeypress = handleInput;
 		textInput.oninput = handleInput;
