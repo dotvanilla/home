@@ -73,6 +73,7 @@ Documents about how to develop Vanilla compiler:
 These demo shows you how to programming in VB.NET for WebAssembly:
 
 + [Base64 Encoder/Decoder](/vbscripts/base64.html)
+  > This demo shows you how to create a web app module with some basic programming features in VisualBasic.NET language, like: array, for...loop, function, if...branch, multiple modules, etc. 
 + [VB.NET programming with WebGL](/vbscripts/webgl.html)
 
 ### Release Notes
