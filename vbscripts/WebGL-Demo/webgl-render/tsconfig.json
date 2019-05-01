@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "amd",
     "target": "es6",
-    "lib": ["es6"],
-    "sourceMap": true
+    "lib": [ "dom", "es6", "dom.iterable", "scripthost" ],
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "../dist",
+    "outFile": "../../../javascripts/webgl.render.js",
+    "declaration": true
   },
   "exclude": [
     "node_modules"
