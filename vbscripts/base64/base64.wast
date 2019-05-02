@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 5/1/2019 3:41:33 PM
+    ;; build: 5/1/2019 5:55:45 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -92,36 +92,36 @@
     ;; String from 170 with 6 bytes in memory
     (data (i32.const 170) "base64\00")
 
-    ;; String from 177 with 32 bytes in memory
-    (data (i32.const 177) "Copyright © I@xieguigang.me 2019\00")
+    ;; String from 177 with 34 bytes in memory
+    (data (i32.const 177) "Copyright (c) I@xieguigang.me 2019\00")
 
-    ;; String from 210 with 19 bytes in memory
-    (data (i32.const 210) "VisualBasic.wasm.js\00")
+    ;; String from 212 with 19 bytes in memory
+    (data (i32.const 212) "VisualBasic.wasm.js\00")
 
-    ;; String from 230 with 36 bytes in memory
-    (data (i32.const 230) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
+    ;; String from 232 with 36 bytes in memory
+    (data (i32.const 232) "e9ba6299-1032-42ab-a760-25f246506c5b\00")
 
-    ;; String from 267 with 12 bytes in memory
-    (data (i32.const 267) "2.0.344.4444\00")
+    ;; String from 269 with 12 bytes in memory
+    (data (i32.const 269) "2.0.344.4444\00")
 
-    ;; String from 280 with 10 bytes in memory
-    (data (i32.const 280) "1.12.0.235\00")
+    ;; String from 282 with 10 bytes in memory
+    (data (i32.const 282) "1.12.0.235\00")
     
     (global $base64Encoder.keyStr (mut i32) (i32.const 1))
 
-    ;; export from [base64Encoder]
+    ;; export from VB.NET module: [base64Encoder]
     
     (export "base64Encoder.encode" (func $base64Encoder.encode))
     (export "base64Encoder.decode" (func $base64Encoder.decode))
     
     
-    ;; export from [utf8]
+    ;; export from VB.NET module: [utf8]
     
     (export "utf8.utf8_encode" (func $utf8.utf8_encode))
     (export "utf8.utf8_decode" (func $utf8.utf8_decode))
     
     
-    ;; export from [AssemblyInfo]
+    ;; export from VB.NET module: [AssemblyInfo]
     
     (export "AssemblyInfo.AssemblyTitle" (func $AssemblyInfo.AssemblyTitle))
     (export "AssemblyInfo.AssemblyDescription" (func $AssemblyInfo.AssemblyDescription))
@@ -350,21 +350,21 @@
     (func $AssemblyInfo.AssemblyTrademark  (result i32)
         ;; Public Function AssemblyTrademark() As string
         
-    (return (i32.const 210))
+    (return (i32.const 212))
     )
     (func $AssemblyInfo.Guid  (result i32)
         ;; Public Function Guid() As string
         
-    (return (i32.const 230))
+    (return (i32.const 232))
     )
     (func $AssemblyInfo.AssemblyVersion  (result i32)
         ;; Public Function AssemblyVersion() As string
         
-    (return (i32.const 267))
+    (return (i32.const 269))
     )
     (func $AssemblyInfo.AssemblyFileVersion  (result i32)
         ;; Public Function AssemblyFileVersion() As string
         
-    (return (i32.const 280))
+    (return (i32.const 282))
     )
     )
