@@ -19,3 +19,15 @@ Here is the details of this memory layout:
    1. If type equals to ZERO, then all of the elements is ``i32`` memory pointer for point to any type, from WebAssembly runtime or javascript runtime.
    2. If type equals to 1/2/3/4, then these type mark indicate that element type is primitive, which means the element its value is the actual value. but byte lenegth may be variant as i32 and f32 is 4 bytes and i64 and f64 is 8 bytes in memory. 
    3. If type equals to any other value, then it means array elements is user defined class object, all of the class object read/write just happends in WebAssembly internal.
+
+### measure array memeory size
+
+Due to the reason of array element is variant from i32(4 bytes) to f64(8 bytes), so the array its memory size is depends on the first byte mark:
+
++ if the first byte mark is value 2(i64) or 4(f64), then element byte size is 8 bytes. so the array memory size is ``length * 8 + 1 + 4``, where ``length`` is the i32 element counts and 8 is the bytes size of the array element, 1 for the first byte mark, and 4 is the length i32 byte size.
++ for other byte mark, its element is 4 bytes f32 or i32(``any`` type is i32 intptr). so the array memory size is ``length * 4 + 1 + 4``.   
+
+## Note about read array in javascript
+
+Due to the reason of array type in vanilla its memory layout is marked with some flag bytes at the begining location. So that you can not read the array data directly at the javascript runtime side. for example if you want to create an ``ArrayBuffer`` and pass this buffer object to WebGL application, **then you should skip 5 bytes(1 byte for type mark and 4 bytes for array length) before you create such array buffer object**.
+
