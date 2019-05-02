@@ -4,7 +4,7 @@ The array in WebAssembly is a block of memory with ``n*sizeof(type)`` memory reg
 
 ## Memory layout of Array
 
-All of the array in WebAssembly is a kind of fixed-size memory region with ``(1 + 4 + n * sizeof(type) + 4)`` bytes.
+All of the array in WebAssembly is a kind of fixed-size memory region with ``(1 + 4 + n * sizeof(type))`` bytes.
 
 ```R
 byte    i32                                      
