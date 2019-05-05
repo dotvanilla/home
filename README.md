@@ -67,6 +67,7 @@ Documents about how to develop Vanilla compiler:
 + [Vanilla compiler design note](/#compiler_design_notes)
 + [Class implementation in WebAssembly](/#class_impl)
 + [Array implementation in WebAssembly](/#array_impl)
++ [Difference Between Class And Structure](/#class_struct_difference)
 
 ### Demo
 
