@@ -50,6 +50,9 @@
 
 Module Algorithm
 
+    ''' <summary>
+    ''' WebGL的渲染程序主要是读取这个数组的内存数据来完成渲染数据的获取的
+    ''' </summary>
     Dim circleData As Circle() = New Circle(CIRCLE_COUNT - 1) {}
     Dim circlevData As CircleV() = New CircleV(CIRCLE_COUNT - 1) {}
     Dim cellCircles As CellCircle() = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
@@ -61,6 +64,10 @@ Module Algorithm
         Next
     End Sub
 
+    ''' <summary>
+    ''' 这个函数主要是用于获取得到数组在内存之中的指针位置
+    ''' </summary>
+    ''' <returns></returns>
     Public Function getCircleDataOffset() As Circle
         Return circleData(0)
     End Function

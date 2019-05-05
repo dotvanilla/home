@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("base64 Encoder written in VisualBasic.NET WebAssembly")>
 <Assembly: AssemblyCompany("MIT")>
 <Assembly: AssemblyProduct("base64")>
-<Assembly: AssemblyCopyright("Copyright © I@xieguigang.me 2019")>
+<Assembly: AssemblyCopyright("Copyright (c) I@xieguigang.me 2019")>
 <Assembly: AssemblyTrademark("VisualBasic.wasm.js")>
 
 <Assembly: ComVisible(False)>
