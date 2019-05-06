@@ -4,10 +4,10 @@ The array in WebAssembly is a block of memory with ``n*sizeof(type)`` memory reg
 
 ## Memory layout of Array
 
-All of the array in WebAssembly is a kind of fixed-size memory region with ``(1 + 4 + n * sizeof(type))`` bytes.
+All of the array in WebAssembly is a kind of fixed-size memory region with ``(4 + 4 + n * sizeof(type))`` bytes.
 
 ```R
-byte    i32                                      
+i32  i32                                      
 type length element1 element2 element3 ...
 ```
 
@@ -24,8 +24,8 @@ Here is the details of this memory layout:
 
 Due to the reason of array element is variant from i32(4 bytes) to f64(8 bytes), so the array its memory size is depends on the first byte mark:
 
-+ if the first byte mark is value 2(i64) or 4(f64), then element byte size is 8 bytes. so the array memory size is ``length * 8 + 1 + 4``, where ``length`` is the i32 element counts and 8 is the bytes size of the array element, 1 for the first byte mark, and 4 is the length i32 byte size.
-+ for other byte mark, its element is 4 bytes f32 or i32(``any`` type is i32 intptr). so the array memory size is ``length * 4 + 1 + 4``.   
++ if the first byte mark is value 2(i64) or 4(f64), then element byte size is 8 bytes. so the array memory size is ``length * 8 + 4 + 4``, where ``length`` is the i32 element counts and 8 is the bytes size of the array element, 1 for the first byte mark, and 4 is the length i32 byte size.
++ for other byte mark, its element is 4 bytes f32 or i32(``any`` type is i32 intptr). so the array memory size is ``length * 4 + 4 + 4``.   
 
 ## Note about read array in javascript
 
