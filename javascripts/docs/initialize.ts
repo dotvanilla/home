@@ -19,16 +19,15 @@ namespace vanillavb.app {
     function getTargetFile(): string {
         let fileName: string = $ts.location.hash();
 
-        if (!Strings.Empty(fileName)) {
-            if (!language) {
+        if (!Strings.Empty(fileName, true)) {
+            if (Strings.Empty(language, true)) {
                 return `/docs/${fileName}.md`;
             } else {
                 return `/docs/${fileName}.${language}.md`;
             }
         } else {
             // show home page
-
-            if (!language) {
+            if (Strings.Empty(language, true)) {
                 return "/README.md";
             } else {
                 return `/README.${language}.md`;

@@ -70,8 +70,8 @@ var vanillavb;
         }
         function getTargetFile() {
             let fileName = $ts.location.hash();
-            if (!Strings.Empty(fileName)) {
-                if (!language) {
+            if (!Strings.Empty(fileName, true)) {
+                if (Strings.Empty(language, true)) {
                     return `/docs/${fileName}.md`;
                 }
                 else {
@@ -80,7 +80,7 @@ var vanillavb;
             }
             else {
                 // show home page
-                if (!language) {
+                if (Strings.Empty(language, true)) {
                     return "/README.md";
                 }
                 else {
