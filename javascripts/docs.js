@@ -72,19 +72,19 @@ var vanillavb;
             let fileName = $ts.location.hash();
             if (!Strings.Empty(fileName)) {
                 if (!language) {
-                    return `/docs/${fileName}.${language}.md`;
+                    return `/docs/${fileName}.md`;
                 }
                 else {
-                    return `/docs/${fileName}.md`;
+                    return `/docs/${fileName}.${language}.md`;
                 }
             }
             else {
                 // show home page
                 if (!language) {
-                    return `/README.${language}.md`;
+                    return "/README.md";
                 }
                 else {
-                    return "/README.md";
+                    return `/README.${language}.md`;
                 }
             }
         }

@@ -21,17 +21,17 @@ namespace vanillavb.app {
 
         if (!Strings.Empty(fileName)) {
             if (!language) {
-                return `/docs/${fileName}.${language}.md`;
-            } else {
                 return `/docs/${fileName}.md`;
+            } else {
+                return `/docs/${fileName}.${language}.md`;
             }
         } else {
             // show home page
 
             if (!language) {
-                return `/README.${language}.md`;
-            } else {
                 return "/README.md";
+            } else {
+                return `/README.${language}.md`;
             }
         }
     }
