@@ -12,7 +12,7 @@ namespace vanillavb.app {
         if (!folder) {
             return "";
         } else {
-            return folder.split("/")[0];
+            return folder.split("/")[1];
         }
     }
 

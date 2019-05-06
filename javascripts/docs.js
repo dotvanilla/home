@@ -65,7 +65,7 @@ var vanillavb;
                 return "";
             }
             else {
-                return folder.split("/")[0];
+                return folder.split("/")[1];
             }
         }
         function getTargetFile() {
