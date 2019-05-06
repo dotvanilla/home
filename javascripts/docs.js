@@ -61,7 +61,7 @@ var vanillavb;
         let language = lang();
         function lang() {
             let folder = $ts.location.path;
-            if (!folder) {
+            if (Strings.Empty(folder) || folder == "/") {
                 return "";
             }
             else {

@@ -9,7 +9,7 @@ namespace vanillavb.app {
     function lang() {
         let folder = $ts.location.path;
 
-        if (!folder) {
+        if (Strings.Empty(folder) || folder == "/") {
             return "";
         } else {
             return folder.split("/")[0];
