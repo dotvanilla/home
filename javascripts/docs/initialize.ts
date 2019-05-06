@@ -12,7 +12,7 @@ namespace vanillavb.app {
         if (!folder) {
             return "";
         } else {
-            return folder.split("/")[1];
+            return folder.split("/")[0];
         }
     }
 
@@ -41,6 +41,7 @@ namespace vanillavb.app {
         window.onhashchange = app.loadDocument;
         config.renderer = new markdown();
         vbcodeStyle.lineHeight = "5px";
+        language = lang();
 
         TypeScript.logging.log(config);
         app.renderDocument(getTargetFile());

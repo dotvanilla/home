@@ -65,7 +65,7 @@ var vanillavb;
                 return "";
             }
             else {
-                return folder.split("/")[1];
+                return folder.split("/")[0];
             }
         }
         function getTargetFile() {
@@ -93,6 +93,7 @@ var vanillavb;
             window.onhashchange = app.loadDocument;
             config.renderer = new app.markdown();
             vbcodeStyle.lineHeight = "5px";
+            language = lang();
             TypeScript.logging.log(config);
             app.renderDocument(getTargetFile());
         }
