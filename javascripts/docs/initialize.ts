@@ -4,34 +4,50 @@ namespace vanillavb.app {
 
     let config: markedjs.option = markedjs.option.Defaults;
     let vbcodeStyle: vscode.CSS = vscode.VisualStudio;
+    let language: string = lang();
+
+    function lang() {
+        let folder = $ts.location.path;
+
+        if (!folder) {
+            return "";
+        } else {
+            return folder.split("/")[0];
+        }
+    }
+
+    function getTargetFile(): string {
+        let fileName: string = $ts.location.hash();
+
+        if (!Strings.Empty(fileName)) {
+            if (!language) {
+                return `/docs/${fileName}.${language}.md`;
+            } else {
+                return `/docs/${fileName}.md`;
+            }
+        } else {
+            // show home page
+
+            if (!language) {
+                return `/README.${language}.md`;
+            } else {
+                return "/README.md";
+            }
+        }
+    }
 
     export function initialize() {
-
+        // initialize styles and events
         window.onhashchange = app.loadDocument;
         config.renderer = new markdown();
         vbcodeStyle.lineHeight = "5px";
 
         TypeScript.logging.log(config);
-
-        if (!Strings.Empty($ts.location.hash())) {
-            app.renderDocument(`/docs/${$ts.location.hash()}.md`);
-        } else {
-            // show home page
-            app.renderDocument("README.md");
-        }
+        app.renderDocument(getTargetFile());
     }
 
     export function loadDocument() {
-        let fileName = $ts.location.hash();
-        let path: string;
-
-        if (Strings.Empty(fileName)) {
-            path = "README.md";
-        } else {
-            path = `/docs/${fileName}.md`;
-        }
-
-        app.renderDocument(path);
+        app.renderDocument(getTargetFile());
     }
 
     export function renderDocument(path: string) {

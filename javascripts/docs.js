@@ -58,30 +58,47 @@ var vanillavb;
     (function (app) {
         let config = markedjs.option.Defaults;
         let vbcodeStyle = vscode.VisualStudio;
+        let language = lang();
+        function lang() {
+            let folder = $ts.location.path;
+            if (!folder) {
+                return "";
+            }
+            else {
+                return folder.split("/")[0];
+            }
+        }
+        function getTargetFile() {
+            let fileName = $ts.location.hash();
+            if (!Strings.Empty(fileName)) {
+                if (!language) {
+                    return `/docs/${fileName}.${language}.md`;
+                }
+                else {
+                    return `/docs/${fileName}.md`;
+                }
+            }
+            else {
+                // show home page
+                if (!language) {
+                    return `/README.${language}.md`;
+                }
+                else {
+                    return "/README.md";
+                }
+            }
+        }
         function initialize() {
+            // initialize styles and events
             window.onhashchange = app.loadDocument;
             config.renderer = new app.markdown();
             vbcodeStyle.lineHeight = "5px";
             TypeScript.logging.log(config);
-            if (!Strings.Empty($ts.location.hash())) {
-                app.renderDocument(`/docs/${$ts.location.hash()}.md`);
-            }
-            else {
-                // show home page
-                app.renderDocument("README.md");
-            }
+            app.renderDocument(getTargetFile());
         }
         app.initialize = initialize;
         function loadDocument() {
-            let fileName = $ts.location.hash();
-            let path;
-            if (Strings.Empty(fileName)) {
-                path = "README.md";
-            }
-            else {
-                path = `/docs/${fileName}.md`;
-            }
-            app.renderDocument(path);
+            app.renderDocument(getTargetFile());
         }
         app.loadDocument = loadDocument;
         function renderDocument(path) {
