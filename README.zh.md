@@ -1,4 +1,4 @@
-# Welcome to .vanilla Framework
+# 欢迎使用.vanilla框架
 
 Wanna run your VisualBasic.NET application in a browser? Please follow this quick **hello world** example:
 
@@ -29,7 +29,7 @@ Module Demo
 End Module
 ```
 
-Now, you can compile your VisualBasic.NET application for target WebAssembly platform, by use ``vanilla`` compiler:
+现在，你可以通过使用``vanilla``编译器来将你的VisualBasic.NET应用程序编译为可以在WebAssembly平台上所运行的App了：
 
 ```bash
 # compile your project in the commandline
@@ -37,7 +37,7 @@ Now, you can compile your VisualBasic.NET application for target WebAssembly pla
 vanilla /path/to/app.vbproj
 ```
 
-Just simply enough! Finally, add script reference to ``visualbasic.wasm.js`` in your web application, and then using this loader javascript code to run your VisualBasic.NET application in web browser or nodejs environment:
+整个过程非常的简单！最后，在你的Web应用程序之中添加对``visualbasic.wasm.js``脚本的文件引用，然后使用下面的javascript加载器程序代码在Web应用或者nodejs环境之中来启动你的VisualBasic.NET应用程序：
 
 ```javascript
 var assmUrl = "vbscript/HelloWorld.wasm";
@@ -53,7 +53,7 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 });
 ```
 
-Hit ``F12`` on your keyboard to open developer console of your web browser, then you will see the ``Hello World!`` message from your VB.NET application.
+敲击你的键盘上面的 ``F12`` 按键来打开你的浏览器的开发人员调试终端，然后你将会看见在终端上面输出的一条来自于你的VB.NET应用程序的``Hello World!``消息输出。
 
 ### Guildlines
 
