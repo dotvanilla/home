@@ -1,64 +1,72 @@
 ﻿#Region "Microsoft.VisualBasic::199cbece58ac72063f515a6fdfd42257, vbscripts\WebGL-Demo\Algorithm.vb"
 
-    ' Author:
-    ' 
-    '       xieguigang (I@xieguigang.me)
-    '       asuka (evia@lilithaf.me)
-    '       wasm project (developer@vanillavb.app)
-    ' 
-    ' Copyright (c) 2019 developer@vanillavb.app, VanillaBasic(https://vanillavb.app)
-    ' 
-    ' 
-    ' MIT License
-    ' 
-    ' 
-    ' Permission is hereby granted, free of charge, to any person obtaining a copy
-    ' of this software and associated documentation files (the "Software"), to deal
-    ' in the Software without restriction, including without limitation the rights
-    ' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    ' copies of the Software, and to permit persons to whom the Software is
-    ' furnished to do so, subject to the following conditions:
-    ' 
-    ' The above copyright notice and this permission notice shall be included in all
-    ' copies or substantial portions of the Software.
-    ' 
-    ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    ' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    ' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    ' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    ' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    ' SOFTWARE.
+' Author:
+' 
+'       xieguigang (I@xieguigang.me)
+'       asuka (evia@lilithaf.me)
+'       wasm project (developer@vanillavb.app)
+' 
+' Copyright (c) 2019 developer@vanillavb.app, VanillaBasic(https://vanillavb.app)
+' 
+' 
+' MIT License
+' 
+' 
+' Permission is hereby granted, free of charge, to any person obtaining a copy
+' of this software and associated documentation files (the "Software"), to deal
+' in the Software without restriction, including without limitation the rights
+' to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+' copies of the Software, and to permit persons to whom the Software is
+' furnished to do so, subject to the following conditions:
+' 
+' The above copyright notice and this permission notice shall be included in all
+' copies or substantial portions of the Software.
+' 
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+' SOFTWARE.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module Algorithm
-    ' 
-    '     Constructor: (+1 Overloads) Sub New
-    ' 
-    '     Function: getCircleDataOffset
-    ' 
-    '     Sub: init, timeStep
-    ' 
-    ' /********************************************************************************/
+' Module Algorithm
+' 
+'     Constructor: (+1 Overloads) Sub New
+' 
+'     Function: getCircleDataOffset
+' 
+'     Sub: init, timeStep
+' 
+' /********************************************************************************/
 
 #End Region
 
+''' <summary>
+''' <see cref="VBMath.Rnd"/> will map to ``Math.random()`` function in javascript
+''' </summary>
 Module Algorithm
 
     ''' <summary>
     ''' WebGL的渲染程序主要是读取这个数组的内存数据来完成渲染数据的获取的
     ''' </summary>
-    Dim circleData As Circle() = New Circle(CIRCLE_COUNT - 1) {}
-    Dim circlevData As CircleV() = New CircleV(CIRCLE_COUNT - 1) {}
-    Dim cellCircles As CellCircle() = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
-    Dim grid As CellCircle()() = New CellCircle(GRID_WIDTH - 1)() {}
+    Dim circleData As Circle()
+    Dim circlevData As CircleV()
+    Dim cellCircles As CellCircle()
+    Dim grid As CellCircle()()
 
     Sub New()
+        circleData = New Circle(CIRCLE_COUNT - 1) {}
+        circlevData = New CircleV(CIRCLE_COUNT - 1) {}
+        cellCircles = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
+        grid = New CellCircle(GRID_WIDTH - 1)() {}
+
         For i As Integer = 0 To grid.Length - 1
             grid(i) = New CellCircle(GRID_HEIGHT - 1) {}
         Next
@@ -68,8 +76,8 @@ Module Algorithm
     ''' 这个函数主要是用于获取得到数组在内存之中的指针位置
     ''' </summary>
     ''' <returns></returns>
-    Public Function getCircleDataOffset() As Circle
-        Return circleData(0)
+    Public Function getCircleDataOffset() As Circle()
+        Return circleData
     End Function
 
     Public Sub init(displayWidth!, displayHeight!)
@@ -185,7 +193,9 @@ Module Algorithm
                     Dim vyi = circlevData(i).vy
 
                     Dim jCellCircle = iCellCircle
+
                     jCellCircle = jCellCircle.next
+
                     Do While Not jCellCircle Is Nothing
                         Dim j = jCellCircle.circleIndex
 
