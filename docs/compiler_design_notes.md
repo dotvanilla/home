@@ -11,7 +11,7 @@ Except the 4 primitive type in WebAssembly, there are several type alias in Vani
 | string     | ``System.String``/``System.Char`` | ``i32``     | ``string``         |
 | intptr     | All of user defined types         | ``i32``     | ``object/any``     |
 | any        | ``System.Object``                 | ``i32``     | ``object``         |
-| array      | ``System.Array``                  | ``i32``     | ``array``          |
+| array      | ``System.Array``                  | ``i32``     | ``UInt8Buffer``    |
 | list       | ``List(Of ...)``                  | ``i32``     | ``array``          |
 | table      | ``Dictionary(Of String, ...)``    | ``i32``     | ``object``         |
 | boolean    | ``Boolean``                       | ``i32``     | ``boolean``        |
@@ -66,4 +66,4 @@ End Namespace
 
 2. The table type is a kind of javascript object which map from the ``Dictionary`` type in VB.NET. The data type of the key in ``Dictionary`` only supports ``string``.
 
-3. Actually the ``array`` and ``list`` is almost the same data type in vanilla, as the array and the list is created based on the javascript array object.
+3. The ``array`` is running in WebAssembly runtime internal for high-performance computing, and the ``array`` is usually combine with structure for export a UInt8Buffer and work with the external memory consumer, like WebGL. ``list`` is the Javascript array list object, it is created based on the javascript array object.
