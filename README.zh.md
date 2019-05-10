@@ -57,6 +57,8 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 
 ### Guildlines
 
+**Vanilla框架是什么？** Vanilla框架是一个专门为VisualBasic.NET语言开发编写的WebAssembly运行时框架以及编译器平台。在Vanilla框架之中，包含有一个最基础的VB.NET应用程序的WebAssembly模块的加载程序，以及对一些最基础的JavaScript Api的封装，还包括一个能够将你的VisualBasic.NET项目编译为WebAssembly模块的编译器。
+
 阅读这些文档来帮助你构建出你的第一个运行在WebAssembly平台上面的VisualBasic.NET应用程序：
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
@@ -69,7 +71,7 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 + [Array implementation in WebAssembly](/#array_impl)
 + [Difference Between Class And Structure](/#class_struct_difference)
 
-### Demo
+### 示例项目
 
 下面的这些Demo向你展示了如何编写一个面向WebAssembly平台的VisualBasic.NET应用程序：
 
@@ -78,8 +80,8 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 + [VB.NET programming with WebGL](/vbscripts/webgl.html)
   > 你可以通过这个WebGL编程示例来学习如何应用VisualBasic.NET进行移动平台的游戏开发，在这个Demo之中你将可以学习WebGL的一些基础的Api调用。
 
-### Release Notes
+### 发行文档
 
-Find changes and update content of the ``vanillavb.app`` runtime at this document:
+阅读下面的文档来了解新版本的``vanillavb.app``框架的更新内容：
 
 > [Vanilla Release Note](/#release_notes)
