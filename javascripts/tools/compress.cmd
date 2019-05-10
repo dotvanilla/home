@@ -7,5 +7,3 @@ java -jar %tool% --js_output_file=../marked.min.js ../marked.js
 java -jar %tool% --js_output_file=../vbcode.min.js ../vbcode.js
 java -jar %tool% --js_output_file=../visualbasic.wasm.min.js ../visualbasic.wasm.js
 java -jar %tool% --js_output_file=../webgl.render.min.js ../webgl.render.js
-
-pause

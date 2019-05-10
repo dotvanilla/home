@@ -39,7 +39,10 @@ declare namespace data.sprintf {
      *
     */
     const placeholder: RegExp;
-    function parseFormat(string: string, arguments: any[]): {
+    /**
+     * @param argumentList ERROR - "arguments" cannot be redeclared in strict mode
+    */
+    function parseFormat(string: string, argumentList: any[]): {
         matches: match[];
         convCount: number;
         strings: string[];
