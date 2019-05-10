@@ -4,51 +4,119 @@ namespace vanillavb.app {
 
     let config: markedjs.option = markedjs.option.Defaults;
     let vbcodeStyle: vscode.CSS = vscode.VisualStudio;
+    let language: string = lang();
 
-    export function initialize() {
+    function lang() {
+        let folder = $ts.location.path;
 
-        window.onhashchange = app.loadDocument;
-        config.renderer = new markdown();
-        vbcodeStyle.lineHeight = "5px";
-
-        TypeScript.logging.log(config);
-
-        if (!Strings.Empty($ts.location.hash())) {
-            app.renderDocument(`/docs/${$ts.location.hash()}.md`);
+        if (Strings.Empty(folder) || folder == "/") {
+            return "";
+        } else if (folder.charAt(0) == "#") {
+            return "";
         } else {
-            // show home page
-            app.renderDocument("README.md");
+            return folder.split("/")[0];
         }
     }
 
-    export function loadDocument() {
-        let fileName = $ts.location.hash();
+    function getTargetFile(): DocumentFullName {
+        let fileName: string = $ts.location.hash();
+        let pathFallback: string;
         let path: string;
 
-        if (Strings.Empty(fileName)) {
-            path = "README.md";
+        if (!Strings.Empty(fileName, true)) {
+            pathFallback = `/docs/${fileName}.md`;
+            path = pathFallback;
+
+            if (!Strings.Empty(language, true)) {
+                path = `/docs/${fileName}.${language}.md`;
+            }
         } else {
-            path = `/docs/${fileName}.md`;
-        }
+            // show home page
+            pathFallback = "/README.md";
+            path = pathFallback;
 
-        app.renderDocument(path);
-    }
-
-    export function renderDocument(path: string) {
-        let renderDocumentInternal = function (markdown: string) {
-            $ts("#article").innerHTML = marked(markdown, config);
-            vscode.highlightVB(vbcodeStyle);
-            $ts.select('.typescript').ForEach((block) => {
-                (<any>window).hljs.highlightBlock(block);
-            });
-
-            let h1 = $ts("#article").getElementsByTagName("h1")[0];
-
-            if (!isNullOrUndefined(h1)) {
-                document.title = h1.innerText;
+            if (!Strings.Empty(language, true)) {
+                path = `/README.${language}.md`;
             }
         }
 
-        $ts.getText(path, renderDocumentInternal);
+        return <DocumentFullName>{
+            path: path,
+            pathFallback: pathFallback
+        }
+    }
+
+    export function initialize() {
+        // initialize styles and events
+        window.onhashchange = app.loadDocument;
+        config.renderer = new markdown();
+        vbcodeStyle.lineHeight = "5px";
+        language = lang();
+
+        TypeScript.logging.log(config);
+        app.renderDocument(getTargetFile());
+    }
+
+    export function loadDocument() {
+        app.renderDocument(getTargetFile());
+    }
+
+    export function updateArticle(html: string) {
+        let h1: HTMLHeadingElement;
+
+        // update article content
+        $ts("#article").innerHTML = html;
+        // and then highligh vb code block
+        vscode.highlightVB(vbcodeStyle);
+
+        h1 = $ts("#article").getElementsByTagName("h1")[0];
+
+        if (!isNullOrUndefined(h1)) {
+            document.title = h1.innerText;
+        }
+    }
+
+    export function renderDocument(ref: DocumentFullName) {
+        let count: number = 0;
+        let renderDocumentInternal = function (markdown: string) {
+            let html: string;            
+
+            if (Strings.Empty(markdown, true)) {
+                // 404的时候返回的是空字符串
+                if (count == 0) {
+                    count++;
+
+                    // request for fallback document path
+                    $ts.getText(ref.pathFallback, renderDocumentInternal, {
+                        nullForNotFound: true
+                    });
+                    return;
+                } else {
+                    // 目标文档查找失败
+                    html = `
+<h1>404 Not Found</h1>
+<p>The requested URL <strong>${ref.path}</strong> was not found on this server.</p>`;
+                }
+            } else {
+                html = marked(markdown, config);
+            }
+
+            vanillavb.app.updateArticle(html);
+        }
+
+        $ts.getText(ref.path, renderDocumentInternal, {
+            nullForNotFound: true
+        });
+    }
+
+    export interface DocumentFullName {
+        /**
+         * 带有当前的语言翻译的文档的位置
+        */
+        path: string;
+        /**
+         * 如果目标文档查找失败，则使用这个相对应的默认英文的文档的路径
+        */
+        pathFallback: string;
     }
 }

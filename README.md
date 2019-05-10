@@ -34,7 +34,7 @@ Now, you can compile your VisualBasic.NET application for target WebAssembly pla
 ```bash
 # compile your project in the commandline
 # and you should add the vanilla folder to your path environment variables.
-vanilla /path/to/app.vbproj
+vanilla "/path/to/app.vbproj"
 ```
 
 Just simply enough! Finally, add script reference to ``visualbasic.wasm.js`` in your web application, and then using this loader javascript code to run your VisualBasic.NET application in web browser or nodejs environment:
@@ -59,15 +59,15 @@ Hit ``F12`` on your keyboard to open developer console of your web browser, then
 
 Read these documents for help yourself build your first VisualBasic.NET WebAssembly application:
 
-+ [WebAssembly for VisualBasic.NET](/#webassembly)
-+ [How to compile](/#use_compiler)
++ [WebAssembly for VisualBasic.NET](#webassembly)
++ [How to compile](#use_compiler)
 
 Documents about how to develop Vanilla compiler:
 
-+ [Vanilla compiler design note](/#compiler_design_notes)
-+ [Class implementation in WebAssembly](/#class_impl)
-+ [Array implementation in WebAssembly](/#array_impl)
-+ [Difference Between Class And Structure](/#class_struct_difference)
++ [Vanilla compiler design note](#compiler_design_notes)
++ [Class implementation in WebAssembly](#class_impl)
++ [Array implementation in WebAssembly](#array_impl)
++ [Difference Between Class And Structure](#class_struct_difference)
 
 ### Demo
 
@@ -81,4 +81,4 @@ These demo shows you how to programming in VB.NET for WebAssembly:
 
 Find changes and update content of the ``vanillavb.app`` runtime at this document:
 
-> [Vanilla Release Note](/#release_notes)
+> [Vanilla Release Note](#release_notes)

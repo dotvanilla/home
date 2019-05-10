@@ -38,10 +38,12 @@ var vanillavb;
                         + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                         + '</code></pre>';
                 }
-                else {
-                    /*if (lang == "typescript") {
-                        return (<any>window).highlight.highlightAuto(code).value;
-                    }*/
+                else if (lang != "vbnet") {
+                    let highlight = window.hljs
+                        .highlightAuto(code)
+                        .value;
+                    code = `<pre><code class="highlight ${lang} hljs">${highlight}</code></pre>`;
+                    return code;
                 }
                 return '<pre><code class="highlight ' + lang + '">'
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
@@ -58,45 +60,98 @@ var vanillavb;
     (function (app) {
         let config = markedjs.option.Defaults;
         let vbcodeStyle = vscode.VisualStudio;
-        function initialize() {
-            window.onhashchange = app.loadDocument;
-            config.renderer = new app.markdown();
-            vbcodeStyle.lineHeight = "5px";
-            TypeScript.logging.log(config);
-            if (!Strings.Empty($ts.location.hash())) {
-                app.renderDocument(`/docs/${$ts.location.hash()}.md`);
+        let language = lang();
+        function lang() {
+            let folder = $ts.location.path;
+            if (Strings.Empty(folder) || folder == "/") {
+                return "";
+            }
+            else if (folder.charAt(0) == "#") {
+                return "";
+            }
+            else {
+                return folder.split("/")[0];
+            }
+        }
+        function getTargetFile() {
+            let fileName = $ts.location.hash();
+            let pathFallback;
+            let path;
+            if (!Strings.Empty(fileName, true)) {
+                pathFallback = `/docs/${fileName}.md`;
+                path = pathFallback;
+                if (!Strings.Empty(language, true)) {
+                    path = `/docs/${fileName}.${language}.md`;
+                }
             }
             else {
                 // show home page
-                app.renderDocument("README.md");
+                pathFallback = "/README.md";
+                path = pathFallback;
+                if (!Strings.Empty(language, true)) {
+                    path = `/README.${language}.md`;
+                }
             }
+            return {
+                path: path,
+                pathFallback: pathFallback
+            };
+        }
+        function initialize() {
+            // initialize styles and events
+            window.onhashchange = app.loadDocument;
+            config.renderer = new app.markdown();
+            vbcodeStyle.lineHeight = "5px";
+            language = lang();
+            TypeScript.logging.log(config);
+            app.renderDocument(getTargetFile());
         }
         app.initialize = initialize;
         function loadDocument() {
-            let fileName = $ts.location.hash();
-            let path;
-            if (Strings.Empty(fileName)) {
-                path = "README.md";
-            }
-            else {
-                path = `/docs/${fileName}.md`;
-            }
-            app.renderDocument(path);
+            app.renderDocument(getTargetFile());
         }
         app.loadDocument = loadDocument;
-        function renderDocument(path) {
+        function updateArticle(html) {
+            let h1;
+            // update article content
+            $ts("#article").innerHTML = html;
+            // and then highligh vb code block
+            vscode.highlightVB(vbcodeStyle);
+            h1 = $ts("#article").getElementsByTagName("h1")[0];
+            if (!isNullOrUndefined(h1)) {
+                document.title = h1.innerText;
+            }
+        }
+        app.updateArticle = updateArticle;
+        function renderDocument(ref) {
+            let count = 0;
             let renderDocumentInternal = function (markdown) {
-                $ts("#article").innerHTML = marked(markdown, config);
-                vscode.highlightVB(vbcodeStyle);
-                $ts.select('.typescript').ForEach((block) => {
-                    window.hljs.highlightBlock(block);
-                });
-                let h1 = $ts("#article").getElementsByTagName("h1")[0];
-                if (!isNullOrUndefined(h1)) {
-                    document.title = h1.innerText;
+                let html;
+                if (Strings.Empty(markdown, true)) {
+                    // 404的时候返回的是空字符串
+                    if (count == 0) {
+                        count++;
+                        // request for fallback document path
+                        $ts.getText(ref.pathFallback, renderDocumentInternal, {
+                            nullForNotFound: true
+                        });
+                        return;
+                    }
+                    else {
+                        // 目标文档查找失败
+                        html = `
+<h1>404 Not Found</h1>
+<p>The requested URL <strong>${ref.path}</strong> was not found on this server.</p>`;
+                    }
                 }
+                else {
+                    html = marked(markdown, config);
+                }
+                vanillavb.app.updateArticle(html);
             };
-            $ts.getText(path, renderDocumentInternal);
+            $ts.getText(ref.path, renderDocumentInternal, {
+                nullForNotFound: true
+            });
         }
         app.renderDocument = renderDocument;
     })(app = vanillavb.app || (vanillavb.app = {}));

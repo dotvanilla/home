@@ -4,10 +4,10 @@
 
 ```bash
 # For compile a single source file
-vanilla /path/to/file.vb [/out /path/to/out.wasm]
+vanilla "/path/to/file.vb" [/out "/path/to/out.wasm"]
 
 # For compile a complete vbproj 
-vanilla /path/to/file.vbproj [/out /path/to/out.wasm]
+vanilla "/path/to/file.vbproj" [/out "/path/to/out.wasm"]
 ```
 
 ### Usage note
