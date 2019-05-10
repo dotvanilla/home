@@ -34,7 +34,7 @@ Now, you can compile your VisualBasic.NET application for target WebAssembly pla
 ```bash
 # compile your project in the commandline
 # and you should add the vanilla folder to your path environment variables.
-vanilla /path/to/app.vbproj
+vanilla "/path/to/app.vbproj"
 ```
 
 Just simply enough! Finally, add script reference to ``visualbasic.wasm.js`` in your web application, and then using this loader javascript code to run your VisualBasic.NET application in web browser or nodejs environment:

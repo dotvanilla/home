@@ -44,7 +44,7 @@
                     + '</code></pre>';
             } else if (lang != "vbnet") {
                 let highlight: string = (<any>window).hljs
-                    .highlightAuto(escaped ? code : markedjs.helpers.escape.doescape(code, true))
+                    .highlightAuto(code)
                     .value;
 
                 code = `<pre><code class="highlight ${lang} hljs">${highlight}</code></pre>`;

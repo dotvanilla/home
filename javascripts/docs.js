@@ -40,7 +40,7 @@ var vanillavb;
                 }
                 else if (lang != "vbnet") {
                     let highlight = window.hljs
-                        .highlightAuto(escaped ? code : markedjs.helpers.escape.doescape(code, true))
+                        .highlightAuto(code)
                         .value;
                     code = `<pre><code class="highlight ${lang} hljs">${highlight}</code></pre>`;
                     return code;
