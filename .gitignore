@@ -329,3 +329,8 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 /javascripts/closure-compiler-v20181125.jar
+/javascripts/webgl.render.js
+/javascripts/visualbasic.wasm.js
+/javascripts/vbcode.js
+/javascripts/marked.js
+/javascripts/linq.js
