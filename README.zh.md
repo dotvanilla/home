@@ -39,7 +39,7 @@ vanilla /path/to/app.vbproj
 
 整个过程非常的简单！最后，在你的Web应用程序之中添加对``visualbasic.wasm.js``脚本的文件引用，然后使用下面的javascript加载器程序代码在Web应用或者nodejs环境之中来启动你的VisualBasic.NET应用程序：
 
-```javascript
+```typescript
 var assmUrl = "vbscript/HelloWorld.wasm";
 
 vanilla.Wasm.RunAssembly(assmUrl, {

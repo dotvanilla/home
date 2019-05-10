@@ -42,10 +42,14 @@
                 return '<pre><code>'
                     + (escaped ? code : markedjs.helpers.escape.doescape(code, true))
                     + '</code></pre>';
-            } else {
-                /*if (lang == "typescript") {
-                    return (<any>window).highlight.highlightAuto(code).value;
-                }*/
+            } else if (lang != "vbnet") {
+                let highlight: string = (<any>window).hljs
+                    .highlightAuto(escaped ? code : markedjs.helpers.escape.doescape(code, true))
+                    .value;
+
+                code = `<pre><code class="highlight ${lang} hljs">${highlight}</code></pre>`;
+
+                return code;
             }
 
             return '<pre><code class="highlight ' + lang + '">'
