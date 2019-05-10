@@ -75,23 +75,27 @@ var vanillavb;
         }
         function getTargetFile() {
             let fileName = $ts.location.hash();
+            let pathFallback;
+            let path;
             if (!Strings.Empty(fileName, true)) {
-                if (Strings.Empty(language, true)) {
-                    return `/docs/${fileName}.md`;
-                }
-                else {
-                    return `/docs/${fileName}.${language}.md`;
+                pathFallback = `/docs/${fileName}.md`;
+                path = pathFallback;
+                if (!Strings.Empty(language, true)) {
+                    path = `/docs/${fileName}.${language}.md`;
                 }
             }
             else {
                 // show home page
-                if (Strings.Empty(language, true)) {
-                    return "/README.md";
-                }
-                else {
-                    return `/README.${language}.md`;
+                pathFallback = "/README.md";
+                path = pathFallback;
+                if (!Strings.Empty(language, true)) {
+                    path = `/README.${language}.md`;
                 }
             }
+            return {
+                path: path,
+                pathFallback: pathFallback
+            };
         }
         function initialize() {
             // initialize styles and events
@@ -107,19 +111,43 @@ var vanillavb;
             app.renderDocument(getTargetFile());
         }
         app.loadDocument = loadDocument;
-        function renderDocument(path) {
+        function updateArticle(html) {
+            let h1;
+            // update article content
+            $ts("#article").innerHTML = html;
+            // and then highligh vb code block
+            vscode.highlightVB(vbcodeStyle);
+            h1 = $ts("#article").getElementsByTagName("h1")[0];
+            if (!isNullOrUndefined(h1)) {
+                document.title = h1.innerText;
+            }
+        }
+        app.updateArticle = updateArticle;
+        function renderDocument(ref) {
+            let count = 0;
             let renderDocumentInternal = function (markdown) {
-                $ts("#article").innerHTML = marked(markdown, config);
-                vscode.highlightVB(vbcodeStyle);
-                $ts.select('.typescript').ForEach((block) => {
-                    window.hljs.highlightBlock(block);
-                });
-                let h1 = $ts("#article").getElementsByTagName("h1")[0];
-                if (!isNullOrUndefined(h1)) {
-                    document.title = h1.innerText;
+                let html;
+                console.log(markdown);
+                if (Strings.Empty(markdown, true)) {
+                    // 404的时候返回的是空字符串
+                    if (count = 0) {
+                        count++;
+                        $ts.getText(ref.pathFallback, renderDocumentInternal);
+                        return;
+                    }
+                    else {
+                        // 目标文档查找失败
+                        html = `
+<h1>404 Not Found</h1>
+<p>The requested URL <strong>${ref.path}</strong> was not found on this server.</p>`;
+                    }
                 }
+                else {
+                    html = marked(markdown, config);
+                }
+                vanillavb.app.updateArticle(html);
             };
-            $ts.getText(path, renderDocumentInternal);
+            $ts.getText(ref.path, renderDocumentInternal);
         }
         app.renderDocument = renderDocument;
     })(app = vanillavb.app || (vanillavb.app = {}));

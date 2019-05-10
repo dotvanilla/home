@@ -14,5 +14,16 @@ declare namespace vanillavb.app {
 declare namespace vanillavb.app {
     function initialize(): void;
     function loadDocument(): void;
-    function renderDocument(path: string): void;
+    function updateArticle(html: string): void;
+    function renderDocument(ref: DocumentFullName): void;
+    interface DocumentFullName {
+        /**
+         * 带有当前的语言翻译的文档的位置
+        */
+        path: string;
+        /**
+         * 如果目标文档查找失败，则使用这个相对应的默认英文的文档的路径
+        */
+        pathFallback: string;
+    }
 }
