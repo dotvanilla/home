@@ -129,7 +129,7 @@ var vanillavb;
                 let html;
                 if (Strings.Empty(markdown, true)) {
                     // 404的时候返回的是空字符串
-                    if (count = 0) {
+                    if (count == 0) {
                         count++;
                         // request for fallback document path
                         $ts.getText(ref.pathFallback, renderDocumentInternal, {
