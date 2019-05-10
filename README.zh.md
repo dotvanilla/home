@@ -2,7 +2,7 @@
 
 希望能够让你的VisualBasic.NET应用程序运行在一个现代的浏览器之中么？请通过下面的一个简单的**hello world**例子来学习吧：
 
-First you should have a VisualBasic.NET project for compile into WebAssembly. You can create a standard vbproj in VisualStudio and should target .NET Framework 4.0 at least, and then copy this ``HelloWorld`` demo, and then save it. 
+首先，你应当拥有一个VisualBasic.NET应用程序源代码项目来编译为WebAssembly应用程序。你可以在VisualStudio之中创建一个标准的桌面应用程序，并且这个项目应该至少需求.NET Framework 4.0版本。然后复制下面的``HelloWorld``示例代码，然后在VisualStudio之中进行保存。 
 
 ```vbnet
 ' A WebAssembly application should contains one code module at least.
@@ -55,13 +55,13 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 
 敲击你的键盘上面的 ``F12`` 按键来打开你的浏览器的开发人员调试终端，然后你将会看见在终端上面输出的一条来自于你的VB.NET应用程序的``Hello World!``消息输出。
 
-### Guildlines
+### 学习指引
 
-**Vanilla框架是什么？** Vanilla框架是一个专门为VisualBasic.NET语言开发编写的WebAssembly运行时框架以及编译器平台。在Vanilla框架之中，包含有一个最基础的VB.NET应用程序的WebAssembly模块的加载程序，以及对一些最基础的JavaScript Api的封装，还包括一个能够将你的VisualBasic.NET项目编译为WebAssembly模块的编译器。
+**Vanilla框架是什么？** Vanilla框架是一个专门为VisualBasic.NET语言开发编写的WebAssembly运行时框架以及编译器平台，Vanilla编译器平台是基于.NET平台上的Roslyn语言分析服务的一个编译器项目。在Vanilla框架之中，包含有一个最基础的VB.NET应用程序的WebAssembly模块的加载程序，以及对一些最基础的JavaScript Api映射到.NET Api的封装，还包括一个能够将你的VisualBasic.NET项目编译为WebAssembly模块的编译器。
 
 阅读这些文档来帮助你构建出你的第一个运行在WebAssembly平台上面的VisualBasic.NET应用程序：
 
-+ [WebAssembly for VisualBasic.NET](/#webassembly)
++ [初步了解Vanilla以及一些简单问答](/#webassembly)
 + [如何使用Vanilla编译器](/#use_compiler)
 
 在这里有一些关于如何设计以及开发Vanilla编译器平台的技术文档：
