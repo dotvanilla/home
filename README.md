@@ -59,15 +59,15 @@ Hit ``F12`` on your keyboard to open developer console of your web browser, then
 
 Read these documents for help yourself build your first VisualBasic.NET WebAssembly application:
 
-+ [WebAssembly for VisualBasic.NET](/#webassembly)
-+ [How to compile](/#use_compiler)
++ [WebAssembly for VisualBasic.NET](#webassembly)
++ [How to compile](#use_compiler)
 
 Documents about how to develop Vanilla compiler:
 
-+ [Vanilla compiler design note](/#compiler_design_notes)
-+ [Class implementation in WebAssembly](/#class_impl)
-+ [Array implementation in WebAssembly](/#array_impl)
-+ [Difference Between Class And Structure](/#class_struct_difference)
++ [Vanilla compiler design note](#compiler_design_notes)
++ [Class implementation in WebAssembly](#class_impl)
++ [Array implementation in WebAssembly](#array_impl)
++ [Difference Between Class And Structure](#class_struct_difference)
 
 ### Demo
 
@@ -81,4 +81,4 @@ These demo shows you how to programming in VB.NET for WebAssembly:
 
 Find changes and update content of the ``vanillavb.app`` runtime at this document:
 
-> [Vanilla Release Note](/#release_notes)
+> [Vanilla Release Note](#release_notes)

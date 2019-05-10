@@ -61,15 +61,15 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 
 阅读这些文档来帮助你构建出你的第一个运行在WebAssembly平台上面的VisualBasic.NET应用程序：
 
-+ [初步了解Vanilla以及一些简单问答](/#webassembly)
-+ [如何使用Vanilla编译器](/#use_compiler)
++ [初步了解Vanilla以及一些简单问答](#webassembly)
++ [如何使用Vanilla编译器](#use_compiler)
 
 在这里有一些关于如何设计以及开发Vanilla编译器平台的技术文档：
 
-+ [Vanilla compiler design note](/#compiler_design_notes)
-+ [Class implementation in WebAssembly](/#class_impl)
-+ [Array implementation in WebAssembly](/#array_impl)
-+ [Difference Between Class And Structure](/#class_struct_difference)
++ [Vanilla compiler design note](#compiler_design_notes)
++ [Class implementation in WebAssembly](#class_impl)
++ [Array implementation in WebAssembly](#array_impl)
++ [Difference Between Class And Structure](#class_struct_difference)
 
 ### 示例项目
 
@@ -84,4 +84,4 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 
 阅读下面的文档来了解新版本的``vanillavb.app``框架的更新内容：
 
-> [Vanilla Release Note](/#release_notes)
+> [Vanilla Release Note](#release_notes)
