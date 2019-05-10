@@ -1,6 +1,6 @@
 # 欢迎使用.vanilla框架
 
-Wanna run your VisualBasic.NET application in a browser? Please follow this quick **hello world** example:
+希望能够让你的VisualBasic.NET应用程序运行在一个现代的浏览器之中么？请通过下面的一个简单的**hello world**例子来学习吧：
 
 First you should have a VisualBasic.NET project for compile into WebAssembly. You can create a standard vbproj in VisualStudio and should target .NET Framework 4.0 at least, and then copy this ``HelloWorld`` demo, and then save it. 
 
@@ -57,12 +57,12 @@ vanilla.Wasm.RunAssembly(assmUrl, {
 
 ### Guildlines
 
-Read these documents for help yourself build your first VisualBasic.NET WebAssembly application:
+阅读这些文档来帮助你构建出你的第一个运行在WebAssembly平台上面的VisualBasic.NET应用程序：
 
 + [WebAssembly for VisualBasic.NET](/#webassembly)
-+ [How to compile](/#use_compiler)
++ [如何使用Vanilla编译器](/#use_compiler)
 
-Documents about how to develop Vanilla compiler:
+在这里有一些关于如何设计以及开发Vanilla编译器平台的技术文档：
 
 + [Vanilla compiler design note](/#compiler_design_notes)
 + [Class implementation in WebAssembly](/#class_impl)
@@ -71,11 +71,12 @@ Documents about how to develop Vanilla compiler:
 
 ### Demo
 
-These demo shows you how to programming in VB.NET for WebAssembly:
+下面的这些Demo向你展示了如何编写一个面向WebAssembly平台的VisualBasic.NET应用程序：
 
 + [Base64 Encoder/Decoder](/vbscripts/base64.html)
-  > This demo shows you how to create a web app module with some basic programming features in VisualBasic.NET language, like: array, for...loop, function, if...branch, multiple modules, etc. 
+  > 这个Demo通过创建一个Web应用程序来向你展示了Vanilla编译器平台目前所支持的一些VIsualBasic.NET语言的一些基础的语法特性，例如：数组，for循环，函数，if分支，多模块应用程序等。
 + [VB.NET programming with WebGL](/vbscripts/webgl.html)
+  > 你可以通过这个WebGL编程示例来学习如何应用VisualBasic.NET进行移动平台的游戏开发，在这个Demo之中你将可以学习WebGL的一些基础的Api调用。
 
 ### Release Notes
 
