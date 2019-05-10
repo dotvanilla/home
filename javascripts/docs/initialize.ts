@@ -11,6 +11,8 @@ namespace vanillavb.app {
 
         if (Strings.Empty(folder) || folder == "/") {
             return "";
+        } else if (folder.charAt(0) == "#") {
+            return "";
         } else {
             return folder.split("/")[0];
         }
