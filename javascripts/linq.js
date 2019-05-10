@@ -1,10 +1,7 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -3425,8 +3422,23 @@ var Internal;
                 }
             });
         };
-        ts.getText = function (url, callback) {
-            HttpHelpers.GetAsyn(urlSolver(url), callback);
+        ts.getText = function (url, callback, options) {
+            if (options === void 0) { options = {
+                nullForNotFound: false
+            }; }
+            HttpHelpers.GetAsyn(urlSolver(url), function (text, code) {
+                if (code != 200) {
+                    if (options.nullForNotFound) {
+                        callback("");
+                    }
+                    else {
+                        callback(text);
+                    }
+                }
+                else {
+                    callback(text);
+                }
+            });
         };
         ts.get = function (url, callback) {
             HttpHelpers.GetAsyn(urlSolver(url), function (response) {
@@ -4201,6 +4213,571 @@ var SlideWindow = /** @class */ (function (_super) {
     };
     return SlideWindow;
 }(IEnumerator));
+/// <reference path="../Collections/Abstract/Enumerator.ts" />
+/**
+ * http://www.rfc-editor.org/rfc/rfc4180.txt
+*/
+var csv;
+(function (csv_1) {
+    /**
+     * Common Format and MIME Type for Comma-Separated Values (CSV) Files
+    */
+    var contentType = "text/csv";
+    /**
+     * ``csv``文件模型
+    */
+    var dataframe = /** @class */ (function (_super) {
+        __extends(dataframe, _super);
+        /**
+         * 从行序列之中构建出一个csv对象模型
+        */
+        function dataframe(rows) {
+            return _super.call(this, rows) || this;
+        }
+        Object.defineProperty(dataframe.prototype, "headers", {
+            /**
+             * Csv文件的第一行作为header
+            */
+            get: function () {
+                return new IEnumerator(this.sequence[0]);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(dataframe.prototype, "contents", {
+            /**
+             * 获取除了第一行作为``header``数据的剩余的所有的行数据
+            */
+            get: function () {
+                return this.Skip(1);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * 获取指定列名称的所有的行的列数据
+         *
+         * @param name csv文件的列名称，第一行之中的文本数据的内容
+         *
+         * @returns 该使用名称所指定的列的所有的内容字符串的枚举序列对象
+        */
+        dataframe.prototype.Column = function (name) {
+            var index = this.sequence[0].indexOf(name);
+            if (index == -1) {
+                return new IEnumerator([]);
+            }
+            else {
+                return this.Select(function (r) { return r.ElementAt(index); });
+            }
+        };
+        /**
+         * 向当前的数据框对象之中添加一行数据
+        */
+        dataframe.prototype.AppendLine = function (line) {
+            this.sequence.push(line);
+            return this;
+        };
+        /**
+         * 向当前的数据框对象之中添加多行数据
+        */
+        dataframe.prototype.AppendRows = function (data) {
+            var _this = this;
+            if (Array.isArray(data)) {
+                data.forEach(function (r) { return _this.sequence.push(r); });
+            }
+            else {
+                data.ForEach(function (r) { return _this.sequence.push(r); });
+            }
+            return this;
+        };
+        /**
+         * 将当前的这个数据框对象转换为csv文本内容
+        */
+        dataframe.prototype.buildDoc = function () {
+            return this.Select(function (r) { return r.rowLine; }).JoinBy("\n");
+        };
+        /**
+         * 使用反射操作将csv文档转换为特定类型的对象数据序列
+         *
+         * @param fieldMaps 这个参数是一个对象，其描述了如何将csv文档之中在js之中
+         *     的非法标识符转换为合法的标识符的映射
+         * @param activator 这个函数指针描述了如何创建一个新的指定类型的对象的过程，
+         *     这个函数指针不可以有参数的传递。
+         *
+         * @returns 这个函数返回类型约束的对象Linq序列集合
+        */
+        dataframe.prototype.Objects = function (fieldMaps, activator) {
+            if (fieldMaps === void 0) { fieldMaps = {}; }
+            if (activator === void 0) { activator = function () {
+                return {};
+            }; }
+            var header = dataframe.ensureMapsAll(fieldMaps, this.headers.ToArray());
+            var objs = this
+                .Skip(1)
+                .Select(function (r) {
+                var o = activator();
+                r.ForEach(function (c, i) {
+                    o[header(i)] = c;
+                });
+                return o;
+            });
+            return objs;
+        };
+        dataframe.ensureMapsAll = function (fieldMaps, headers) {
+            for (var i = 0; i < headers.length; i++) {
+                var column = headers[i];
+                if (column in fieldMaps) {
+                    // do nothing
+                }
+                else {
+                    // fill gaps
+                    fieldMaps[column] = column;
+                }
+            }
+            return function (i) {
+                return fieldMaps[headers[i]];
+            };
+        };
+        /**
+         * 使用ajax将csv文件保存到服务器
+         *
+         * @param url csv文件数据将会被通过post方法保存到这个url所指定的网络资源上面
+         * @param callback ajax异步回调，默认是打印返回结果到终端之上
+         *
+        */
+        dataframe.prototype.save = function (url, fileName, callback) {
+            if (fileName === void 0) { fileName = "upload.csv"; }
+            if (callback === void 0) { callback = function (response) {
+                console.log(response);
+            }; }
+            var file = this.buildDoc();
+            HttpHelpers.UploadFile(url, file, fileName, callback);
+        };
+        /**
+         * 使用ajax GET加载csv文件数据，不推荐使用这个方法处理大型的csv文件数据
+         *
+         * @param callback 当这个异步回调为空值的时候，函数使用同步的方式工作，返回csv对象
+         *                 如果这个参数不是空值，则以异步的方式工作，此时函数会返回空值
+         * @param parseText 如果url返回来的数据之中还包含有其他的信息，则会需要这个参数来进行csv文本数据的解析
+        */
+        dataframe.Load = function (url, callback, parseText) {
+            var _this = this;
+            if (callback === void 0) { callback = null; }
+            if (parseText === void 0) { parseText = this.defaultContent; }
+            if (callback == null || callback == undefined) {
+                // 同步
+                var load = parseText(HttpHelpers.GET(url));
+                var tsv = this.isTsv(load);
+                return dataframe.Parse(load.content, tsv);
+            }
+            else {
+                // 异步
+                HttpHelpers.GetAsyn(url, function (text, code, contentType) {
+                    if (code == 200) {
+                        var load = parseText(text, contentType);
+                        var tsv = _this.isTsv(load);
+                        var data = dataframe.Parse(load.content, tsv);
+                        console.log(data.headers);
+                        callback(data);
+                    }
+                    else {
+                        throw "Error while load csv data source, http " + code + ": " + text;
+                    }
+                });
+            }
+            return null;
+        };
+        dataframe.isTsv = function (load) {
+            var type = load.type.trim();
+            var tsv = (type == "tsv") || (type == "#tsv");
+            return tsv;
+        };
+        /**
+         * 默认是直接加个csv标签将格式设为默认的csv文件
+        */
+        dataframe.defaultContent = function (content) {
+            return {
+                type: "csv",
+                content: content
+            };
+        };
+        /**
+         * 将所给定的文本文档内容解析为数据框对象
+         *
+         * @param tsv 所需要进行解析的文本内容是否为使用``<TAB>``作为分割符的tsv文本文件？
+         *   默认不是，即默认使用逗号``,``作为分隔符的csv文本文件。
+        */
+        dataframe.Parse = function (text, tsv) {
+            if (tsv === void 0) { tsv = false; }
+            var parse = tsv ? csv_1.row.ParseTsv : csv_1.row.Parse;
+            var allTextLines = $ts.from(text.split(/\n/));
+            var rows;
+            if (Strings.Empty(allTextLines.Last)) {
+                // 2019-1-2 因为文本文件很有可能是以空行结尾的
+                // 所以在这里需要做下额外的判断
+                // 否则会在序列的最后面出现一行空数据
+                // 这个空数据很有可能会对下游程序代码产生bug影响
+                rows = allTextLines
+                    .Take(allTextLines.Count - 1)
+                    .Select(parse);
+            }
+            else {
+                rows = allTextLines.Select(parse);
+            }
+            return new dataframe(rows);
+        };
+        return dataframe;
+    }(IEnumerator));
+    csv_1.dataframe = dataframe;
+})(csv || (csv = {}));
+var csv;
+(function (csv) {
+    /**
+     * 将对象序列转换为``dataframe``对象
+     *
+     * 这个函数只能够转换object类型的数据，对于基础类型将不保证能够正常工作
+     *
+     * @param data 因为这个对象序列对象是具有类型约束的，所以可以直接从第一个
+     *    元素对象之中得到所有的属性名称作为csv文件头的数据
+    */
+    function toDataFrame(data) {
+        var seq = Array.isArray(data) ? new IEnumerator(data) : data;
+        var header = $ts(Object.keys(seq.First));
+        var rows = seq
+            .Select(function (obj) {
+            var columns = header
+                .Select(function (ref, i) {
+                return toString(obj[ref]);
+            });
+            return new csv.row(columns);
+        });
+        return new csv.dataframe([new csv.row(header)]).AppendRows(rows);
+    }
+    csv.toDataFrame = toDataFrame;
+    function toString(obj) {
+        if (isNullOrUndefined(obj)) {
+            // 这个对象值是空的，所以在csv文件之中是空字符串
+            return "";
+        }
+        else {
+            return "" + obj;
+        }
+    }
+})(csv || (csv = {}));
+var csv;
+(function (csv) {
+    var HTML;
+    (function (HTML) {
+        var bootstrap = ["table", "table-hover"];
+        /**
+         * 将数据框对象转换为HTMl格式的表格对象的html代码
+         *
+         * @param tblClass 所返回来的html表格代码之中的table对象的类型默认是bootstrap类型的，
+         * 所以默认可以直接应用bootstrap的样式在这个表格之上
+         *
+         * @returns 表格的HTML代码
+        */
+        function toHTMLTable(data, tblClass) {
+            if (tblClass === void 0) { tblClass = bootstrap; }
+            var th = data.headers
+                .Select(function (h) { return "<th>" + h + "</th>"; })
+                .JoinBy("\n");
+            var tr = data.contents
+                .Select(function (r) { return r.Select(function (c) { return "<td>" + c + "</td>"; }).JoinBy(""); })
+                .Select(function (r) { return "<tr>" + r + "</tr>"; })
+                .JoinBy("\n");
+            return "\n            <table class=\"" + tblClass + "\">\n                <thead>\n                    <tr>" + th + "</tr>\n                </thead>\n                <tbody>\n                    " + tr + "\n                </tbody>\n            </table>";
+        }
+        HTML.toHTMLTable = toHTMLTable;
+        function createHTMLTable(data, tblClass) {
+            if (tblClass === void 0) { tblClass = bootstrap; }
+            return toHTMLTable(csv.toDataFrame(data), tblClass);
+        }
+        HTML.createHTMLTable = createHTMLTable;
+    })(HTML = csv.HTML || (csv.HTML = {}));
+})(csv || (csv = {}));
+var csv;
+(function (csv) {
+    /**
+     * csv文件之中的一行数据，相当于当前行的列数据的集合
+    */
+    var row = /** @class */ (function (_super) {
+        __extends(row, _super);
+        function row(cells) {
+            return _super.call(this, cells) || this;
+        }
+        Object.defineProperty(row.prototype, "columns", {
+            /**
+             * 当前的这一个行对象的列数据集合
+             *
+             * 注意，你无法通过直接修改这个数组之中的元素来达到修改这个行之中的值的目的
+             * 因为这个属性会返回这个行的数组值的复制对象
+            */
+            get: function () {
+                return this.sequence.slice();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(row.prototype, "rowLine", {
+            /**
+             * 这个只读属性仅用于生成csv文件
+            */
+            get: function () {
+                return From(this.columns)
+                    .Select(row.autoEscape)
+                    .JoinBy(",");
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * Returns the index of the first occurrence of a value in an array.
+         *
+         * 函数得到指定的值在本行对象之中的列的编号
+         *
+         * @param value The value to locate in the array.
+         * @param fromIndex The array index at which to begin the search. If ``fromIndex`` is omitted,
+         *      the search starts at index 0.
+         *
+         * @returns 如果这个函数返回-1则表示找不到
+        */
+        row.prototype.indexOf = function (value, fromIndex) {
+            if (fromIndex === void 0) { fromIndex = null; }
+            if (isNullOrUndefined(fromIndex)) {
+                return this.sequence.indexOf(value);
+            }
+            else {
+                return this.sequence.indexOf(value, fromIndex);
+            }
+        };
+        row.prototype.ProjectObject = function (headers) {
+            var obj = {};
+            var data = this.columns;
+            if (Array.isArray(headers)) {
+                headers.forEach(function (h, i) {
+                    obj[h] = data[i];
+                });
+            }
+            else {
+                headers.ForEach(function (h, i) {
+                    obj[h] = data[i];
+                });
+            }
+            return obj;
+        };
+        row.autoEscape = function (c) {
+            if (c.indexOf(",") > -1) {
+                return "\"" + c + "\"";
+            }
+            else {
+                return c;
+            }
+        };
+        row.Parse = function (line) {
+            return new row(csv.CharsParser(line));
+        };
+        row.ParseTsv = function (line) {
+            return new row(csv.CharsParser(line, "\t"));
+        };
+        return row;
+    }(IEnumerator));
+    csv.row = row;
+})(csv || (csv = {}));
+/// <reference path="../Collections/Pointer.ts" />
+var csv;
+(function (csv) {
+    /**
+     * 通过Chars枚举来解析域，分隔符默认为逗号
+     * > https://github.com/xieguigang/sciBASIC/blame/701f9d0e6307a779bb4149c57a22a71572f1e40b/Data/DataFrame/IO/csv/Tokenizer.vb#L97
+     *
+    */
+    function CharsParser(s, delimiter, quot) {
+        if (delimiter === void 0) { delimiter = ","; }
+        if (quot === void 0) { quot = '"'; }
+        var tokens = [];
+        var temp = [];
+        var openStack = false;
+        var buffer = From(Strings.ToCharArray(s)).ToPointer();
+        var dblQuot = new RegExp("[" + quot + "]{2}", 'g');
+        var cellStr = function () {
+            // https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
+            // 2018-09-02
+            // 如果join函数的参数是空的话，则js之中默认是使用逗号作为连接符的 
+            return temp.join("").replace(dblQuot, quot);
+        };
+        var procEscape = function (c) {
+            if (!StartEscaping(temp)) {
+                // 查看下一个字符是否为分隔符
+                // 因为前面的 Dim c As Char = +buffer 已经位移了，所以在这里直接取当前的字符
+                var peek = buffer.Current;
+                // 也有可能是 "" 转义 为单个 "
+                var lastQuot = (temp.length > 0 && temp[temp.length - 1] != quot);
+                if (temp.length == 0 && peek == delimiter) {
+                    // openStack意味着前面已经出现一个 " 了
+                    // 这里又出现了一个 " 并且下一个字符为分隔符
+                    // 则说明是 "", 当前的cell内容是一个空字符串
+                    tokens.push("");
+                    temp = [];
+                    buffer.MoveNext();
+                    openStack = false;
+                }
+                else if ((peek == delimiter || buffer.EndRead) && lastQuot) {
+                    // 下一个字符为分隔符，则结束这个token
+                    tokens.push(cellStr());
+                    temp = [];
+                    // 跳过下一个分隔符，因为已经在这里判断过了
+                    buffer.MoveNext();
+                    openStack = false;
+                }
+                else {
+                    // 不是，则继续添加
+                    temp.push(c);
+                }
+            }
+            else {
+                // \" 会被转义为单个字符 "
+                temp[temp.length - 1] = c;
+            }
+        };
+        while (!buffer.EndRead) {
+            var c = buffer.Next;
+            if (openStack) {
+                if (c == quot) {
+                    procEscape(c);
+                }
+                else {
+                    // 由于双引号而产生的转义          
+                    temp.push(c);
+                }
+            }
+            else {
+                if (temp.length == 0 && c == quot) {
+                    // token的第一个字符串为双引号，则开始转义
+                    openStack = true;
+                }
+                else {
+                    if (c == delimiter) {
+                        tokens.push(cellStr());
+                        temp = [];
+                    }
+                    else {
+                        temp.push(c);
+                    }
+                }
+            }
+        }
+        if (temp.length > 0) {
+            tokens.push(cellStr());
+        }
+        return tokens;
+    }
+    csv.CharsParser = CharsParser;
+    /**
+     * 当前的token对象之中是否是转义的起始，即当前的token之中的最后一个符号
+     * 是否是转义符<paramref name="escape"/>?
+    */
+    function StartEscaping(buffer, escape) {
+        if (escape === void 0) { escape = "\\"; }
+        if (IsNullOrEmpty(buffer)) {
+            return false;
+        }
+        else {
+            return buffer[buffer.length - 1] == escape;
+        }
+    }
+})(csv || (csv = {}));
+var TsLinq;
+(function (TsLinq) {
+    /**
+     * 这个对象可以自动的将调用者的函数名称作为键名进行对应的键值的读取操作
+    */
+    var MetaReader = /** @class */ (function () {
+        function MetaReader(meta) {
+            this.meta = meta;
+        }
+        /**
+         * Read meta object value by call name
+         *
+         * > https://stackoverflow.com/questions/280389/how-do-you-find-out-the-caller-function-in-javascript
+        */
+        MetaReader.prototype.GetValue = function (key) {
+            if (key === void 0) { key = null; }
+            if (!key) {
+                key = TsLinq.StackTrace.GetCallerMember().memberName;
+            }
+            if (key in this.meta) {
+                return this.meta[key];
+            }
+            else {
+                return null;
+            }
+        };
+        return MetaReader;
+    }());
+    TsLinq.MetaReader = MetaReader;
+})(TsLinq || (TsLinq = {}));
+/// <reference path="../Collections/Abstract/Enumerator.ts" />
+var TsLinq;
+(function (TsLinq) {
+    var PriorityQueue = /** @class */ (function (_super) {
+        __extends(PriorityQueue, _super);
+        function PriorityQueue() {
+            return _super.call(this, []) || this;
+        }
+        Object.defineProperty(PriorityQueue.prototype, "Q", {
+            /**
+             * 队列元素
+            */
+            get: function () {
+                return this.sequence;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         *
+        */
+        PriorityQueue.prototype.enqueue = function (obj) {
+            var last = this.Last;
+            var q = this.Q;
+            var x = new QueueItem(obj);
+            q.push(x);
+            if (last) {
+                last.below = x;
+                x.above = last;
+            }
+        };
+        PriorityQueue.prototype.extract = function (i) {
+            var q = this.Q;
+            var x_above = q[i - 1];
+            var x_below = q[i + 1];
+            var x = q.splice(i, 1)[0];
+            if (x_above) {
+                x_above.below = x_below;
+            }
+            if (x_below) {
+                x_below.above = x_above;
+            }
+            return x;
+        };
+        PriorityQueue.prototype.dequeue = function () {
+            return this.extract(0);
+        };
+        return PriorityQueue;
+    }(IEnumerator));
+    TsLinq.PriorityQueue = PriorityQueue;
+    var QueueItem = /** @class */ (function () {
+        function QueueItem(x) {
+            this.value = x;
+        }
+        QueueItem.prototype.toString = function () {
+            return this.value.toString();
+        };
+        return QueueItem;
+    }());
+    TsLinq.QueueItem = QueueItem;
+})(TsLinq || (TsLinq = {}));
 var DOM;
 (function (DOM) {
     /**
@@ -4405,800 +4982,6 @@ var DOM;
     }
     DOM.ParseNodeDeclare = ParseNodeDeclare;
 })(DOM || (DOM = {}));
-// namespace DOM {
-// 2018-10-15
-// 为了方便书写代码，在其他脚本之中添加变量类型申明，在这里就不进行命名空间的包裹了
-/**
- * TypeScript脚本之中的HTML节点元素的类型代理接口
-*/
-var HTMLTsElement = /** @class */ (function () {
-    function HTMLTsElement(node) {
-        this.node = node instanceof HTMLElement ?
-            node :
-            node.node;
-    }
-    Object.defineProperty(HTMLTsElement.prototype, "HTMLElement", {
-        /**
-         * 可以从这里获取得到原生的``HTMLElement``对象用于操作
-        */
-        get: function () {
-            return this.node;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * 这个拓展函数总是会将节点中的原来的内容清空，然后显示html函数参数
-     * 所给定的内容
-     *
-     * @param html 当这个参数为一个无参数的函数的时候，主要是用于生成一个比较复杂的文档节点而使用的;
-     *    如果为字符串文本类型，则是直接将文本当作为HTML代码赋值给当前的这个节点对象的innerHTML属性;
-    */
-    HTMLTsElement.prototype.display = function (html) {
-        if (!html) {
-            this.HTMLElement.innerHTML = "";
-        }
-        else if (typeof html == "string" || typeof html == "number" || typeof html == "boolean") {
-            this.HTMLElement.innerHTML = html.toString();
-        }
-        else {
-            var node;
-            var parent = this.HTMLElement;
-            if (typeof html == "function") {
-                node = html();
-            }
-            else {
-                node = html instanceof HTMLTsElement ?
-                    html.HTMLElement :
-                    html;
-            }
-            parent.innerHTML = "";
-            parent.appendChild(node);
-        }
-        return this;
-    };
-    /**
-     * Clear all of the contents in current html element node.
-    */
-    HTMLTsElement.prototype.clear = function () {
-        this.HTMLElement.innerHTML = "";
-        return this;
-    };
-    HTMLTsElement.prototype.text = function (innerText) {
-        this.HTMLElement.innerText = innerText;
-        return this;
-    };
-    HTMLTsElement.prototype.addClass = function (className) {
-        var node = this.HTMLElement;
-        if (!node.classList.contains(className)) {
-            node.classList.add(className);
-        }
-        return this;
-    };
-    HTMLTsElement.prototype.removeClass = function (className) {
-        var node = this.HTMLElement;
-        if (node.classList.contains(className)) {
-            node.classList.remove(className);
-        }
-        return this;
-    };
-    /**
-     * 在当前的HTML文档节点之中添加一个新的文档节点
-    */
-    HTMLTsElement.prototype.append = function (node) {
-        if (node instanceof HTMLTsElement) {
-            this.HTMLElement.appendChild(node.HTMLElement);
-        }
-        else if (node instanceof HTMLElement) {
-            this.HTMLElement.appendChild(node);
-        }
-        else {
-            this.HTMLElement.appendChild(node());
-        }
-        return this;
-    };
-    /**
-     * 将css的display属性值设置为block用来显示当前的节点
-    */
-    HTMLTsElement.prototype.show = function () {
-        this.HTMLElement.style.display = "block";
-        return this;
-    };
-    /**
-     * 将css的display属性值设置为none来隐藏当前的节点
-    */
-    HTMLTsElement.prototype.hide = function () {
-        this.HTMLElement.style.display = "none";
-        return this;
-    };
-    return HTMLTsElement;
-}());
-/**
- * 在这里对原生的html节点进行拓展
-*/
-var TypeExtensions;
-(function (TypeExtensions) {
-    /**
-     * 在原生节点模式之下对输入的给定的节点对象添加拓展方法
-     *
-     * 向HTML节点对象的原型定义之中拓展新的方法和成员属性
-     * 这个函数的输出在ts之中可能用不到，主要是应用于js脚本
-     * 编程之中
-     *
-     * @param node 当查询失败的时候是空值
-    */
-    function Extends(node) {
-        var obj = node;
-        if (isNullOrUndefined(node)) {
-            return null;
-        }
-        var extendsNode = new HTMLTsElement(node);
-        /**
-         * 这个拓展函数总是会将节点中的原来的内容清空，然后显示html函数参数
-         * 所给定的内容
-        */
-        obj.display = function (html) {
-            extendsNode.display(html);
-            return node;
-        };
-        obj.show = function () {
-            extendsNode.show();
-            return node;
-        };
-        obj.hide = function () {
-            extendsNode.hide();
-            return node;
-        };
-        obj.addClass = function (name) {
-            extendsNode.addClass(name);
-            return node;
-        };
-        obj.removeClass = function (name) {
-            extendsNode.removeClass(name);
-            return node;
-        };
-        obj.CType = function () {
-            return node;
-        };
-        obj.clear = function () {
-            node.innerHTML = "";
-            return node;
-        };
-        obj.selects = function (cssSelector) { return Internal.Handlers.stringEval.select(cssSelector, node); };
-        // 用这个方法可以很方便的从现有的节点进行转换
-        // 也可以直接使用new进行构造
-        obj.asExtends = extendsNode;
-        obj.asImage = node;
-        obj.asInput = node;
-        return node;
-    }
-    TypeExtensions.Extends = Extends;
-})(TypeExtensions || (TypeExtensions = {}));
-var TsLinq;
-(function (TsLinq) {
-    /**
-     * 这个对象可以自动的将调用者的函数名称作为键名进行对应的键值的读取操作
-    */
-    var MetaReader = /** @class */ (function () {
-        function MetaReader(meta) {
-            this.meta = meta;
-        }
-        /**
-         * Read meta object value by call name
-         *
-         * > https://stackoverflow.com/questions/280389/how-do-you-find-out-the-caller-function-in-javascript
-        */
-        MetaReader.prototype.GetValue = function (key) {
-            if (key === void 0) { key = null; }
-            if (!key) {
-                key = TsLinq.StackTrace.GetCallerMember().memberName;
-            }
-            if (key in this.meta) {
-                return this.meta[key];
-            }
-            else {
-                return null;
-            }
-        };
-        return MetaReader;
-    }());
-    TsLinq.MetaReader = MetaReader;
-})(TsLinq || (TsLinq = {}));
-/// <reference path="../Collections/Abstract/Enumerator.ts" />
-var TsLinq;
-(function (TsLinq) {
-    var PriorityQueue = /** @class */ (function (_super) {
-        __extends(PriorityQueue, _super);
-        function PriorityQueue() {
-            return _super.call(this, []) || this;
-        }
-        Object.defineProperty(PriorityQueue.prototype, "Q", {
-            /**
-             * 队列元素
-            */
-            get: function () {
-                return this.sequence;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        /**
-         *
-        */
-        PriorityQueue.prototype.enqueue = function (obj) {
-            var last = this.Last;
-            var q = this.Q;
-            var x = new QueueItem(obj);
-            q.push(x);
-            if (last) {
-                last.below = x;
-                x.above = last;
-            }
-        };
-        PriorityQueue.prototype.extract = function (i) {
-            var q = this.Q;
-            var x_above = q[i - 1];
-            var x_below = q[i + 1];
-            var x = q.splice(i, 1)[0];
-            if (x_above) {
-                x_above.below = x_below;
-            }
-            if (x_below) {
-                x_below.above = x_above;
-            }
-            return x;
-        };
-        PriorityQueue.prototype.dequeue = function () {
-            return this.extract(0);
-        };
-        return PriorityQueue;
-    }(IEnumerator));
-    TsLinq.PriorityQueue = PriorityQueue;
-    var QueueItem = /** @class */ (function () {
-        function QueueItem(x) {
-            this.value = x;
-        }
-        QueueItem.prototype.toString = function () {
-            return this.value.toString();
-        };
-        return QueueItem;
-    }());
-    TsLinq.QueueItem = QueueItem;
-})(TsLinq || (TsLinq = {}));
-/**
- * Binary tree implements
-*/
-var algorithm;
-(function (algorithm) {
-    var BTree;
-    (function (BTree) {
-        /**
-         * 用于进行数据分组所需要的最基础的二叉树数据结构
-         *
-         * ``{key => value}``
-        */
-        var binaryTree = /** @class */ (function () {
-            /**
-             * 构建一个二叉树对象
-             *
-             * @param comparer 这个函数指针描述了如何进行两个对象之间的比较操作，如果这个函数参数使用默认值的话
-             *                 则只能够针对最基本的数值，逻辑变量进行操作
-            */
-            function binaryTree(comparer) {
-                if (comparer === void 0) { comparer = function (a, b) {
-                    var x = DataExtensions.as_numeric(a);
-                    var y = DataExtensions.as_numeric(b);
-                    return x - y;
-                }; }
-                this.compares = comparer;
-            }
-            /**
-             * 向这个二叉树对象之中添加一个子节点
-            */
-            binaryTree.prototype.add = function (term, value) {
-                if (value === void 0) { value = null; }
-                var np = this.root;
-                var cmp = 0;
-                if (!np) {
-                    // 根节点是空的，则将当前的term作为根节点
-                    this.root = new BTree.node(term, value);
-                    return;
-                }
-                while (np) {
-                    cmp = this.compares(term, np.key);
-                    if (cmp == 0) {
-                        // this node is existed
-                        // value replace??
-                        np.value = value;
-                        break;
-                    }
-                    else if (cmp < 0) {
-                        if (np.left) {
-                            np = np.left;
-                        }
-                        else {
-                            // np is a leaf node?
-                            // add at here
-                            np.left = new BTree.node(term, value);
-                            break;
-                        }
-                    }
-                    else {
-                        if (np.right) {
-                            np = np.right;
-                        }
-                        else {
-                            np.right = new BTree.node(term, value);
-                            break;
-                        }
-                    }
-                }
-            };
-            /**
-             * 根据key值查找一个节点，然后获取该节点之中与key所对应的值
-             *
-             * @returns 如果这个函数返回空值，则表示可能未找到目标子节点
-            */
-            binaryTree.prototype.find = function (term) {
-                var np = this.root;
-                var cmp = 0;
-                while (np) {
-                    cmp = this.compares(term, np.key);
-                    if (cmp == 0) {
-                        return np.value;
-                    }
-                    else if (cmp < 0) {
-                        np = np.left;
-                    }
-                    else {
-                        np = np.right;
-                    }
-                }
-                // not exists
-                return null;
-            };
-            /**
-             * 将这个二叉树对象转换为一个节点的数组
-            */
-            binaryTree.prototype.ToArray = function () {
-                return BTree.binaryTreeExtensions.populateNodes(this.root);
-            };
-            /**
-             * 将这个二叉树对象转换为一个Linq查询表达式所需要的枚举器类型
-            */
-            binaryTree.prototype.AsEnumerable = function () {
-                return new IEnumerator(this.ToArray());
-            };
-            return binaryTree;
-        }());
-        BTree.binaryTree = binaryTree;
-    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
-})(algorithm || (algorithm = {}));
-var algorithm;
-(function (algorithm) {
-    var BTree;
-    (function (BTree) {
-        /**
-         * data extension module for binary tree nodes data sequence
-        */
-        var binaryTreeExtensions;
-        (function (binaryTreeExtensions) {
-            /**
-             * Convert a binary tree object as a node array.
-            */
-            function populateNodes(tree) {
-                var out = [];
-                visitInternal(tree, out);
-                return out;
-            }
-            binaryTreeExtensions.populateNodes = populateNodes;
-            function visitInternal(tree, out) {
-                // 20180929 为什么会存在undefined的节点呢？
-                if (isNullOrUndefined(tree)) {
-                    if (TypeScript.logging.outputWarning) {
-                        console.warn(tree);
-                    }
-                    return;
-                }
-                else {
-                    out.push(tree);
-                }
-                if (tree.left) {
-                    visitInternal(tree.left, out);
-                }
-                if (tree.right) {
-                    visitInternal(tree.right, out);
-                }
-            }
-        })(binaryTreeExtensions = BTree.binaryTreeExtensions || (BTree.binaryTreeExtensions = {}));
-    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
-})(algorithm || (algorithm = {}));
-var algorithm;
-(function (algorithm) {
-    var BTree;
-    (function (BTree) {
-        /**
-         * A binary tree node.
-        */
-        var node = /** @class */ (function () {
-            function node(key, value, left, right) {
-                if (value === void 0) { value = null; }
-                if (left === void 0) { left = null; }
-                if (right === void 0) { right = null; }
-                this.key = key;
-                this.left = left;
-                this.right = right;
-                this.value = value;
-            }
-            node.prototype.toString = function () {
-                return this.key.toString();
-            };
-            return node;
-        }());
-        BTree.node = node;
-    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
-})(algorithm || (algorithm = {}));
-/**
- * How to Encode and Decode Strings with Base64 in JavaScript
- *
- * https://gist.github.com/ncerminara/11257943
- *
- * In base64 encoding, the character set is ``[A-Z, a-z, 0-9, and + /]``.
- * If the rest length is less than 4, the string is padded with ``=``
- * characters.
- *
- * (符号``=``只是用来进行字符串的长度填充使用的，因为base64字符串的长度应该总是4的倍数)
-*/
-var Base64;
-(function (Base64) {
-    var base64Pattern = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g;
-    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    /**
-     * 简单的检测一下所给定的字符串是否是有效的base64字符串
-    */
-    function isValidBase64String(text) {
-        if (text && (text.length % 4 == 0)) {
-            return base64Pattern.test(text);
-        }
-        else {
-            return false;
-        }
-    }
-    Base64.isValidBase64String = isValidBase64String;
-    /**
-     * 将任意文本编码为base64字符串
-    */
-    function encode(text) {
-        var base64 = [];
-        var n, r, i, s, o, u, a;
-        var f = 0;
-        text = Base64.utf8_encode(text);
-        while (f < text.length) {
-            n = text.charCodeAt(f++);
-            r = text.charCodeAt(f++);
-            i = text.charCodeAt(f++);
-            s = n >> 2;
-            o = (n & 3) << 4 | r >> 4;
-            u = (r & 15) << 2 | i >> 6;
-            a = i & 63;
-            if (isNaN(r)) {
-                u = a = 64;
-            }
-            else if (isNaN(i)) {
-                a = 64;
-            }
-            base64.push(keyStr.charAt(s));
-            base64.push(keyStr.charAt(o));
-            base64.push(keyStr.charAt(u));
-            base64.push(keyStr.charAt(a));
-        }
-        return base64.join("");
-    }
-    Base64.encode = encode;
-    /**
-     * 将base64字符串解码为普通的文本字符串
-    */
-    function decode(base64) {
-        var text = "";
-        var n, r, i;
-        var s, o, u, a;
-        var f = 0;
-        base64 = base64.replace(/[^A-Za-z0-9+/=]/g, "");
-        while (f < base64.length) {
-            s = keyStr.indexOf(base64.charAt(f++));
-            o = keyStr.indexOf(base64.charAt(f++));
-            u = keyStr.indexOf(base64.charAt(f++));
-            a = keyStr.indexOf(base64.charAt(f++));
-            n = s << 2 | o >> 4;
-            r = (o & 15) << 4 | u >> 2;
-            i = (u & 3) << 6 | a;
-            text = text + String.fromCharCode(n);
-            if (u != 64) {
-                text = text + String.fromCharCode(r);
-            }
-            if (a != 64) {
-                text = text + String.fromCharCode(i);
-            }
-        }
-        text = Base64.utf8_decode(text);
-        return text;
-    }
-    Base64.decode = decode;
-    /**
-     * 将文本转换为utf8编码的文本字符串
-    */
-    function utf8_encode(text) {
-        var chars = [];
-        text = text.replace(/rn/g, "n");
-        for (var n = 0; n < text.length; n++) {
-            var r = text.charCodeAt(n);
-            if (r < 128) {
-                chars.push(String.fromCharCode(r));
-            }
-            else if (r > 127 && r < 2048) {
-                chars.push(String.fromCharCode(r >> 6 | 192));
-                chars.push(String.fromCharCode(r & 63 | 128));
-            }
-            else {
-                chars.push(String.fromCharCode(r >> 12 | 224));
-                chars.push(String.fromCharCode(r >> 6 & 63 | 128));
-                chars.push(String.fromCharCode(r & 63 | 128));
-            }
-        }
-        return chars.join("");
-    }
-    Base64.utf8_encode = utf8_encode;
-    /**
-     * 将utf8编码的文本转换为原来的文本
-    */
-    function utf8_decode(text) {
-        var t = [];
-        var n = 0;
-        var r = 0;
-        var c2 = 0;
-        var c3 = 0;
-        while (n < text.length) {
-            r = text.charCodeAt(n);
-            if (r < 128) {
-                t.push(String.fromCharCode(r));
-                n++;
-            }
-            else if (r > 191 && r < 224) {
-                c2 = text.charCodeAt(n + 1);
-                t.push(String.fromCharCode((r & 31) << 6 | c2 & 63));
-                n += 2;
-            }
-            else {
-                c2 = text.charCodeAt(n + 1);
-                c3 = text.charCodeAt(n + 2);
-                t.push(String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63));
-                n += 3;
-            }
-        }
-        return t.join("");
-    }
-    Base64.utf8_decode = utf8_decode;
-})(Base64 || (Base64 = {}));
-/**
- * 可能对unicode的支持不是很好，推荐只用来压缩ASCII字符串
-*/
-var LZW;
-(function (LZW) {
-    /**
-     * LZW-compress a string
-    */
-    function encode(s) {
-        var dict = {};
-        var data = (s + "").split("");
-        var out = [];
-        var currChar;
-        var phrase = data[0];
-        var code = 256;
-        for (var i = 1; i < data.length; i++) {
-            currChar = data[i];
-            if (dict[phrase + currChar] != null) {
-                phrase += currChar;
-            }
-            else {
-                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-                dict[phrase + currChar] = code;
-                code++;
-                phrase = currChar;
-            }
-        }
-        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-        for (var i = 0; i < out.length; i++) {
-            out[i] = String.fromCharCode(out[i]);
-        }
-        return out.join("");
-    }
-    LZW.encode = encode;
-    /**
-     * Decompress an LZW-encoded string
-    */
-    function decode(s) {
-        var dict = {};
-        var data = (s + "").split("");
-        var currChar = data[0];
-        var oldPhrase = currChar;
-        var out = [currChar];
-        var code = 256;
-        var phrase;
-        for (var i = 1; i < data.length; i++) {
-            var currCode = data[i].charCodeAt(0);
-            if (currCode < 256) {
-                phrase = data[i];
-            }
-            else {
-                phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
-            }
-            out.push(phrase);
-            currChar = phrase.charAt(0);
-            dict[code] = oldPhrase + currChar;
-            code++;
-            oldPhrase = phrase;
-        }
-        return out.join("");
-    }
-    LZW.decode = decode;
-})(LZW || (LZW = {}));
-var TsLinq;
-(function (TsLinq) {
-    /**
-     * 调用堆栈之中的某一个栈片段信息
-    */
-    var StackFrame = /** @class */ (function () {
-        function StackFrame() {
-        }
-        StackFrame.prototype.toString = function () {
-            return this.caller + " [as " + this.memberName + "](" + this.file + ":" + this.line + ":" + this.column + ")";
-        };
-        StackFrame.Parse = function (line) {
-            var frame = new StackFrame();
-            var file = StackFrame.getFileName(line);
-            var caller = line.replace(file, "").trim().substr(3);
-            file = file.substr(1, file.length - 2);
-            if (caller.indexOf("/") > -1 || caller.indexOf(":") > -1) {
-                // 没有替换成功，任然是一个文件路径，则可能
-                // 是html文档之中的一个最开始的函数调用
-                // 是没有caller的
-                caller = "<HTML\\Document>";
-            }
-            var position = $ts(file.match(/([:]\d+){2}$/m)[0].split(":"));
-            var posStrLen = (position.Select(function (s) { return s.length; }).Sum() + 2);
-            var location = From(position)
-                .Where(function (s) { return s.length > 0; })
-                .Select(function (x) { return Strings.Val(x); })
-                .ToArray();
-            frame.file = file.substr(0, file.length - posStrLen);
-            var alias = caller.match(/\[.+\]/);
-            var memberName = (!alias || alias.length == 0) ? null : alias[0];
-            if (memberName) {
-                caller = caller
-                    .substr(0, caller.length - memberName.length)
-                    .trim();
-                frame.memberName = memberName
-                    .substr(3, memberName.length - 4)
-                    .trim();
-            }
-            else {
-                var t = caller.split(".");
-                frame.memberName = t[t.length - 1];
-            }
-            frame.caller = caller;
-            frame.line = location[0];
-            frame.column = location[1];
-            return frame;
-        };
-        StackFrame.getFileName = function (line) {
-            var matches = line.match(/\(.+\)/);
-            if (!matches || matches.length == 0) {
-                // 2018-09-14 可能是html文件之中
-                return "(" + line.substr(6).trim() + ")";
-            }
-            else {
-                return matches[0];
-            }
-        };
-        return StackFrame;
-    }());
-    TsLinq.StackFrame = StackFrame;
-})(TsLinq || (TsLinq = {}));
-var Levenshtein;
-(function (Levenshtein) {
-    var defaultScore = {
-        insert: function (x) { return 1; },
-        delete: function (x) { return 1; },
-        substitute: function (s, t) {
-            if (s == t) {
-                return 0;
-            }
-            else {
-                return 1;
-            }
-        }
-    };
-    function DistanceMatrix(source, target, score) {
-        if (score === void 0) { score = defaultScore; }
-        var src = Strings.ToCharArray(source, true);
-        var tar = Strings.ToCharArray(target, true);
-        if (src.length == 0 && tar.length == 0) {
-            return [[0]];
-        }
-        if (src.length == 0) {
-            return [[$ts(tar).Sum(function (c) { return score.insert(c); })]];
-        }
-        else if (tar.length == 0) {
-            return [[$ts(src).Sum(function (c) { return score.delete(c); })]];
-        }
-        var ns = src.length + 1;
-        var nt = tar.length + 1;
-        var d = new Matrix(ns, nt, 0.0);
-        d.column(0, Enumerable.Range(0, ns - 1));
-        d.row(0, Enumerable.Range(0, nt - 1));
-        for (var j = 1; j < nt; j++) {
-            for (var i = 1; i < ns; i++) {
-                d.M(i, j, Enumerable.Min(d.M(i - 1, j) + score.delete(src[i - 1]), d.M(i, j - 1) + score.insert(tar[j - 1]), d.M(i - 1, j - 1) + score.substitute(src[i - 1], tar[j - 1])));
-            }
-        }
-        return d.ToArray(false);
-    }
-    Levenshtein.DistanceMatrix = DistanceMatrix;
-    function ComputeDistance(source, target, score) {
-        if (score === void 0) { score = defaultScore; }
-        var d = DistanceMatrix(source, target, score);
-        var distance = d[d.length - 1][d[0].length - 1];
-        return distance;
-    }
-    Levenshtein.ComputeDistance = ComputeDistance;
-})(Levenshtein || (Levenshtein = {}));
-var StringBuilder = /** @class */ (function () {
-    /**
-     * @param newLine 换行符的文本，默认为纯文本格式，也可以指定为html格式的换行符``<br />``
-    */
-    function StringBuilder(str, newLine) {
-        if (str === void 0) { str = null; }
-        if (newLine === void 0) { newLine = "\n"; }
-        if (!str) {
-            this.buffer = "";
-        }
-        else if (typeof str == "string") {
-            this.buffer = "" + str;
-        }
-        else {
-            this.buffer = "" + str.buffer;
-        }
-        this.newLine = newLine;
-    }
-    Object.defineProperty(StringBuilder.prototype, "Length", {
-        /**
-         * 返回得到当前的缓冲区的字符串数据长度大小
-        */
-        get: function () {
-            return this.buffer.length;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * 向当前的缓冲之中添加目标文本
-    */
-    StringBuilder.prototype.Append = function (text) {
-        this.buffer = this.buffer + text;
-        return this;
-    };
-    /**
-     * 向当前的缓冲之中添加目标文本病在最末尾添加一个指定的换行符
-    */
-    StringBuilder.prototype.AppendLine = function (text) {
-        if (text === void 0) { text = ""; }
-        return this.Append(text + this.newLine);
-    };
-    StringBuilder.prototype.toString = function () {
-        return this.buffer + "";
-    };
-    return StringBuilder;
-}());
 /**
  * 实现这个类需要重写下面的方法实现：
  *
@@ -5748,36 +5531,6 @@ var Which;
     }
     Which.Min = Min;
 })(Which || (Which = {}));
-var Internal;
-(function (Internal) {
-    var Arguments = /** @class */ (function () {
-        function Arguments() {
-        }
-        /**
-         * 在创建新的节点的时候，会有一个属性值的赋值过程，
-         * 该赋值过程会需要使用这个函数来过滤Arguments的属性值，否则该赋值过程会将Arguments
-         * 里面的属性名也进行赋值，可能会造成bug
-        */
-        Arguments.nameFilter = function (args) {
-            var _this = this;
-            return From(Object.keys(args))
-                .Where(function (name) { return _this.ArgumentNames.indexOf(name) == -1; })
-                .ToArray();
-        };
-        Arguments.Default = function () {
-            return {
-                caseInSensitive: false,
-                nativeModel: true,
-                defaultValue: "",
-                context: window
-            };
-        };
-        //#endregion
-        Arguments.ArgumentNames = Object.keys(Arguments.Default());
-        return Arguments;
-    }());
-    Internal.Arguments = Arguments;
-})(Internal || (Internal = {}));
 var TypeScript;
 (function (TypeScript) {
     /**
@@ -5857,6 +5610,739 @@ var Cookies;
     }
     Cookies.delCookie = delCookie;
 })(Cookies || (Cookies = {}));
+/**
+ * Binary tree implements
+*/
+var algorithm;
+(function (algorithm) {
+    var BTree;
+    (function (BTree) {
+        /**
+         * 用于进行数据分组所需要的最基础的二叉树数据结构
+         *
+         * ``{key => value}``
+        */
+        var binaryTree = /** @class */ (function () {
+            /**
+             * 构建一个二叉树对象
+             *
+             * @param comparer 这个函数指针描述了如何进行两个对象之间的比较操作，如果这个函数参数使用默认值的话
+             *                 则只能够针对最基本的数值，逻辑变量进行操作
+            */
+            function binaryTree(comparer) {
+                if (comparer === void 0) { comparer = function (a, b) {
+                    var x = DataExtensions.as_numeric(a);
+                    var y = DataExtensions.as_numeric(b);
+                    return x - y;
+                }; }
+                this.compares = comparer;
+            }
+            /**
+             * 向这个二叉树对象之中添加一个子节点
+            */
+            binaryTree.prototype.add = function (term, value) {
+                if (value === void 0) { value = null; }
+                var np = this.root;
+                var cmp = 0;
+                if (!np) {
+                    // 根节点是空的，则将当前的term作为根节点
+                    this.root = new BTree.node(term, value);
+                    return;
+                }
+                while (np) {
+                    cmp = this.compares(term, np.key);
+                    if (cmp == 0) {
+                        // this node is existed
+                        // value replace??
+                        np.value = value;
+                        break;
+                    }
+                    else if (cmp < 0) {
+                        if (np.left) {
+                            np = np.left;
+                        }
+                        else {
+                            // np is a leaf node?
+                            // add at here
+                            np.left = new BTree.node(term, value);
+                            break;
+                        }
+                    }
+                    else {
+                        if (np.right) {
+                            np = np.right;
+                        }
+                        else {
+                            np.right = new BTree.node(term, value);
+                            break;
+                        }
+                    }
+                }
+            };
+            /**
+             * 根据key值查找一个节点，然后获取该节点之中与key所对应的值
+             *
+             * @returns 如果这个函数返回空值，则表示可能未找到目标子节点
+            */
+            binaryTree.prototype.find = function (term) {
+                var np = this.root;
+                var cmp = 0;
+                while (np) {
+                    cmp = this.compares(term, np.key);
+                    if (cmp == 0) {
+                        return np.value;
+                    }
+                    else if (cmp < 0) {
+                        np = np.left;
+                    }
+                    else {
+                        np = np.right;
+                    }
+                }
+                // not exists
+                return null;
+            };
+            /**
+             * 将这个二叉树对象转换为一个节点的数组
+            */
+            binaryTree.prototype.ToArray = function () {
+                return BTree.binaryTreeExtensions.populateNodes(this.root);
+            };
+            /**
+             * 将这个二叉树对象转换为一个Linq查询表达式所需要的枚举器类型
+            */
+            binaryTree.prototype.AsEnumerable = function () {
+                return new IEnumerator(this.ToArray());
+            };
+            return binaryTree;
+        }());
+        BTree.binaryTree = binaryTree;
+    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
+})(algorithm || (algorithm = {}));
+var algorithm;
+(function (algorithm) {
+    var BTree;
+    (function (BTree) {
+        /**
+         * data extension module for binary tree nodes data sequence
+        */
+        var binaryTreeExtensions;
+        (function (binaryTreeExtensions) {
+            /**
+             * Convert a binary tree object as a node array.
+            */
+            function populateNodes(tree) {
+                var out = [];
+                visitInternal(tree, out);
+                return out;
+            }
+            binaryTreeExtensions.populateNodes = populateNodes;
+            function visitInternal(tree, out) {
+                // 20180929 为什么会存在undefined的节点呢？
+                if (isNullOrUndefined(tree)) {
+                    if (TypeScript.logging.outputWarning) {
+                        console.warn(tree);
+                    }
+                    return;
+                }
+                else {
+                    out.push(tree);
+                }
+                if (tree.left) {
+                    visitInternal(tree.left, out);
+                }
+                if (tree.right) {
+                    visitInternal(tree.right, out);
+                }
+            }
+        })(binaryTreeExtensions = BTree.binaryTreeExtensions || (BTree.binaryTreeExtensions = {}));
+    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
+})(algorithm || (algorithm = {}));
+var algorithm;
+(function (algorithm) {
+    var BTree;
+    (function (BTree) {
+        /**
+         * A binary tree node.
+        */
+        var node = /** @class */ (function () {
+            function node(key, value, left, right) {
+                if (value === void 0) { value = null; }
+                if (left === void 0) { left = null; }
+                if (right === void 0) { right = null; }
+                this.key = key;
+                this.left = left;
+                this.right = right;
+                this.value = value;
+            }
+            node.prototype.toString = function () {
+                return this.key.toString();
+            };
+            return node;
+        }());
+        BTree.node = node;
+    })(BTree = algorithm.BTree || (algorithm.BTree = {}));
+})(algorithm || (algorithm = {}));
+/**
+ * How to Encode and Decode Strings with Base64 in JavaScript
+ *
+ * https://gist.github.com/ncerminara/11257943
+ *
+ * In base64 encoding, the character set is ``[A-Z, a-z, 0-9, and + /]``.
+ * If the rest length is less than 4, the string is padded with ``=``
+ * characters.
+ *
+ * (符号``=``只是用来进行字符串的长度填充使用的，因为base64字符串的长度应该总是4的倍数)
+*/
+var Base64;
+(function (Base64) {
+    var base64Pattern = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g;
+    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    /**
+     * 简单的检测一下所给定的字符串是否是有效的base64字符串
+    */
+    function isValidBase64String(text) {
+        if (text && (text.length % 4 == 0)) {
+            return base64Pattern.test(text);
+        }
+        else {
+            return false;
+        }
+    }
+    Base64.isValidBase64String = isValidBase64String;
+    /**
+     * 将任意文本编码为base64字符串
+    */
+    function encode(text) {
+        var base64 = [];
+        var n, r, i, s, o, u, a;
+        var f = 0;
+        text = Base64.utf8_encode(text);
+        while (f < text.length) {
+            n = text.charCodeAt(f++);
+            r = text.charCodeAt(f++);
+            i = text.charCodeAt(f++);
+            s = n >> 2;
+            o = (n & 3) << 4 | r >> 4;
+            u = (r & 15) << 2 | i >> 6;
+            a = i & 63;
+            if (isNaN(r)) {
+                u = a = 64;
+            }
+            else if (isNaN(i)) {
+                a = 64;
+            }
+            base64.push(keyStr.charAt(s));
+            base64.push(keyStr.charAt(o));
+            base64.push(keyStr.charAt(u));
+            base64.push(keyStr.charAt(a));
+        }
+        return base64.join("");
+    }
+    Base64.encode = encode;
+    /**
+     * 将base64字符串解码为普通的文本字符串
+    */
+    function decode(base64) {
+        var text = "";
+        var n, r, i;
+        var s, o, u, a;
+        var f = 0;
+        base64 = base64.replace(/[^A-Za-z0-9+/=]/g, "");
+        while (f < base64.length) {
+            s = keyStr.indexOf(base64.charAt(f++));
+            o = keyStr.indexOf(base64.charAt(f++));
+            u = keyStr.indexOf(base64.charAt(f++));
+            a = keyStr.indexOf(base64.charAt(f++));
+            n = s << 2 | o >> 4;
+            r = (o & 15) << 4 | u >> 2;
+            i = (u & 3) << 6 | a;
+            text = text + String.fromCharCode(n);
+            if (u != 64) {
+                text = text + String.fromCharCode(r);
+            }
+            if (a != 64) {
+                text = text + String.fromCharCode(i);
+            }
+        }
+        text = Base64.utf8_decode(text);
+        return text;
+    }
+    Base64.decode = decode;
+    /**
+     * 将文本转换为utf8编码的文本字符串
+    */
+    function utf8_encode(text) {
+        var chars = [];
+        text = text.replace(/rn/g, "n");
+        for (var n = 0; n < text.length; n++) {
+            var r = text.charCodeAt(n);
+            if (r < 128) {
+                chars.push(String.fromCharCode(r));
+            }
+            else if (r > 127 && r < 2048) {
+                chars.push(String.fromCharCode(r >> 6 | 192));
+                chars.push(String.fromCharCode(r & 63 | 128));
+            }
+            else {
+                chars.push(String.fromCharCode(r >> 12 | 224));
+                chars.push(String.fromCharCode(r >> 6 & 63 | 128));
+                chars.push(String.fromCharCode(r & 63 | 128));
+            }
+        }
+        return chars.join("");
+    }
+    Base64.utf8_encode = utf8_encode;
+    /**
+     * 将utf8编码的文本转换为原来的文本
+    */
+    function utf8_decode(text) {
+        var t = [];
+        var n = 0;
+        var r = 0;
+        var c2 = 0;
+        var c3 = 0;
+        while (n < text.length) {
+            r = text.charCodeAt(n);
+            if (r < 128) {
+                t.push(String.fromCharCode(r));
+                n++;
+            }
+            else if (r > 191 && r < 224) {
+                c2 = text.charCodeAt(n + 1);
+                t.push(String.fromCharCode((r & 31) << 6 | c2 & 63));
+                n += 2;
+            }
+            else {
+                c2 = text.charCodeAt(n + 1);
+                c3 = text.charCodeAt(n + 2);
+                t.push(String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63));
+                n += 3;
+            }
+        }
+        return t.join("");
+    }
+    Base64.utf8_decode = utf8_decode;
+})(Base64 || (Base64 = {}));
+/**
+ * 可能对unicode的支持不是很好，推荐只用来压缩ASCII字符串
+*/
+var LZW;
+(function (LZW) {
+    /**
+     * LZW-compress a string
+    */
+    function encode(s) {
+        var dict = {};
+        var data = (s + "").split("");
+        var out = [];
+        var currChar;
+        var phrase = data[0];
+        var code = 256;
+        for (var i = 1; i < data.length; i++) {
+            currChar = data[i];
+            if (dict[phrase + currChar] != null) {
+                phrase += currChar;
+            }
+            else {
+                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+                dict[phrase + currChar] = code;
+                code++;
+                phrase = currChar;
+            }
+        }
+        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        for (var i = 0; i < out.length; i++) {
+            out[i] = String.fromCharCode(out[i]);
+        }
+        return out.join("");
+    }
+    LZW.encode = encode;
+    /**
+     * Decompress an LZW-encoded string
+    */
+    function decode(s) {
+        var dict = {};
+        var data = (s + "").split("");
+        var currChar = data[0];
+        var oldPhrase = currChar;
+        var out = [currChar];
+        var code = 256;
+        var phrase;
+        for (var i = 1; i < data.length; i++) {
+            var currCode = data[i].charCodeAt(0);
+            if (currCode < 256) {
+                phrase = data[i];
+            }
+            else {
+                phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+            }
+            out.push(phrase);
+            currChar = phrase.charAt(0);
+            dict[code] = oldPhrase + currChar;
+            code++;
+            oldPhrase = phrase;
+        }
+        return out.join("");
+    }
+    LZW.decode = decode;
+})(LZW || (LZW = {}));
+var TsLinq;
+(function (TsLinq) {
+    /**
+     * 调用堆栈之中的某一个栈片段信息
+    */
+    var StackFrame = /** @class */ (function () {
+        function StackFrame() {
+        }
+        StackFrame.prototype.toString = function () {
+            return this.caller + " [as " + this.memberName + "](" + this.file + ":" + this.line + ":" + this.column + ")";
+        };
+        StackFrame.Parse = function (line) {
+            var frame = new StackFrame();
+            var file = StackFrame.getFileName(line);
+            var caller = line.replace(file, "").trim().substr(3);
+            file = file.substr(1, file.length - 2);
+            if (caller.indexOf("/") > -1 || caller.indexOf(":") > -1) {
+                // 没有替换成功，任然是一个文件路径，则可能
+                // 是html文档之中的一个最开始的函数调用
+                // 是没有caller的
+                caller = "<HTML\\Document>";
+            }
+            var position = $ts(file.match(/([:]\d+){2}$/m)[0].split(":"));
+            var posStrLen = (position.Select(function (s) { return s.length; }).Sum() + 2);
+            var location = From(position)
+                .Where(function (s) { return s.length > 0; })
+                .Select(function (x) { return Strings.Val(x); })
+                .ToArray();
+            frame.file = file.substr(0, file.length - posStrLen);
+            var alias = caller.match(/\[.+\]/);
+            var memberName = (!alias || alias.length == 0) ? null : alias[0];
+            if (memberName) {
+                caller = caller
+                    .substr(0, caller.length - memberName.length)
+                    .trim();
+                frame.memberName = memberName
+                    .substr(3, memberName.length - 4)
+                    .trim();
+            }
+            else {
+                var t = caller.split(".");
+                frame.memberName = t[t.length - 1];
+            }
+            frame.caller = caller;
+            frame.line = location[0];
+            frame.column = location[1];
+            return frame;
+        };
+        StackFrame.getFileName = function (line) {
+            var matches = line.match(/\(.+\)/);
+            if (!matches || matches.length == 0) {
+                // 2018-09-14 可能是html文件之中
+                return "(" + line.substr(6).trim() + ")";
+            }
+            else {
+                return matches[0];
+            }
+        };
+        return StackFrame;
+    }());
+    TsLinq.StackFrame = StackFrame;
+})(TsLinq || (TsLinq = {}));
+var Levenshtein;
+(function (Levenshtein) {
+    var defaultScore = {
+        insert: function (x) { return 1; },
+        delete: function (x) { return 1; },
+        substitute: function (s, t) {
+            if (s == t) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
+        }
+    };
+    function DistanceMatrix(source, target, score) {
+        if (score === void 0) { score = defaultScore; }
+        var src = Strings.ToCharArray(source, true);
+        var tar = Strings.ToCharArray(target, true);
+        if (src.length == 0 && tar.length == 0) {
+            return [[0]];
+        }
+        if (src.length == 0) {
+            return [[$ts(tar).Sum(function (c) { return score.insert(c); })]];
+        }
+        else if (tar.length == 0) {
+            return [[$ts(src).Sum(function (c) { return score.delete(c); })]];
+        }
+        var ns = src.length + 1;
+        var nt = tar.length + 1;
+        var d = new Matrix(ns, nt, 0.0);
+        d.column(0, Enumerable.Range(0, ns - 1));
+        d.row(0, Enumerable.Range(0, nt - 1));
+        for (var j = 1; j < nt; j++) {
+            for (var i = 1; i < ns; i++) {
+                d.M(i, j, Enumerable.Min(d.M(i - 1, j) + score.delete(src[i - 1]), d.M(i, j - 1) + score.insert(tar[j - 1]), d.M(i - 1, j - 1) + score.substitute(src[i - 1], tar[j - 1])));
+            }
+        }
+        return d.ToArray(false);
+    }
+    Levenshtein.DistanceMatrix = DistanceMatrix;
+    function ComputeDistance(source, target, score) {
+        if (score === void 0) { score = defaultScore; }
+        var d = DistanceMatrix(source, target, score);
+        var distance = d[d.length - 1][d[0].length - 1];
+        return distance;
+    }
+    Levenshtein.ComputeDistance = ComputeDistance;
+})(Levenshtein || (Levenshtein = {}));
+var StringBuilder = /** @class */ (function () {
+    /**
+     * @param newLine 换行符的文本，默认为纯文本格式，也可以指定为html格式的换行符``<br />``
+    */
+    function StringBuilder(str, newLine) {
+        if (str === void 0) { str = null; }
+        if (newLine === void 0) { newLine = "\n"; }
+        if (!str) {
+            this.buffer = "";
+        }
+        else if (typeof str == "string") {
+            this.buffer = "" + str;
+        }
+        else {
+            this.buffer = "" + str.buffer;
+        }
+        this.newLine = newLine;
+    }
+    Object.defineProperty(StringBuilder.prototype, "Length", {
+        /**
+         * 返回得到当前的缓冲区的字符串数据长度大小
+        */
+        get: function () {
+            return this.buffer.length;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * 向当前的缓冲之中添加目标文本
+    */
+    StringBuilder.prototype.Append = function (text) {
+        this.buffer = this.buffer + text;
+        return this;
+    };
+    /**
+     * 向当前的缓冲之中添加目标文本病在最末尾添加一个指定的换行符
+    */
+    StringBuilder.prototype.AppendLine = function (text) {
+        if (text === void 0) { text = ""; }
+        return this.Append(text + this.newLine);
+    };
+    StringBuilder.prototype.toString = function () {
+        return this.buffer + "";
+    };
+    return StringBuilder;
+}());
+// namespace DOM {
+// 2018-10-15
+// 为了方便书写代码，在其他脚本之中添加变量类型申明，在这里就不进行命名空间的包裹了
+/**
+ * TypeScript脚本之中的HTML节点元素的类型代理接口
+*/
+var HTMLTsElement = /** @class */ (function () {
+    function HTMLTsElement(node) {
+        this.node = node instanceof HTMLElement ?
+            node :
+            node.node;
+    }
+    Object.defineProperty(HTMLTsElement.prototype, "HTMLElement", {
+        /**
+         * 可以从这里获取得到原生的``HTMLElement``对象用于操作
+        */
+        get: function () {
+            return this.node;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * 这个拓展函数总是会将节点中的原来的内容清空，然后显示html函数参数
+     * 所给定的内容
+     *
+     * @param html 当这个参数为一个无参数的函数的时候，主要是用于生成一个比较复杂的文档节点而使用的;
+     *    如果为字符串文本类型，则是直接将文本当作为HTML代码赋值给当前的这个节点对象的innerHTML属性;
+    */
+    HTMLTsElement.prototype.display = function (html) {
+        if (!html) {
+            this.HTMLElement.innerHTML = "";
+        }
+        else if (typeof html == "string" || typeof html == "number" || typeof html == "boolean") {
+            this.HTMLElement.innerHTML = html.toString();
+        }
+        else {
+            var node;
+            var parent = this.HTMLElement;
+            if (typeof html == "function") {
+                node = html();
+            }
+            else {
+                node = html instanceof HTMLTsElement ?
+                    html.HTMLElement :
+                    html;
+            }
+            parent.innerHTML = "";
+            parent.appendChild(node);
+        }
+        return this;
+    };
+    /**
+     * Clear all of the contents in current html element node.
+    */
+    HTMLTsElement.prototype.clear = function () {
+        this.HTMLElement.innerHTML = "";
+        return this;
+    };
+    HTMLTsElement.prototype.text = function (innerText) {
+        this.HTMLElement.innerText = innerText;
+        return this;
+    };
+    HTMLTsElement.prototype.addClass = function (className) {
+        var node = this.HTMLElement;
+        if (!node.classList.contains(className)) {
+            node.classList.add(className);
+        }
+        return this;
+    };
+    HTMLTsElement.prototype.removeClass = function (className) {
+        var node = this.HTMLElement;
+        if (node.classList.contains(className)) {
+            node.classList.remove(className);
+        }
+        return this;
+    };
+    /**
+     * 在当前的HTML文档节点之中添加一个新的文档节点
+    */
+    HTMLTsElement.prototype.append = function (node) {
+        if (node instanceof HTMLTsElement) {
+            this.HTMLElement.appendChild(node.HTMLElement);
+        }
+        else if (node instanceof HTMLElement) {
+            this.HTMLElement.appendChild(node);
+        }
+        else {
+            this.HTMLElement.appendChild(node());
+        }
+        return this;
+    };
+    /**
+     * 将css的display属性值设置为block用来显示当前的节点
+    */
+    HTMLTsElement.prototype.show = function () {
+        this.HTMLElement.style.display = "block";
+        return this;
+    };
+    /**
+     * 将css的display属性值设置为none来隐藏当前的节点
+    */
+    HTMLTsElement.prototype.hide = function () {
+        this.HTMLElement.style.display = "none";
+        return this;
+    };
+    return HTMLTsElement;
+}());
+/**
+ * 在这里对原生的html节点进行拓展
+*/
+var TypeExtensions;
+(function (TypeExtensions) {
+    /**
+     * 在原生节点模式之下对输入的给定的节点对象添加拓展方法
+     *
+     * 向HTML节点对象的原型定义之中拓展新的方法和成员属性
+     * 这个函数的输出在ts之中可能用不到，主要是应用于js脚本
+     * 编程之中
+     *
+     * @param node 当查询失败的时候是空值
+    */
+    function Extends(node) {
+        var obj = node;
+        if (isNullOrUndefined(node)) {
+            return null;
+        }
+        var extendsNode = new HTMLTsElement(node);
+        /**
+         * 这个拓展函数总是会将节点中的原来的内容清空，然后显示html函数参数
+         * 所给定的内容
+        */
+        obj.display = function (html) {
+            extendsNode.display(html);
+            return node;
+        };
+        obj.show = function () {
+            extendsNode.show();
+            return node;
+        };
+        obj.hide = function () {
+            extendsNode.hide();
+            return node;
+        };
+        obj.addClass = function (name) {
+            extendsNode.addClass(name);
+            return node;
+        };
+        obj.removeClass = function (name) {
+            extendsNode.removeClass(name);
+            return node;
+        };
+        obj.CType = function () {
+            return node;
+        };
+        obj.clear = function () {
+            node.innerHTML = "";
+            return node;
+        };
+        obj.selects = function (cssSelector) { return Internal.Handlers.stringEval.select(cssSelector, node); };
+        // 用这个方法可以很方便的从现有的节点进行转换
+        // 也可以直接使用new进行构造
+        obj.asExtends = extendsNode;
+        obj.asImage = node;
+        obj.asInput = node;
+        return node;
+    }
+    TypeExtensions.Extends = Extends;
+})(TypeExtensions || (TypeExtensions = {}));
+var Internal;
+(function (Internal) {
+    var Arguments = /** @class */ (function () {
+        function Arguments() {
+        }
+        /**
+         * 在创建新的节点的时候，会有一个属性值的赋值过程，
+         * 该赋值过程会需要使用这个函数来过滤Arguments的属性值，否则该赋值过程会将Arguments
+         * 里面的属性名也进行赋值，可能会造成bug
+        */
+        Arguments.nameFilter = function (args) {
+            var _this = this;
+            return From(Object.keys(args))
+                .Where(function (name) { return _this.ArgumentNames.indexOf(name) == -1; })
+                .ToArray();
+        };
+        Arguments.Default = function () {
+            return {
+                caseInSensitive: false,
+                nativeModel: true,
+                defaultValue: "",
+                context: window
+            };
+        };
+        //#endregion
+        Arguments.ArgumentNames = Object.keys(Arguments.Default());
+        return Arguments;
+    }());
+    Internal.Arguments = Arguments;
+})(Internal || (Internal = {}));
 var CanvasHelper;
 (function (CanvasHelper) {
     var innerCanvas;
@@ -6733,478 +7219,4 @@ var HttpHelpers;
     }());
     HttpHelpers.PostData = PostData;
 })(HttpHelpers || (HttpHelpers = {}));
-/// <reference path="../Collections/Abstract/Enumerator.ts" />
-/**
- * http://www.rfc-editor.org/rfc/rfc4180.txt
-*/
-var csv;
-(function (csv_1) {
-    /**
-     * Common Format and MIME Type for Comma-Separated Values (CSV) Files
-    */
-    var contentType = "text/csv";
-    /**
-     * ``csv``文件模型
-    */
-    var dataframe = /** @class */ (function (_super) {
-        __extends(dataframe, _super);
-        /**
-         * 从行序列之中构建出一个csv对象模型
-        */
-        function dataframe(rows) {
-            return _super.call(this, rows) || this;
-        }
-        Object.defineProperty(dataframe.prototype, "headers", {
-            /**
-             * Csv文件的第一行作为header
-            */
-            get: function () {
-                return new IEnumerator(this.sequence[0]);
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(dataframe.prototype, "contents", {
-            /**
-             * 获取除了第一行作为``header``数据的剩余的所有的行数据
-            */
-            get: function () {
-                return this.Skip(1);
-            },
-            enumerable: true,
-            configurable: true
-        });
-        /**
-         * 获取指定列名称的所有的行的列数据
-         *
-         * @param name csv文件的列名称，第一行之中的文本数据的内容
-         *
-         * @returns 该使用名称所指定的列的所有的内容字符串的枚举序列对象
-        */
-        dataframe.prototype.Column = function (name) {
-            var index = this.sequence[0].indexOf(name);
-            if (index == -1) {
-                return new IEnumerator([]);
-            }
-            else {
-                return this.Select(function (r) { return r.ElementAt(index); });
-            }
-        };
-        /**
-         * 向当前的数据框对象之中添加一行数据
-        */
-        dataframe.prototype.AppendLine = function (line) {
-            this.sequence.push(line);
-            return this;
-        };
-        /**
-         * 向当前的数据框对象之中添加多行数据
-        */
-        dataframe.prototype.AppendRows = function (data) {
-            var _this = this;
-            if (Array.isArray(data)) {
-                data.forEach(function (r) { return _this.sequence.push(r); });
-            }
-            else {
-                data.ForEach(function (r) { return _this.sequence.push(r); });
-            }
-            return this;
-        };
-        /**
-         * 将当前的这个数据框对象转换为csv文本内容
-        */
-        dataframe.prototype.buildDoc = function () {
-            return this.Select(function (r) { return r.rowLine; }).JoinBy("\n");
-        };
-        /**
-         * 使用反射操作将csv文档转换为特定类型的对象数据序列
-         *
-         * @param fieldMaps 这个参数是一个对象，其描述了如何将csv文档之中在js之中
-         *     的非法标识符转换为合法的标识符的映射
-         * @param activator 这个函数指针描述了如何创建一个新的指定类型的对象的过程，
-         *     这个函数指针不可以有参数的传递。
-         *
-         * @returns 这个函数返回类型约束的对象Linq序列集合
-        */
-        dataframe.prototype.Objects = function (fieldMaps, activator) {
-            if (fieldMaps === void 0) { fieldMaps = {}; }
-            if (activator === void 0) { activator = function () {
-                return {};
-            }; }
-            var header = dataframe.ensureMapsAll(fieldMaps, this.headers.ToArray());
-            var objs = this
-                .Skip(1)
-                .Select(function (r) {
-                var o = activator();
-                r.ForEach(function (c, i) {
-                    o[header(i)] = c;
-                });
-                return o;
-            });
-            return objs;
-        };
-        dataframe.ensureMapsAll = function (fieldMaps, headers) {
-            for (var i = 0; i < headers.length; i++) {
-                var column = headers[i];
-                if (column in fieldMaps) {
-                    // do nothing
-                }
-                else {
-                    // fill gaps
-                    fieldMaps[column] = column;
-                }
-            }
-            return function (i) {
-                return fieldMaps[headers[i]];
-            };
-        };
-        /**
-         * 使用ajax将csv文件保存到服务器
-         *
-         * @param url csv文件数据将会被通过post方法保存到这个url所指定的网络资源上面
-         * @param callback ajax异步回调，默认是打印返回结果到终端之上
-         *
-        */
-        dataframe.prototype.save = function (url, fileName, callback) {
-            if (fileName === void 0) { fileName = "upload.csv"; }
-            if (callback === void 0) { callback = function (response) {
-                console.log(response);
-            }; }
-            var file = this.buildDoc();
-            HttpHelpers.UploadFile(url, file, fileName, callback);
-        };
-        /**
-         * 使用ajax GET加载csv文件数据，不推荐使用这个方法处理大型的csv文件数据
-         *
-         * @param callback 当这个异步回调为空值的时候，函数使用同步的方式工作，返回csv对象
-         *                 如果这个参数不是空值，则以异步的方式工作，此时函数会返回空值
-         * @param parseText 如果url返回来的数据之中还包含有其他的信息，则会需要这个参数来进行csv文本数据的解析
-        */
-        dataframe.Load = function (url, callback, parseText) {
-            var _this = this;
-            if (callback === void 0) { callback = null; }
-            if (parseText === void 0) { parseText = this.defaultContent; }
-            if (callback == null || callback == undefined) {
-                // 同步
-                var load = parseText(HttpHelpers.GET(url));
-                var tsv = this.isTsv(load);
-                return dataframe.Parse(load.content, tsv);
-            }
-            else {
-                // 异步
-                HttpHelpers.GetAsyn(url, function (text, code, contentType) {
-                    if (code == 200) {
-                        var load = parseText(text, contentType);
-                        var tsv = _this.isTsv(load);
-                        var data = dataframe.Parse(load.content, tsv);
-                        console.log(data.headers);
-                        callback(data);
-                    }
-                    else {
-                        throw "Error while load csv data source, http " + code + ": " + text;
-                    }
-                });
-            }
-            return null;
-        };
-        dataframe.isTsv = function (load) {
-            var type = load.type.trim();
-            var tsv = (type == "tsv") || (type == "#tsv");
-            return tsv;
-        };
-        /**
-         * 默认是直接加个csv标签将格式设为默认的csv文件
-        */
-        dataframe.defaultContent = function (content) {
-            return {
-                type: "csv",
-                content: content
-            };
-        };
-        /**
-         * 将所给定的文本文档内容解析为数据框对象
-         *
-         * @param tsv 所需要进行解析的文本内容是否为使用``<TAB>``作为分割符的tsv文本文件？
-         *   默认不是，即默认使用逗号``,``作为分隔符的csv文本文件。
-        */
-        dataframe.Parse = function (text, tsv) {
-            if (tsv === void 0) { tsv = false; }
-            var parse = tsv ? csv_1.row.ParseTsv : csv_1.row.Parse;
-            var allTextLines = $ts.from(text.split(/\n/));
-            var rows;
-            if (Strings.Empty(allTextLines.Last)) {
-                // 2019-1-2 因为文本文件很有可能是以空行结尾的
-                // 所以在这里需要做下额外的判断
-                // 否则会在序列的最后面出现一行空数据
-                // 这个空数据很有可能会对下游程序代码产生bug影响
-                rows = allTextLines
-                    .Take(allTextLines.Count - 1)
-                    .Select(parse);
-            }
-            else {
-                rows = allTextLines.Select(parse);
-            }
-            return new dataframe(rows);
-        };
-        return dataframe;
-    }(IEnumerator));
-    csv_1.dataframe = dataframe;
-})(csv || (csv = {}));
-var csv;
-(function (csv) {
-    var HTML;
-    (function (HTML) {
-        var bootstrap = ["table", "table-hover"];
-        /**
-         * 将数据框对象转换为HTMl格式的表格对象的html代码
-         *
-         * @param tblClass 所返回来的html表格代码之中的table对象的类型默认是bootstrap类型的，
-         * 所以默认可以直接应用bootstrap的样式在这个表格之上
-         *
-         * @returns 表格的HTML代码
-        */
-        function toHTMLTable(data, tblClass) {
-            if (tblClass === void 0) { tblClass = bootstrap; }
-            var th = data.headers
-                .Select(function (h) { return "<th>" + h + "</th>"; })
-                .JoinBy("\n");
-            var tr = data.contents
-                .Select(function (r) { return r.Select(function (c) { return "<td>" + c + "</td>"; }).JoinBy(""); })
-                .Select(function (r) { return "<tr>" + r + "</tr>"; })
-                .JoinBy("\n");
-            return "\n            <table class=\"" + tblClass + "\">\n                <thead>\n                    <tr>" + th + "</tr>\n                </thead>\n                <tbody>\n                    " + tr + "\n                </tbody>\n            </table>";
-        }
-        HTML.toHTMLTable = toHTMLTable;
-        function createHTMLTable(data, tblClass) {
-            if (tblClass === void 0) { tblClass = bootstrap; }
-            return toHTMLTable(csv.toDataFrame(data), tblClass);
-        }
-        HTML.createHTMLTable = createHTMLTable;
-    })(HTML = csv.HTML || (csv.HTML = {}));
-})(csv || (csv = {}));
-var csv;
-(function (csv) {
-    /**
-     * csv文件之中的一行数据，相当于当前行的列数据的集合
-    */
-    var row = /** @class */ (function (_super) {
-        __extends(row, _super);
-        function row(cells) {
-            return _super.call(this, cells) || this;
-        }
-        Object.defineProperty(row.prototype, "columns", {
-            /**
-             * 当前的这一个行对象的列数据集合
-             *
-             * 注意，你无法通过直接修改这个数组之中的元素来达到修改这个行之中的值的目的
-             * 因为这个属性会返回这个行的数组值的复制对象
-            */
-            get: function () {
-                return this.sequence.slice();
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(row.prototype, "rowLine", {
-            /**
-             * 这个只读属性仅用于生成csv文件
-            */
-            get: function () {
-                return From(this.columns)
-                    .Select(row.autoEscape)
-                    .JoinBy(",");
-            },
-            enumerable: true,
-            configurable: true
-        });
-        /**
-         * Returns the index of the first occurrence of a value in an array.
-         *
-         * 函数得到指定的值在本行对象之中的列的编号
-         *
-         * @param value The value to locate in the array.
-         * @param fromIndex The array index at which to begin the search. If ``fromIndex`` is omitted,
-         *      the search starts at index 0.
-         *
-         * @returns 如果这个函数返回-1则表示找不到
-        */
-        row.prototype.indexOf = function (value, fromIndex) {
-            if (fromIndex === void 0) { fromIndex = null; }
-            if (isNullOrUndefined(fromIndex)) {
-                return this.sequence.indexOf(value);
-            }
-            else {
-                return this.sequence.indexOf(value, fromIndex);
-            }
-        };
-        row.prototype.ProjectObject = function (headers) {
-            var obj = {};
-            var data = this.columns;
-            if (Array.isArray(headers)) {
-                headers.forEach(function (h, i) {
-                    obj[h] = data[i];
-                });
-            }
-            else {
-                headers.ForEach(function (h, i) {
-                    obj[h] = data[i];
-                });
-            }
-            return obj;
-        };
-        row.autoEscape = function (c) {
-            if (c.indexOf(",") > -1) {
-                return "\"" + c + "\"";
-            }
-            else {
-                return c;
-            }
-        };
-        row.Parse = function (line) {
-            return new row(csv.CharsParser(line));
-        };
-        row.ParseTsv = function (line) {
-            return new row(csv.CharsParser(line, "\t"));
-        };
-        return row;
-    }(IEnumerator));
-    csv.row = row;
-})(csv || (csv = {}));
-/// <reference path="../Collections/Pointer.ts" />
-var csv;
-(function (csv) {
-    /**
-     * 通过Chars枚举来解析域，分隔符默认为逗号
-     * > https://github.com/xieguigang/sciBASIC/blame/701f9d0e6307a779bb4149c57a22a71572f1e40b/Data/DataFrame/IO/csv/Tokenizer.vb#L97
-     *
-    */
-    function CharsParser(s, delimiter, quot) {
-        if (delimiter === void 0) { delimiter = ","; }
-        if (quot === void 0) { quot = '"'; }
-        var tokens = [];
-        var temp = [];
-        var openStack = false;
-        var buffer = From(Strings.ToCharArray(s)).ToPointer();
-        var dblQuot = new RegExp("[" + quot + "]{2}", 'g');
-        var cellStr = function () {
-            // https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
-            // 2018-09-02
-            // 如果join函数的参数是空的话，则js之中默认是使用逗号作为连接符的 
-            return temp.join("").replace(dblQuot, quot);
-        };
-        var procEscape = function (c) {
-            if (!StartEscaping(temp)) {
-                // 查看下一个字符是否为分隔符
-                // 因为前面的 Dim c As Char = +buffer 已经位移了，所以在这里直接取当前的字符
-                var peek = buffer.Current;
-                // 也有可能是 "" 转义 为单个 "
-                var lastQuot = (temp.length > 0 && temp[temp.length - 1] != quot);
-                if (temp.length == 0 && peek == delimiter) {
-                    // openStack意味着前面已经出现一个 " 了
-                    // 这里又出现了一个 " 并且下一个字符为分隔符
-                    // 则说明是 "", 当前的cell内容是一个空字符串
-                    tokens.push("");
-                    temp = [];
-                    buffer.MoveNext();
-                    openStack = false;
-                }
-                else if ((peek == delimiter || buffer.EndRead) && lastQuot) {
-                    // 下一个字符为分隔符，则结束这个token
-                    tokens.push(cellStr());
-                    temp = [];
-                    // 跳过下一个分隔符，因为已经在这里判断过了
-                    buffer.MoveNext();
-                    openStack = false;
-                }
-                else {
-                    // 不是，则继续添加
-                    temp.push(c);
-                }
-            }
-            else {
-                // \" 会被转义为单个字符 "
-                temp[temp.length - 1] = c;
-            }
-        };
-        while (!buffer.EndRead) {
-            var c = buffer.Next;
-            if (openStack) {
-                if (c == quot) {
-                    procEscape(c);
-                }
-                else {
-                    // 由于双引号而产生的转义          
-                    temp.push(c);
-                }
-            }
-            else {
-                if (temp.length == 0 && c == quot) {
-                    // token的第一个字符串为双引号，则开始转义
-                    openStack = true;
-                }
-                else {
-                    if (c == delimiter) {
-                        tokens.push(cellStr());
-                        temp = [];
-                    }
-                    else {
-                        temp.push(c);
-                    }
-                }
-            }
-        }
-        if (temp.length > 0) {
-            tokens.push(cellStr());
-        }
-        return tokens;
-    }
-    csv.CharsParser = CharsParser;
-    /**
-     * 当前的token对象之中是否是转义的起始，即当前的token之中的最后一个符号
-     * 是否是转义符<paramref name="escape"/>?
-    */
-    function StartEscaping(buffer, escape) {
-        if (escape === void 0) { escape = "\\"; }
-        if (IsNullOrEmpty(buffer)) {
-            return false;
-        }
-        else {
-            return buffer[buffer.length - 1] == escape;
-        }
-    }
-})(csv || (csv = {}));
-var csv;
-(function (csv) {
-    /**
-     * 将对象序列转换为``dataframe``对象
-     *
-     * 这个函数只能够转换object类型的数据，对于基础类型将不保证能够正常工作
-     *
-     * @param data 因为这个对象序列对象是具有类型约束的，所以可以直接从第一个
-     *    元素对象之中得到所有的属性名称作为csv文件头的数据
-    */
-    function toDataFrame(data) {
-        var seq = Array.isArray(data) ? new IEnumerator(data) : data;
-        var header = $ts(Object.keys(seq.First));
-        var rows = seq
-            .Select(function (obj) {
-            var columns = header
-                .Select(function (ref, i) {
-                return toString(obj[ref]);
-            });
-            return new csv.row(columns);
-        });
-        return new csv.dataframe([new csv.row(header)]).AppendRows(rows);
-    }
-    csv.toDataFrame = toDataFrame;
-    function toString(obj) {
-        if (isNullOrUndefined(obj)) {
-            // 这个对象值是空的，所以在csv文件之中是空字符串
-            return "";
-        }
-        else {
-            return "" + obj;
-        }
-    }
-})(csv || (csv = {}));
 //# sourceMappingURL=linq.js.map

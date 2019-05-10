@@ -127,12 +127,14 @@ var vanillavb;
             let count = 0;
             let renderDocumentInternal = function (markdown) {
                 let html;
-                console.log(markdown);
                 if (Strings.Empty(markdown, true)) {
                     // 404的时候返回的是空字符串
                     if (count = 0) {
                         count++;
-                        $ts.getText(ref.pathFallback, renderDocumentInternal);
+                        // request for fallback document path
+                        $ts.getText(ref.pathFallback, renderDocumentInternal, {
+                            nullForNotFound: true
+                        });
                         return;
                     }
                     else {
@@ -147,7 +149,9 @@ var vanillavb;
                 }
                 vanillavb.app.updateArticle(html);
             };
-            $ts.getText(ref.path, renderDocumentInternal);
+            $ts.getText(ref.path, renderDocumentInternal, {
+                nullForNotFound: true
+            });
         }
         app.renderDocument = renderDocument;
     })(app = vanillavb.app || (vanillavb.app = {}));

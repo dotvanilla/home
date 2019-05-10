@@ -79,15 +79,17 @@ namespace vanillavb.app {
     export function renderDocument(ref: DocumentFullName) {
         let count: number = 0;
         let renderDocumentInternal = function (markdown: string) {
-            let html: string;
-
-            console.log(markdown);
+            let html: string;            
 
             if (Strings.Empty(markdown, true)) {
                 // 404的时候返回的是空字符串
                 if (count = 0) {
                     count++;
-                    $ts.getText(ref.pathFallback, renderDocumentInternal);
+
+                    // request for fallback document path
+                    $ts.getText(ref.pathFallback, renderDocumentInternal, {
+                        nullForNotFound: true
+                    });
                     return;
                 } else {
                     // 目标文档查找失败
@@ -102,7 +104,9 @@ namespace vanillavb.app {
             vanillavb.app.updateArticle(html);
         }
 
-        $ts.getText(ref.path, renderDocumentInternal);
+        $ts.getText(ref.path, renderDocumentInternal, {
+            nullForNotFound: true
+        });
     }
 
     export interface DocumentFullName {
