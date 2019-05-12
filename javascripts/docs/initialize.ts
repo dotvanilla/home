@@ -18,8 +18,7 @@ namespace vanillavb.app {
         }
     }
 
-    function getTargetFile(): DocumentFullName {
-        let fileName: string = $ts.location.hash();
+    function getTargetFile(fileName: string = $ts.location.hash()): DocumentFullName {
         let pathFallback: string;
         let path: string;
 
@@ -76,10 +75,22 @@ namespace vanillavb.app {
         }
     }
 
-    export function renderDocument(ref: DocumentFullName) {
+    /**
+     * Render a given markdown document to html and display on the document body
+     * 
+     * @param ref The document fullname reference or file basename 
+    */
+    export function renderDocument(ref: DocumentFullName | string) {
         let count: number = 0;
+        let url: DocumentFullName = (function () {
+            if (typeof ref == "string") {
+                return getTargetFile(ref);
+            } else {
+                return ref;
+            }
+        })();
         let renderDocumentInternal = function (markdown: string) {
-            let html: string;            
+            let html: string;
 
             if (Strings.Empty(markdown, true)) {
                 // 404的时候返回的是空字符串
@@ -87,7 +98,7 @@ namespace vanillavb.app {
                     count++;
 
                     // request for fallback document path
-                    $ts.getText(ref.pathFallback, renderDocumentInternal, {
+                    $ts.getText(url.pathFallback, renderDocumentInternal, {
                         nullForNotFound: true
                     });
                     return;
@@ -95,7 +106,7 @@ namespace vanillavb.app {
                     // 目标文档查找失败
                     html = `
 <h1>404 Not Found</h1>
-<p>The requested URL <strong>${ref.path}</strong> was not found on this server.</p>`;
+<p>The requested URL <strong>${url.path}</strong> was not found on this server.</p>`;
                 }
             } else {
                 html = marked(markdown, config);
@@ -104,7 +115,8 @@ namespace vanillavb.app {
             vanillavb.app.updateArticle(html);
         }
 
-        $ts.getText(ref.path, renderDocumentInternal, {
+        // fetch markdown document from server and run renderer
+        $ts.getText(url.path, renderDocumentInternal, {
             nullForNotFound: true
         });
     }

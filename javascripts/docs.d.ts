@@ -15,7 +15,12 @@ declare namespace vanillavb.app {
     function initialize(): void;
     function loadDocument(): void;
     function updateArticle(html: string): void;
-    function renderDocument(ref: DocumentFullName): void;
+    /**
+     * Render a given markdown document to html and display on the document body
+     *
+     * @param ref The document fullname reference or file basename
+    */
+    function renderDocument(ref: DocumentFullName | string): void;
     interface DocumentFullName {
         /**
          * 带有当前的语言翻译的文档的位置
