@@ -21,21 +21,33 @@ namespace vanillavb.app {
     function getTargetFile(fileName: string = $ts.location.hash(), multipleLanguage: boolean = true): DocumentFullName {
         let pathFallback: string;
         let path: string;
+        let folder: string = lang();
 
-        if (!Strings.Empty(fileName, true)) {
-            pathFallback = `/docs/${fileName}.md`;
-            path = pathFallback;
-
-            if (multipleLanguage && !Strings.Empty(language, true)) {
-                path = `/docs/${fileName}.${language}.md`;
+        if (folder == "vbscripts") {
+            if (!Strings.Empty(fileName, true)) {
+                pathFallback = `/vbscripts/docs/${fileName}.md`;
+            } else {
+                // show home page
+                pathFallback = "/vbscripts/README.md";
             }
-        } else {
-            // show home page
-            pathFallback = "/README.md";
-            path = pathFallback;
 
-            if (multipleLanguage && !Strings.Empty(language, true)) {
-                path = `/README.${language}.md`;
+            path = pathFallback;
+        } else {
+            if (!Strings.Empty(fileName, true)) {
+                pathFallback = `/docs/${fileName}.md`;
+                path = pathFallback;
+
+                if (multipleLanguage && !Strings.Empty(language, true)) {
+                    path = `/docs/${fileName}.${language}.md`;
+                }
+            } else {
+                // show home page
+                pathFallback = "/README.md";
+                path = pathFallback;
+
+                if (multipleLanguage && !Strings.Empty(language, true)) {
+                    path = `/README.${language}.md`;
+                }
             }
         }
 

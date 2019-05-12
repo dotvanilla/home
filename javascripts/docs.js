@@ -76,19 +76,32 @@ var vanillavb;
         function getTargetFile(fileName = $ts.location.hash(), multipleLanguage = true) {
             let pathFallback;
             let path;
-            if (!Strings.Empty(fileName, true)) {
-                pathFallback = `/docs/${fileName}.md`;
-                path = pathFallback;
-                if (multipleLanguage && !Strings.Empty(language, true)) {
-                    path = `/docs/${fileName}.${language}.md`;
+            let folder = lang();
+            if (folder == "vbscripts") {
+                if (!Strings.Empty(fileName, true)) {
+                    pathFallback = `/vbscripts/docs/${fileName}.md`;
                 }
+                else {
+                    // show home page
+                    pathFallback = "/vbscripts/README.md";
+                }
+                path = pathFallback;
             }
             else {
-                // show home page
-                pathFallback = "/README.md";
-                path = pathFallback;
-                if (multipleLanguage && !Strings.Empty(language, true)) {
-                    path = `/README.${language}.md`;
+                if (!Strings.Empty(fileName, true)) {
+                    pathFallback = `/docs/${fileName}.md`;
+                    path = pathFallback;
+                    if (multipleLanguage && !Strings.Empty(language, true)) {
+                        path = `/docs/${fileName}.${language}.md`;
+                    }
+                }
+                else {
+                    // show home page
+                    pathFallback = "/README.md";
+                    path = pathFallback;
+                    if (multipleLanguage && !Strings.Empty(language, true)) {
+                        path = `/README.${language}.md`;
+                    }
                 }
             }
             return {
