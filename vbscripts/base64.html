@@ -24,6 +24,7 @@
   <script type="text/javascript" src="../javascripts/vbcode.min.js"></script>
   <script type="text/javascript" src="../javascripts/highlight/highlight.pack.js"></script>
   <script type="text/javascript" src="../javascripts/visualbasic.wasm.min.js"></script>
+  <script type="text/javascript" src="../javascripts/docs.js"></script>
 
   <link rel="canonical" href="http://vanillavb.app/" />
   <link rel="search" type="application/opensearchdescription+xml" href="#" title="" />
@@ -46,35 +47,24 @@
   </section>
 
   <section class="main-content">
+    <span id="demo">
+        <div>
+            <h3>Base64 encoder test</h3>
+    
+            <p>
+              Input any text at here:
+            </p>
+            <p><textarea id="text-input" rows="5" cols="41"></textarea></p>
+            <p>Base64 encode output from VisualBasic.NET WebAssembly application:</p>
+            <p id="base64-output" style="background-color: blanchedalmond;"></p>
+            <p>And this is the raw text decode from the base64 result:</p>
+            <p id="raw-output" style="background-color:azure;"></p>
+          </div>
+    
+          <hr />
+    </span>
     <span id="article">
-      <div>
-        <h3>Base64 encoder test</h3>
-
-        <p>
-          Input any text at here:
-        </p>
-        <p><textarea id="text-input" rows="5" cols="41"></textarea></p>
-        <p>Base64 encode output from VisualBasic.NET WebAssembly application:</p>
-        <p id="base64-output" style="background-color: blanchedalmond;"></p>
-        <p>And this is the raw text decode from the base64 result:</p>
-        <p id="raw-output" style="background-color:azure;"></p>
-      </div>
-
-      <hr />
-
-      <div>
-        You can found this demo project at location:
-        <p><a
-            href="https://github.com/dotvanilla/home/tree/master/vbscripts/base64">https://github.com/dotvanilla/home/tree/master/vbscripts/base64</a>
-        </p>
-        <p>
-          Compile this demo project with vanilla:
-          <pre>
-<code># switch current directory to the repository root,
-# and then type
-vanilla vbscripts/base64/base64.vbproj</code></pre>
-        </p>
-      </div>
+      
     </span>
 
     <footer class="site-footer">

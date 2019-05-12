@@ -56,17 +56,12 @@ Module Algorithm
     ''' <summary>
     ''' WebGL的渲染程序主要是读取这个数组的内存数据来完成渲染数据的获取的
     ''' </summary>
-    Dim circleData As Circle()
-    Dim circlevData As CircleV()
-    Dim cellCircles As CellCircle()
-    Dim grid As CellCircle()()
+    Dim circleData As Circle() = New Circle(CIRCLE_COUNT - 1) {}
+    Dim circlevData As CircleV() = New CircleV(CIRCLE_COUNT - 1) {}
+    Dim cellCircles As CellCircle() = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
+    Dim grid As CellCircle()() = New CellCircle(GRID_WIDTH - 1)() {}
 
     Sub New()
-        circleData = New Circle(CIRCLE_COUNT - 1) {}
-        circlevData = New CircleV(CIRCLE_COUNT - 1) {}
-        cellCircles = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
-        grid = New CellCircle(GRID_WIDTH - 1)() {}
-
         For i As Integer = 0 To grid.Length - 1
             grid(i) = New CellCircle(GRID_HEIGHT - 1) {}
         Next
@@ -92,7 +87,7 @@ Module Algorithm
                 r = System.Math.Ceiling(System.Math.Exp(VBMath.Rnd * 8) / 23.2887)
 
                 ' ensure within window bounds
-                If (displayWidth - (x + r) < 0 OrElse x - r < 0 OrElse displayHeight - (y + r) < 0 OrElse y - r < 0) Then
+                If (displayWidth - (x + r) < 0) OrElse (x - r < 0) OrElse (displayHeight - (y + r) < 0) OrElse (y - r < 0) Then
                     collision = True
                 Else
                     ' ensure no collisions for starting position
