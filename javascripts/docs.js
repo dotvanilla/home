@@ -82,8 +82,14 @@ var vanillavb;
                     pathFallback = `/vbscripts/docs/${fileName}.md`;
                 }
                 else {
-                    // show home page
-                    pathFallback = "/vbscripts/README.md";
+                    fileName = $ts.location.fileName;
+                    if (fileName == "index.html" || Strings.Empty(fileName, true)) {
+                        // show home page
+                        pathFallback = "/vbscripts/README.md";
+                    }
+                    else {
+                        return null;
+                    }
                 }
                 path = pathFallback;
             }
@@ -115,7 +121,6 @@ var vanillavb;
             config.renderer = new app.markdown();
             vbcodeStyle.lineHeight = "5px";
             language = lang();
-            // TypeScript.logging.log(config);
             app.renderDocument(getTargetFile());
         }
         app.initialize = initialize;
@@ -174,6 +179,10 @@ var vanillavb;
                 }
                 vanillavb.app.updateArticle(html);
             };
+            if (isNullOrUndefined(url)) {
+                // stop render when path is nothing
+                return;
+            }
             // fetch markdown document from server and run renderer
             $ts.getText(url.path, renderDocumentInternal, {
                 nullForNotFound: true

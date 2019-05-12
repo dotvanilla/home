@@ -27,8 +27,14 @@ namespace vanillavb.app {
             if (!Strings.Empty(fileName, true)) {
                 pathFallback = `/vbscripts/docs/${fileName}.md`;
             } else {
-                // show home page
-                pathFallback = "/vbscripts/README.md";
+                fileName = $ts.location.fileName;
+
+                if (fileName == "index.html" || Strings.Empty(fileName, true)) {
+                    // show home page
+                    pathFallback = "/vbscripts/README.md";
+                } else {
+                    return null;
+                }
             }
 
             path = pathFallback;
@@ -64,7 +70,6 @@ namespace vanillavb.app {
         vbcodeStyle.lineHeight = "5px";
         language = lang();
 
-        // TypeScript.logging.log(config);
         app.renderDocument(getTargetFile());
     }
 
@@ -125,6 +130,11 @@ namespace vanillavb.app {
             }
 
             vanillavb.app.updateArticle(html);
+        }
+
+        if (isNullOrUndefined(url)) {
+            // stop render when path is nothing
+            return;
         }
 
         // fetch markdown document from server and run renderer
