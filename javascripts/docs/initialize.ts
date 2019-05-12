@@ -18,7 +18,7 @@ namespace vanillavb.app {
         }
     }
 
-    function getTargetFile(fileName: string = $ts.location.hash()): DocumentFullName {
+    function getTargetFile(fileName: string = $ts.location.hash(), multipleLanguage: boolean = true): DocumentFullName {
         let pathFallback: string;
         let path: string;
 
@@ -26,7 +26,7 @@ namespace vanillavb.app {
             pathFallback = `/docs/${fileName}.md`;
             path = pathFallback;
 
-            if (!Strings.Empty(language, true)) {
+            if (multipleLanguage && !Strings.Empty(language, true)) {
                 path = `/docs/${fileName}.${language}.md`;
             }
         } else {
@@ -34,7 +34,7 @@ namespace vanillavb.app {
             pathFallback = "/README.md";
             path = pathFallback;
 
-            if (!Strings.Empty(language, true)) {
+            if (multipleLanguage && !Strings.Empty(language, true)) {
                 path = `/README.${language}.md`;
             }
         }
@@ -52,7 +52,7 @@ namespace vanillavb.app {
         vbcodeStyle.lineHeight = "5px";
         language = lang();
 
-        TypeScript.logging.log(config);
+        // TypeScript.logging.log(config);
         app.renderDocument(getTargetFile());
     }
 

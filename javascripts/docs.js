@@ -73,13 +73,13 @@ var vanillavb;
                 return folder.split("/")[0];
             }
         }
-        function getTargetFile(fileName = $ts.location.hash()) {
+        function getTargetFile(fileName = $ts.location.hash(), multipleLanguage = true) {
             let pathFallback;
             let path;
             if (!Strings.Empty(fileName, true)) {
                 pathFallback = `/docs/${fileName}.md`;
                 path = pathFallback;
-                if (!Strings.Empty(language, true)) {
+                if (multipleLanguage && !Strings.Empty(language, true)) {
                     path = `/docs/${fileName}.${language}.md`;
                 }
             }
@@ -87,7 +87,7 @@ var vanillavb;
                 // show home page
                 pathFallback = "/README.md";
                 path = pathFallback;
-                if (!Strings.Empty(language, true)) {
+                if (multipleLanguage && !Strings.Empty(language, true)) {
                     path = `/README.${language}.md`;
                 }
             }
@@ -102,7 +102,7 @@ var vanillavb;
             config.renderer = new app.markdown();
             vbcodeStyle.lineHeight = "5px";
             language = lang();
-            TypeScript.logging.log(config);
+            // TypeScript.logging.log(config);
             app.renderDocument(getTargetFile());
         }
         app.initialize = initialize;
