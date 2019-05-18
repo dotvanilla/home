@@ -111,7 +111,7 @@ Module Algorithm
         Next
     End Sub
 
-    Public Sub timeStep(displayWidth!, displayHeight!)
+    Private Sub reset()
         For p As Integer = 0 To GRID_WIDTH - 1
             Dim row = grid(p)
 
@@ -119,7 +119,9 @@ Module Algorithm
                 row(q) = Nothing
             Next
         Next
+    End Sub
 
+    Private Sub update(displayWidth!, displayHeight!)
         Dim cellCircleCount = 0
 
         For i As Integer = 0 To CIRCLE_COUNT - 1
@@ -164,34 +166,36 @@ Module Algorithm
                 bottomRow = GRID_HEIGHT - 1
             End If
 
-            For p As Integer = leftCol To rightCol
-                Dim row = grid(p)
+            For p2 As Integer = leftCol To rightCol
+                Dim row1 = grid(p2)
 
-                For q As Integer = topRow To bottomRow
+                For q2 As Integer = topRow To bottomRow
                     Dim cellCircle = cellCircles(cellCircleCount)
                     cellCircleCount += 1
                     cellCircle.circleIndex = i
-                    cellCircle.next = row(q)
-                    row(q) = cellCircle
+                    cellCircle.next = row1(q2)
+                    row1(q2) = cellCircle
                 Next
             Next
         Next
+    End Sub
 
-        For p As Integer = 0 To GRID_WIDTH - 1
-            Dim row = grid(p)
+    Private Sub detectConflicts()
+        For p1 As Integer = 0 To GRID_WIDTH - 1
+            Dim row2 = grid(p1)
 
-            For q As Integer = 0 To GRID_HEIGHT - 1
-                Dim iCellCircle = row(q)
+            For q1 As Integer = 0 To GRID_HEIGHT - 1
+                Dim iCellCircle = row2(q1)
 
                 Do While Not iCellCircle Is Nothing
-                    Dim i = iCellCircle.circleIndex
+                    Dim index = iCellCircle.circleIndex
 
-                    Dim xi = circleData(i).x
-                    Dim yi = circleData(i).y
-                    Dim ri = circleData(i).r
+                    Dim xi = circleData(index).x
+                    Dim yi = circleData(index).y
+                    Dim ri = circleData(index).r
 
-                    Dim vxi = circlevData(i).vx
-                    Dim vyi = circlevData(i).vy
+                    Dim vxi = circlevData(index).vx
+                    Dim vyi = circlevData(index).vy
 
                     Dim jCellCircle = iCellCircle
 
@@ -221,36 +225,43 @@ Module Algorithm
                             Dim cuj = collDx * vxj + collDy * vyj
 
                             ' skip collision if moving away from eachother
-                            If (cui - cuj <= 0) Then
-                                Continue Do
+                            If Not (cui - cuj <= 0) Then
+                                ' we then use 1d elastic collision equations
+                                ' to get resultant 1d velocities after collision
+                                ' (https://en.wikipedia.org/wiki/Elastic_collision)
+                                Dim massSum = ri + rj
+                                Dim massDiff = ri - rj
+                                Dim cvi = (cui * massDiff + 2 * rj * cuj) / massSum
+                                Dim cvj = (2 * ri * cui - cuj * massDiff) / massSum
+
+                                ' calculate the collision velocity change
+                                Dim dcvi = cvi - cui
+                                Dim dcvj = cvj - cuj
+
+                                ' apply that velocity change dotted with the collision unit vector
+                                ' to the original velocities
+                                circlevData(index).vx = vxi + collDx * dcvi
+                                circlevData(index).vy = vyi + collDy * dcvi
+                                circlevData(j).vx = vxj + collDx * dcvj
+                                circlevData(j).vy = vyj + collDy * dcvj
+
+                                jCellCircle = jCellCircle.next
                             End If
-                            ' we then use 1d elastic collision equations
-                            ' to get resultant 1d velocities after collision
-                            ' (https://en.wikipedia.org/wiki/Elastic_collision)
-                            Dim massSum = ri + rj
-                            Dim massDiff = ri - rj
-                            Dim cvi = (cui * massDiff + 2 * rj * cuj) / massSum
-                            Dim cvj = (2 * ri * cui - cuj * massDiff) / massSum
-
-                            ' calculate the collision velocity change
-                            Dim dcvi = cvi - cui
-                            Dim dcvj = cvj - cuj
-
-                            ' apply that velocity change dotted with the collision unit vector
-                            ' to the original velocities
-                            circlevData(i).vx = vxi + collDx * dcvi
-                            circlevData(i).vy = vyi + collDy * dcvi
-                            circlevData(j).vx = vxj + collDx * dcvj
-                            circlevData(j).vy = vyj + collDy * dcvj
+                        Else
+                            jCellCircle = jCellCircle.next
                         End If
-
-                        jCellCircle = jCellCircle.next
                     Loop
 
                     iCellCircle = iCellCircle.next
                 Loop
             Next
         Next
+    End Sub
+
+    Public Sub timeStep(displayWidth!, displayHeight!)
+        Call reset()
+        Call update(displayWidth, displayHeight)
+        Call detectConflicts()
     End Sub
 End Module
 
