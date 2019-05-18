@@ -15,9 +15,18 @@
       var buffer = engine.memory.buffer;
       var circleCount = engine.Algorithm.getCircleCount();
       var arrayPtr = engine.Algorithm.getCircleDataOffset();
+
+      console.log(`${arrayPtr}/4=${arrayPtr/4}`)
+
       var circleData = new Float32Array(buffer, arrayPtr, circleCount * 3);
       var canvas = $ts("#canvas");
-      var render = new webgl.render(canvas, Algorithm.timeStep, Algorithm.init, circleData, circleCount);
+      var render = new webgl.render(
+        canvas, 
+        engine.Algorithm.timeStep,
+        engine.Algorithm.init, 
+        circleData, 
+        circleCount
+      );
 
       render.run();
     },
