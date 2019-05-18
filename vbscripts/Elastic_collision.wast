@@ -108,6 +108,7 @@
     ;; Export methods of this module
     ;; export from VB.NET module: [Algorithm]
     
+    (export "Algorithm.getCircleCount" (func $Algorithm.getCircleCount))
     (export "Algorithm.getCircleDataOffset" (func $Algorithm.getCircleDataOffset))
     (export "Algorithm.init" (func $Algorithm.init))
     (export "Algorithm.timeStep" (func $Algorithm.timeStep))
@@ -134,13 +135,22 @@
 
     ;; functions in [Algorithm]
     
-    (func $Algorithm.getCircleDataOffset  (result i32)
-        ;; Public Function getCircleDataOffset() As array(Of intptr)
+    (func $Algorithm.getCircleCount  (result i32)
+        ;; Public Function getCircleCount() As i32
         
     (local $arrayOffset_9a020000 i32)
     (local $arrayOffset_9b020000 i32)
     (local $arrayOffset_9c020000 i32)
     (local $arrayOffset_9d020000 i32)
+    
+    (return (get_global $defines.CIRCLE_COUNT))
+    )
+    
+    
+    (func $Algorithm.getCircleDataOffset  (result i32)
+        ;; Public Function getCircleDataOffset() As array(Of intptr)
+        
+    
     
     (return (get_global $Algorithm.circleData))
     )
