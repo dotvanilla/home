@@ -68,6 +68,37 @@
     .S {
       font: bolder 14px arial, sans-serif;
     }
+
+    .float-nav {
+      background: #f7f9fa;
+      background-image: url(../css/back-to-top-icon-png-4.jpg);
+      background-size: 25px 25px;
+      background-repeat: no-repeat;
+      background-position-x: 9px;
+      background-position-y: 10px;
+      border: 1px solid #e5e9ef;
+      border-radius: 3px;
+      width: 45px;
+      height: 45px;
+      margin-bottom: 8px;
+      position: fixed;
+      right: 12px;
+      bottom: 120px;
+      transition: all .3s;
+      transition-property: all;
+      transition-duration: 0.3s;
+      transition-timing-function: ease;
+      transition-delay: 0s;
+      cursor: pointer;
+      color: #999;
+      text-align: center;
+    }
+
+    .float-nav:hover {
+      background-color: #159957;
+      border-color: #159957;
+      color: #fff;
+    }
   </style>
 
 </head>
@@ -151,6 +182,11 @@
     $ts.getText("base64.wast", code => $ts("#webassembly").display(wast.highlight(code)));
 
   </script>
+
+  <div title="Back to top" class="item backup float-nav" onclick="TypeScript.URL.JumpToHash('#demo');">
+
+  </div>
+
 </body>
 
 </html>
