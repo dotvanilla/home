@@ -5,22 +5,26 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 5/18/2019 7:41:02 PM
+    ;; build: 5/18/2019 7:57:36 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
     ;; imports must occur before all non-import definitions
 
-    ;; Declare Function Math.random Lib "Math" Alias "random" () As f64
+    ;; Declare Function Math.pow Lib "Math" Alias "pow" (a As f64, b As f64) As f64
+    (func $Math.pow (import "Math" "pow") (param $a f64) (param $b f64) (result f64))
+;; Declare Function Math.sqrt Lib "Math" Alias "sqrt" (a As f64) As f64
+    (func $Math.sqrt (import "Math" "sqrt") (param $a f64) (result f64))
+;; Declare Function Math.exp Lib "Math" Alias "exp" (x As f64) As f64
+    (func $Math.exp (import "Math" "exp") (param $x f64) (result f64))
+;; Declare Function Math.cos Lib "Math" Alias "cos" (x As f64) As f64
+    (func $Math.cos (import "Math" "cos") (param $x f64) (result f64))
+;; Declare Function Math.random Lib "Math" Alias "random" () As f64
     (func $Math.random (import "Math" "random")  (result f64))
 ;; Declare Function Math.ceil Lib "Math" Alias "ceil" (x As f64) As f64
     (func $Math.ceil (import "Math" "ceil") (param $x f64) (result f64))
-;; Declare Function Math.exp Lib "Math" Alias "exp" (x As f64) As f64
-    (func $Math.exp (import "Math" "exp") (param $x f64) (result f64))
 ;; Declare Function Math.floor Lib "Math" Alias "floor" (x As f64) As f64
     (func $Math.floor (import "Math" "floor") (param $x f64) (result f64))
-;; Declare Function Math.sqrt Lib "Math" Alias "sqrt" (a As f64) As f64
-    (func $Math.sqrt (import "Math" "sqrt") (param $a f64) (result f64))
     
     ;; Only allows one memory block in each module
     (memory (import "env" "bytechunks") 1)
@@ -654,9 +658,11 @@
     (func $global.initializer  
     ;; Public Function initializer() As void
     
-
-
 (local $arrayOffset_9a020000 i32)
+(local $arrayOffset_9b020000 i32)
+(local $arrayOffset_9c020000 i32)
+(local $arrayOffset_9d020000 i32)
+
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
 ;; Array memory block begin at location: (get_global $global.ObjectManager)
@@ -669,7 +675,6 @@
 (set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9a020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
 (set_global $Algorithm.circleData (i32.add (get_local $arrayOffset_9a020000) (i32.const -8)))
-(local $arrayOffset_9b020000 i32)
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
 ;; Array memory block begin at location: (get_global $global.ObjectManager)
@@ -682,7 +687,6 @@
 (set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9b020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
 (set_global $Algorithm.circlevData (i32.add (get_local $arrayOffset_9b020000) (i32.const -8)))
-(local $arrayOffset_9c020000 i32)
 
 ;; Save (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) array element data to memory:
 ;; Array memory block begin at location: (get_global $global.ObjectManager)
@@ -695,7 +699,6 @@
 (set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9c020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
 (set_global $Algorithm.cellCircles (i32.add (get_local $arrayOffset_9c020000) (i32.const -8)))
-(local $arrayOffset_9d020000 i32)
 
 ;; Save (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) array element data to memory:
 ;; Array memory block begin at location: (get_global $global.ObjectManager)
