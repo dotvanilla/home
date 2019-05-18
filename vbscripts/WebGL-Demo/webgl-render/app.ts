@@ -71,7 +71,7 @@
         }
 
         public run() {
-            requestAnimationFrame(this.draw);
+            requestAnimationFrame.call(this, this.draw);
         }
 
         /**
@@ -98,7 +98,7 @@
             vm.lastDrawTime = curTime;
 
             // do next frame
-            requestAnimationFrame(vm.draw);
+            requestAnimationFrame.call(vm, vm.draw);
         }
 
         private updateIterationCount(dt) {
