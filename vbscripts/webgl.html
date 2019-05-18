@@ -14,7 +14,7 @@
 
       var buffer = engine.memory.buffer;
       var circleCount = engine.Algorithm.getCircleCount();
-      var arrayPtr = engine.Algorithm.getCircleDataOffset();
+      var arrayPtr = engine.Algorithm.getCircleDataOffset() + 8;
 
       console.log(`${arrayPtr}/4=${arrayPtr/4}`)
 

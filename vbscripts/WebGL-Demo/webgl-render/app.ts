@@ -67,7 +67,7 @@
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl.createBuffer());
             this.gl.vertexAttribPointer(circleCoordLoc, 3, this.gl.FLOAT, false, 4 * 3, 0);
 
-            this.lastDrawTime = performance.now();            
+            this.lastDrawTime = performance.now();
         }
 
         public run() {
@@ -79,25 +79,26 @@
         */
         private draw() {
             let curTime = performance.now();
-            let gl = this.gl;
+            let vm = this;
+            let gl = vm.gl;
 
             // optimize iteration count from time since last draw
-            this.updateIterationCount(curTime - this.lastDrawTime);
+            vm.updateIterationCount(curTime - vm.lastDrawTime);
 
-            for (let i = 0; i < this.iterations; i++) {
-                this.timeStep(this.displayWidth, this.displayHeight);
+            for (let i = 0; i < vm.iterations; i++) {
+                vm.timeStep(vm.displayWidth, vm.displayHeight);
             }
 
             // copy the circle data from array buffer memory to the GPU
-            gl.bufferData(gl.ARRAY_BUFFER, this.circleFloat32Array, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, vm.circleFloat32Array, gl.DYNAMIC_DRAW);
             // draw the circles on the GPU from the data
-            gl.drawArrays(gl.POINTS, 0, this.circleCount);
+            gl.drawArrays(gl.POINTS, 0, vm.circleCount);
 
             // start a new animation loop
-            this.lastDrawTime = curTime;
+            vm.lastDrawTime = curTime;
 
             // do next frame
-            requestAnimationFrame(this.draw);
+            requestAnimationFrame(vm.draw);
         }
 
         private updateIterationCount(dt) {

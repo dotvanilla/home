@@ -336,3 +336,5 @@ ASALocalRun/
 /javascripts/linq.js
 /javascripts/tools/closure-compiler-v20181125.jar
 /javascripts/wast.code.js
+*.dll
+/vbscripts/Elastic_collision.xml
