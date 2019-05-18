@@ -335,3 +335,4 @@ ASALocalRun/
 /javascripts/marked.js
 /javascripts/linq.js
 /javascripts/tools/closure-compiler-v20181125.jar
+/javascripts/wast.code.js
