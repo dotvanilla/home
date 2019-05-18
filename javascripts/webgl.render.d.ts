@@ -32,6 +32,7 @@ declare namespace webgl {
          * @param init call generation function
         */
         constructor(canvas: HTMLCanvasElement, timeStep: CanvasFrameAction, init: CanvasFrameAction, circleFloat32Array: ArrayBuffer, circleCount: number);
+        run(): void;
         /**
          * Draw loop
         */
