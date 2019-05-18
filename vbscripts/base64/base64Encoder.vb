@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::30b83a0c3b931173d3a3e0aadb1dcdf3, vbscripts\base64\base64Encoder.vb"
+﻿#Region "Microsoft.VisualBasic::39f244ad2fe0af76c9bd3247d2f8ef41, vbscripts\base64\base64Encoder.vb"
 
     ' Author:
     ' 
@@ -141,4 +141,3 @@ Public Module base64Encoder
         Return text
     End Function
 End Module
-

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::7ae5e6fcd0b3275265ada75fb8a7bb47, vbscripts\base64\stringHelpers.vb"
+﻿#Region "Microsoft.VisualBasic::c4ba22d295b1396a1a11044eabadf274, vbscripts\base64\stringHelpers.vb"
 
     ' Author:
     ' 
@@ -65,4 +65,3 @@ Module stringHelpers
     Declare Function Join Lib "string" Alias "join" (array As IList, delimiter As String) As String
 
 End Module
-

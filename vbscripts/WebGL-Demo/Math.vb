@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::cc0fa363bf79e41f0f454a4421b269a3, vbscripts\WebGL-Demo\Math.vb"
+﻿#Region "Microsoft.VisualBasic::1dcd3a15fbc7383a7256218b812de7e9, vbscripts\WebGL-Demo\Math.vb"
 
     ' Author:
     ' 
@@ -55,4 +55,3 @@ Module Math
         Return Global.System.Math.Sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) <= r1 + r2
     End Function
 End Module
-

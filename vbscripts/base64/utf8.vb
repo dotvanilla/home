@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::3b19d74fb2231e8be299d89d5d603b59, vbscripts\base64\utf8.vb"
+﻿#Region "Microsoft.VisualBasic::e4b8de27a55f3836b8731226dd9c09a2, vbscripts\base64\utf8.vb"
 
     ' Author:
     ' 
@@ -116,4 +116,3 @@ Module utf8
         Return t.Join("")
     End Function
 End Module
-
