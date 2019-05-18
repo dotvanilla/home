@@ -1,45 +1,82 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-US">
 
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <!-- Begin Jekyll SEO tag v2.5.0 -->
-  <title>Welcome to .vanilla Framework</title>
-  <meta name="generator" content="Jekyll v3.7.4" />
-  <meta property="og:title" content="Welcome to .vanilla Framework" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:url" content="http://vanillavb.app/" />
-  <meta property="og:site_name" content=".vanilla Framework" />
-  <script type="application/ld+json">
-    {"@type":"WebSite","url":"http://vanillavb.app/","name":"home","headline":"Welcome to .vanilla Framework","@context":"http://schema.org"}
-  </script>
-  <!-- End Jekyll SEO tag -->
+    <!-- Begin Jekyll SEO tag v2.5.0 -->
+    <title>Welcome to .vanilla Framework</title>
+    <meta name="generator" content="Jekyll v3.7.4" />
+    <meta property="og:title" content="Welcome to .vanilla Framework" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="http://vanillavb.app/" />
+    <meta property="og:site_name" content=".vanilla Framework" />
+    <script type="application/ld+json">
+        {"@type":"WebSite","url":"http://vanillavb.app/","name":"home","headline":"Welcome to .vanilla Framework","@context":"http://schema.org"}
+    </script>
+    <!-- End Jekyll SEO tag -->
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#157878">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
 
-  <script type="text/javascript" src="../javascripts/linq.min.js"></script>
-  <script type="text/javascript" src="../javascripts/marked.min.js"></script>
-  <script type="text/javascript" src="../javascripts/vbcode.min.js"></script>
-  <script type="text/javascript" src="../javascripts/highlight/highlight.pack.js"></script>
-  <script type="text/javascript" src="../javascripts/visualbasic.wasm.min.js"></script>
-  <script type="text/javascript" src="../javascripts/docs.js"></script>
+    <script type="text/javascript" src="../javascripts/linq.min.js"></script>
+    <script type="text/javascript" src="../javascripts/marked.min.js"></script>
+    <script type="text/javascript" src="../javascripts/vbcode.min.js"></script>
+    <script type="text/javascript" src="../javascripts/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../javascripts/visualbasic.wasm.min.js"></script>
+    <script type="text/javascript" src="../javascripts/docs.js"></script>
+    <script type="text/javascript" src="../javascripts/wast.code.min.js"></script>
 
-  <link rel="canonical" href="http://vanillavb.app/" />
-  <link rel="search" type="application/opensearchdescription+xml" href="#" title="" />
-  <link rel="EditURI" type="application/rsd+xml" href="" />
-  <link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" />
-  <link rel="alternate" type="application/atom+xml" title="" href="" />
-  <link rel="shortcut icon" href="../vscodeinsider.png" />
-  <link rel="stylesheet" href="../css/style.css?v=80bb96db1a971059506c5069dfe3d1dda4784285">
-  <link rel="stylesheet" href="../javascripts/highlight/styles/xcode.css">
+    <link rel="canonical" href="http://vanillavb.app/" />
+    <link rel="search" type="application/opensearchdescription+xml" href="#" title="" />
+    <link rel="EditURI" type="application/rsd+xml" href="" />
+    <link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" />
+    <link rel="alternate" type="application/atom+xml" title="" href="" />
+    <link rel="shortcut icon" href="../vscodeinsider.png" />
+    <link rel="stylesheet" href="../css/style.css?v=80bb96db1a971059506c5069dfe3d1dda4784285">
+    <link rel="stylesheet" href="../javascripts/highlight/styles/xcode.css">
+
+    <style type="text/css">
+    #webassembly > .string {
+        color: brown;
+    }
+
+    #webassembly > .comment {
+        color: green;
+    }
+
+    #webassembly > .code {
+        color: darkslateblue;
+    }
+
+    #webassembly > .keyword {
+        color: blue;
+    }
+
+    #webassembly > .line-number {
+        padding-right: 10px;
+    }
+
+    #webassembly > .type {
+        color: rgb(175, 0, 175);
+    }
+
+    #webassembly > .symbol {
+        color: rgb(10, 142, 182);
+    }
+
+    #webassembly > .S {
+        font: bolder 14px arial,sans-serif;
+    }
+
+    </style>
+
 </head>
 
 <body>
 
   <section class="page-header">
-    <h1 class="project-name"><a href="/" style="color:white;">.vanilla Framework</a></h1>
+    <h1 class="project-name"><a href="/" style="        color: white;">.vanilla Framework</a></h1>
     <h2 class="project-tagline"></h2>
 
     <a href="https://github.com/dotvanilla/vanilla" class="btn">View on GitHub</a>
@@ -56,9 +93,9 @@
             </p>
             <p><textarea id="text-input" rows="5" cols="41"></textarea></p>
             <p>Base64 encode output from VisualBasic.NET WebAssembly application:</p>
-            <p id="base64-output" style="background-color: blanchedalmond;"></p>
+            <p id="base64-output" style="        background-color: blanchedalmond;"></p>
             <p>And this is the raw text decode from the base64 result:</p>
-            <p id="raw-output" style="background-color:azure;"></p>
+            <p id="raw-output" style="        background-color: azure;"></p>
           </div>
     
           <hr />
@@ -66,6 +103,13 @@
     <span id="article">
 
     </span>
+
+      <div>
+          <h4>WebAssembly Source</h4>
+          <div id="webassembly">
+
+          </div>
+      </div>
 
     <footer class="site-footer">
       <span class="site-footer-credits">Power by <a
@@ -103,6 +147,8 @@
       },
       api: { console: true, text: true, array: true }
     });
+
+      $ts.getText("base64.wast", code => $ts("#webassembly").display(wast.highlight(code)));
   </script>
 </body>
 
