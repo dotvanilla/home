@@ -71,7 +71,11 @@
         }
 
         public run() {
-            requestAnimationFrame.call(this, this.draw);
+            let vm = this;
+
+            requestAnimationFrame(function () {
+                vm.draw();
+            });
         }
 
         /**
@@ -98,7 +102,9 @@
             vm.lastDrawTime = curTime;
 
             // do next frame
-            requestAnimationFrame.call(vm, vm.draw);
+            requestAnimationFrame(function () {
+                vm.draw();
+            });
         }
 
         private updateIterationCount(dt) {
