@@ -113,8 +113,10 @@ Module Algorithm
 
     Public Sub timeStep(displayWidth!, displayHeight!)
         For p As Integer = 0 To GRID_WIDTH - 1
+            Dim row = grid(p)
+
             For q As Integer = 0 To GRID_HEIGHT - 1
-                grid(p)(q) = Nothing
+                row(q) = Nothing
             Next
         Next
 
@@ -163,19 +165,23 @@ Module Algorithm
             End If
 
             For p As Integer = leftCol To rightCol
+                Dim row = grid(p)
+
                 For q As Integer = topRow To bottomRow
                     Dim cellCircle = cellCircles(cellCircleCount)
                     cellCircleCount += 1
                     cellCircle.circleIndex = i
-                    cellCircle.next = grid(p)(q)
-                    grid(p)(q) = cellCircle
+                    cellCircle.next = row(q)
+                    row(q) = cellCircle
                 Next
             Next
         Next
 
         For p As Integer = 0 To GRID_WIDTH - 1
+            Dim row = grid(p)
+
             For q As Integer = 0 To GRID_HEIGHT - 1
-                Dim iCellCircle = grid(p)(q)
+                Dim iCellCircle = row(q)
 
                 Do While Not iCellCircle Is Nothing
                     Dim i = iCellCircle.circleIndex
