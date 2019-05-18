@@ -7,7 +7,7 @@
     <ProjectGuid>{EAE44E1D-2F0F-4EA2-8468-ED0649742650}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>WebGL_Demo</RootNamespace>
-    <AssemblyName>WebGL-Demo</AssemblyName>
+    <AssemblyName>Elastic_collision</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
@@ -18,8 +18,8 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>WebGL-Demo.xml</DocumentationFile>
+    <OutputPath>..\</OutputPath>
+    <DocumentationFile>Elastic_collision.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -27,8 +27,8 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>WebGL-Demo.xml</DocumentationFile>
+    <OutputPath>..\</OutputPath>
+    <DocumentationFile>Elastic_collision.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
