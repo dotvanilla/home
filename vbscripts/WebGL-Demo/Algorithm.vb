@@ -67,6 +67,10 @@ Module Algorithm
         Next
     End Sub
 
+    Public Function getCircleCount() As Integer
+        Return CIRCLE_COUNT
+    End Function
+
     ''' <summary>
     ''' 这个函数主要是用于获取得到数组在内存之中的指针位置
     ''' </summary>

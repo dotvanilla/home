@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<title>WebGL Demo</title>
+<script src="../javascripts/linq.min.js"></script>
+<script src="../javascripts/visualbasic.wasm.min.js"></script>
+<script src="../javascripts/webgl.render.min.js"></script>
+
+<body style="margin:0; overflow: hidden">
+  <canvas id="canvas" style="width: 100vw; height: 100vh; display:block;"></canvas>
+</body>
+<script>
+  vanilla.Wasm.showDebugMessage(false);
+  vanilla.Wasm.RunAssembly("../vbscripts/Elastic_collision.wasm", {
+    run: engine => {
+
+      var buffer = engine.memory.buffer;
+      var circleCount = engine.Algorithm.getCircleCount();
+      var arrayPtr = engine.Algorithm.getCircleDataOffset();
+      var circleData = new Float32Array(buffer, arrayPtr, circleCount * 3);
+      var canvas = $ts("#canvas");
+      var render = new webgl.render(canvas, Algorithm.timeStep, Algorithm.init, circleData, circleCount);
+
+      render.run();
+    },
+    api: { console: true, text: true, array: true }
+  });
+</script>

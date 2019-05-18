@@ -67,9 +67,11 @@
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl.createBuffer());
             this.gl.vertexAttribPointer(circleCoordLoc, 3, this.gl.FLOAT, false, 4 * 3, 0);
 
-            this.lastDrawTime = performance.now();
+            this.lastDrawTime = performance.now();            
+        }
 
-            requestAnimationFrame(vm.draw);
+        public run() {
+            requestAnimationFrame(this.draw);
         }
 
         /**
@@ -93,6 +95,8 @@
 
             // start a new animation loop
             this.lastDrawTime = curTime;
+
+            // do next frame
             requestAnimationFrame(this.draw);
         }
 
