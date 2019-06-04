@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 5/19/2019 12:34:13 AM
+    ;; build: 6/3/2019 11:42:34 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -25,6 +25,8 @@
     (func $Math.ceil (import "Math" "ceil") (param $x f64) (result f64))
 ;; Declare Function Math.floor Lib "Math" Alias "floor" (x As f64) As f64
     (func $Math.floor (import "Math" "floor") (param $x f64) (result f64))
+;; Declare Function GC.addObject Lib "GC" Alias "addObject" (offset As i32, class_id As i32) As void
+    (func $GC.addObject (import "GC" "addObject") (param $offset i32) (param $class_id i32) )
     
     ;; Only allows one memory block in each module
     (memory (import "env" "bytechunks") 1)
@@ -32,57 +34,69 @@
     ;; A global object manager for create user object in WebAssembly
     ;; Its initialize value is the total size of the string data
     ;; of this webassembly module
-    (global $global.ObjectManager (mut i32) (i32.const 1204))
+    (global $global.ObjectManager (mut i32) (i32.const 1176))
+
+    ;; memory allocate in javascript runtime
+    (func $global.ObjectManager.Allocate (param $sizeof i32) (param $class_id i32) (result i32)
+    ;; Public Function ObjectManager.Allocate(sizeof As i32, class_id As i32) As i32
+    
+(local $offset i32)
+
+(set_local $offset (get_global $global.ObjectManager))
+(set_global $global.ObjectManager (i32.add (get_local $offset) (get_local $sizeof)))
+(call $GC.addObject (get_local $offset) (get_local $class_id))
+(return (get_local $offset))
+)
 
     ;; Memory data for string constant
         
-    ;; String from 960 with 10 bytes in memory
-    (data (i32.const 960) "WebGL-Demo\00")
+    ;; String from 904 with 10 bytes in memory
+    (data (i32.const 904) "WebGL-Demo\00")
     
-    ;; String from 971 with 80 bytes in memory
-    (data (i32.const 971) "WebAssembly conversion demonstrating the faster-performing grid of linked-lists.\00")
+    ;; String from 920 with 80 bytes in memory
+    (data (i32.const 920) "WebAssembly conversion demonstrating the faster-performing grid of linked-lists.\00")
     
-    ;; String from 1052 with 3 bytes in memory
-    (data (i32.const 1052) "MIT\00")
+    ;; String from 1008 with 3 bytes in memory
+    (data (i32.const 1008) "MIT\00")
     
-    ;; String from 1056 with 10 bytes in memory
-    (data (i32.const 1056) "WebGL-Demo\00")
+    ;; String from 1016 with 10 bytes in memory
+    (data (i32.const 1016) "WebGL-Demo\00")
     
-    ;; String from 1067 with 69 bytes in memory
-    (data (i32.const 1067) "https://github.com/guybedford/wasm-demo/blob/master/native/demo-opt.c\00")
+    ;; String from 1032 with 69 bytes in memory
+    (data (i32.const 1032) "https://github.com/guybedford/wasm-demo/blob/master/native/demo-opt.c\00")
     
-    ;; String from 1137 with 13 bytes in memory
-    (data (i32.const 1137) "vanillavb.app\00")
+    ;; String from 1104 with 13 bytes in memory
+    (data (i32.const 1104) "vanillavb.app\00")
     
-    ;; String from 1151 with 36 bytes in memory
-    (data (i32.const 1151) "83ca2b93-4e57-4d44-b2bc-163252a9305d\00")
+    ;; String from 1120 with 36 bytes in memory
+    (data (i32.const 1120) "83ca2b93-4e57-4d44-b2bc-163252a9305d\00")
     
-    ;; String from 1188 with 7 bytes in memory
-    (data (i32.const 1188) "1.0.0.0\00")
+    ;; String from 1160 with 7 bytes in memory
+    (data (i32.const 1160) "1.0.0.0\00")
     
-    ;; String from 1196 with 7 bytes in memory
-    (data (i32.const 1196) "1.0.0.0\00")
+    ;; String from 1168 with 7 bytes in memory
+    (data (i32.const 1168) "1.0.0.0\00")
     
     ;; Memory data for user defined class object its meta data
     ;; all of these string is base64 encoded json object
         
-    ;; String from 13 with 336 bytes in memory
+    ;; String from 13 with 300 bytes in memory
     ;;
     ;; class [13] Circle
     ;;
-    (data (i32.const 13) "eyJjb21tZW50IjpudWxsLCJtZW1vcnlQdHIiOnsiVmFsdWUiOjEzfSwiY2xhc3MiOiJDaXJjbGUiLCJjbGFzc19pZCI6MTMsImZpZWxkcyI6eyJ4Ijp7ImdlbmVyaWMiOltdLCJyYXciOiJmMzIiLCJ0eXBlIjozfSwieSI6eyJnZW5lcmljIjpbXSwicmF3IjoiZjMyIiwidHlwZSI6M30sInIiOnsiZ2VuZXJpYyI6W10sInJhdyI6ImYzMiIsInR5cGUiOjN9fSwiaXNTdHJ1Y3QiOmZhbHNlLCJtZXRob2RzIjp7fSwibmFtZXNwYWNlIjpudWxsfQ==\00")
+    (data (i32.const 13) "eyJjb21tZW50IjpudWxsLCJjbGFzcyI6IkNpcmNsZSIsImNsYXNzX2lkIjoxMywiZmllbGRzIjp7IngiOnsiZ2VuZXJpYyI6W10sInJhdyI6ImYzMiIsInR5cGUiOjN9LCJ5Ijp7ImdlbmVyaWMiOltdLCJyYXciOiJmMzIiLCJ0eXBlIjozfSwiciI6eyJnZW5lcmljIjpbXSwicmF3IjoiZjMyIiwidHlwZSI6M319LCJpc1N0cnVjdCI6ZmFsc2UsIm1ldGhvZHMiOnt9LCJuYW1lc3BhY2UiOm51bGx9\00")
     
-    ;; String from 350 with 288 bytes in memory
+    ;; String from 320 with 252 bytes in memory
     ;;
-    ;; class [350] CircleV
+    ;; class [320] CircleV
     ;;
-    (data (i32.const 350) "eyJjb21tZW50IjpudWxsLCJtZW1vcnlQdHIiOnsiVmFsdWUiOjM1MH0sImNsYXNzIjoiQ2lyY2xlViIsImNsYXNzX2lkIjozNTAsImZpZWxkcyI6eyJ2eSI6eyJnZW5lcmljIjpbXSwicmF3IjoiZjMyIiwidHlwZSI6M30sInZ4Ijp7ImdlbmVyaWMiOltdLCJyYXciOiJmMzIiLCJ0eXBlIjozfX0sImlzU3RydWN0IjpmYWxzZSwibWV0aG9kcyI6e30sIm5hbWVzcGFjZSI6bnVsbH0=\00")
+    (data (i32.const 320) "eyJjb21tZW50IjpudWxsLCJjbGFzcyI6IkNpcmNsZVYiLCJjbGFzc19pZCI6MzIwLCJmaWVsZHMiOnsidnkiOnsiZ2VuZXJpYyI6W10sInJhdyI6ImYzMiIsInR5cGUiOjN9LCJ2eCI6eyJnZW5lcmljIjpbXSwicmF3IjoiZjMyIiwidHlwZSI6M319LCJpc1N0cnVjdCI6ZmFsc2UsIm1ldGhvZHMiOnt9LCJuYW1lc3BhY2UiOm51bGx9\00")
     
-    ;; String from 639 with 324 bytes in memory
+    ;; String from 576 with 288 bytes in memory
     ;;
-    ;; class [639] CellCircle
+    ;; class [576] CellCircle
     ;;
-    (data (i32.const 639) "eyJjb21tZW50IjpudWxsLCJtZW1vcnlQdHIiOnsiVmFsdWUiOjYzOX0sImNsYXNzIjoiQ2VsbENpcmNsZSIsImNsYXNzX2lkIjo2MzksImZpZWxkcyI6eyJuZXh0Ijp7ImdlbmVyaWMiOltdLCJyYXciOiJbNjM5XUNlbGxDaXJjbGUiLCJ0eXBlIjoxMH0sImNpcmNsZUluZGV4Ijp7ImdlbmVyaWMiOltdLCJyYXciOiJpMzIiLCJ0eXBlIjoxfX0sImlzU3RydWN0IjpmYWxzZSwibWV0aG9kcyI6e30sIm5hbWVzcGFjZSI6bnVsbH0=\00")
+    (data (i32.const 576) "eyJjb21tZW50IjpudWxsLCJjbGFzcyI6IkNlbGxDaXJjbGUiLCJjbGFzc19pZCI6NTc2LCJmaWVsZHMiOnsibmV4dCI6eyJnZW5lcmljIjpbXSwicmF3IjoiWzU3Nl1DZWxsQ2lyY2xlIiwidHlwZSI6MTB9LCJjaXJjbGVJbmRleCI6eyJnZW5lcmljIjpbXSwicmF3IjoiaTMyIiwidHlwZSI6MX19LCJpc1N0cnVjdCI6ZmFsc2UsIm1ldGhvZHMiOnt9LCJuYW1lc3BhY2UiOm51bGx9\00")
 
     ;; Pre-defined constant values
     (global $Math.E (mut f64) (f64.const 2.7182818284590451))
@@ -571,7 +585,7 @@
         
     
     
-    (return (i32.const 960))
+    (return (i32.const 904))
     )
     
     
@@ -580,7 +594,7 @@
         
     
     
-    (return (i32.const 971))
+    (return (i32.const 920))
     )
     
     
@@ -589,7 +603,7 @@
         
     
     
-    (return (i32.const 1052))
+    (return (i32.const 1008))
     )
     
     
@@ -598,7 +612,7 @@
         
     
     
-    (return (i32.const 1056))
+    (return (i32.const 1016))
     )
     
     
@@ -607,7 +621,7 @@
         
     
     
-    (return (i32.const 1067))
+    (return (i32.const 1032))
     )
     
     
@@ -616,7 +630,7 @@
         
     
     
-    (return (i32.const 1137))
+    (return (i32.const 1104))
     )
     
     
@@ -625,7 +639,7 @@
         
     
     
-    (return (i32.const 1151))
+    (return (i32.const 1120))
     )
     
     
@@ -634,7 +648,7 @@
         
     
     
-    (return (i32.const 1188))
+    (return (i32.const 1160))
     )
     
     
@@ -643,7 +657,7 @@
         
     
     
-    (return (i32.const 1196))
+    (return (i32.const 1168))
     )
     
     
@@ -675,52 +689,44 @@
 
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_global $global.ObjectManager)
+;; Array memory block begin at location: (get_local $arrayOffset_9a020000)
+(set_local $arrayOffset_9a020000 (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
 ;; class_id/typealias_enum i32 data: (i32.const 13)/array(Of intptr)
-(i32.store (get_global $global.ObjectManager) (i32.const 13))
-(i32.store (i32.add (get_global $global.ObjectManager) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
+(i32.store (get_local $arrayOffset_9a020000) (i32.const 13))
+(i32.store (i32.add (get_local $arrayOffset_9a020000) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
-;; Offset object manager with (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) bytes
-(set_local $arrayOffset_9a020000 (i32.add (get_global $global.ObjectManager) (i32.const 8)))
-(set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9a020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
-(set_global $Algorithm.circleData (i32.add (get_local $arrayOffset_9a020000) (i32.const -8)))
+(set_global $Algorithm.circleData (get_local $arrayOffset_9a020000))
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_global $global.ObjectManager)
-;; class_id/typealias_enum i32 data: (i32.const 350)/array(Of intptr)
-(i32.store (get_global $global.ObjectManager) (i32.const 350))
-(i32.store (i32.add (get_global $global.ObjectManager) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
+;; Array memory block begin at location: (get_local $arrayOffset_9b020000)
+(set_local $arrayOffset_9b020000 (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; class_id/typealias_enum i32 data: (i32.const 320)/array(Of intptr)
+(i32.store (get_local $arrayOffset_9b020000) (i32.const 320))
+(i32.store (i32.add (get_local $arrayOffset_9b020000) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
-;; Offset object manager with (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) bytes
-(set_local $arrayOffset_9b020000 (i32.add (get_global $global.ObjectManager) (i32.const 8)))
-(set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9b020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
-(set_global $Algorithm.circlevData (i32.add (get_local $arrayOffset_9b020000) (i32.const -8)))
+(set_global $Algorithm.circlevData (get_local $arrayOffset_9b020000))
 
 ;; Save (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_global $global.ObjectManager)
-;; class_id/typealias_enum i32 data: (i32.const 639)/array(Of intptr)
-(i32.store (get_global $global.ObjectManager) (i32.const 639))
-(i32.store (i32.add (get_global $global.ObjectManager) (i32.const 4)) (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)))
+;; Array memory block begin at location: (get_local $arrayOffset_9c020000)
+(set_local $arrayOffset_9c020000 (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; class_id/typealias_enum i32 data: (i32.const 576)/array(Of intptr)
+(i32.store (get_local $arrayOffset_9c020000) (i32.const 576))
+(i32.store (i32.add (get_local $arrayOffset_9c020000) (i32.const 4)) (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
-;; Offset object manager with (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4))) bytes
-(set_local $arrayOffset_9c020000 (i32.add (get_global $global.ObjectManager) (i32.const 8)))
-(set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9c020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
-(set_global $Algorithm.cellCircles (i32.add (get_local $arrayOffset_9c020000) (i32.const -8)))
+(set_global $Algorithm.cellCircles (get_local $arrayOffset_9c020000))
 
 ;; Save (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_global $global.ObjectManager)
-;; class_id/typealias_enum i32 data: (i32.const 639)/array(Of intptr)
-(i32.store (get_global $global.ObjectManager) (i32.const 639))
-(i32.store (i32.add (get_global $global.ObjectManager) (i32.const 4)) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)))
+;; Array memory block begin at location: (get_local $arrayOffset_9d020000)
+(set_local $arrayOffset_9d020000 (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; class_id/typealias_enum i32 data: (i32.const 576)/array(Of intptr)
+(i32.store (get_local $arrayOffset_9d020000) (i32.const 576))
+(i32.store (i32.add (get_local $arrayOffset_9d020000) (i32.const 4)) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
-;; Offset object manager with (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) (i32.const 4))) bytes
-(set_local $arrayOffset_9d020000 (i32.add (get_global $global.ObjectManager) (i32.const 8)))
-(set_global $global.ObjectManager (i32.add (i32.add (get_local $arrayOffset_9d020000) (i32.const -8)) (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) (i32.const 4)))))
 ;; Assign array memory data to another expression
-(set_global $Algorithm.grid (i32.add (get_local $arrayOffset_9d020000) (i32.const -8)))
+(set_global $Algorithm.grid (get_local $arrayOffset_9d020000))
 )
 
     (func $defines.constructor  
@@ -744,7 +750,7 @@
     (loop $loop_b7020000
 
                 (br_if $block_b6020000 (i32.gt_s (get_local $i) (i32.sub (i32.load (i32.add (get_global $Algorithm.grid) (i32.const 4))) (i32.const 1))))
-        (i32.store (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $i) (i32.const 4))) (i32.add (get_local $arrayOffset_b8020000) (i32.const -8)))
+        (i32.store (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $i) (i32.const 4))) (get_local $arrayOffset_b8020000))
         ;; For loop control step: (i32.const 1)
         (set_local $i (i32.add (get_local $i) (i32.const 1)))
         (br $loop_b7020000)
