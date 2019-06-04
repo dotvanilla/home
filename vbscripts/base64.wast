@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 6/4/2019 7:31:09 PM
+    ;; build: 6/4/2019 7:43:49 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -215,6 +215,7 @@
     (local $u i32)
     (local $a i32)
     (local $f i32)
+    (local $lenOfText i32)
     
     (set_local $base64 (call $array.new (i32.const -1)))
     (set_local $n (i32.const 0))
@@ -226,13 +227,14 @@
     (set_local $a (i32.const 0))
     (set_local $f (i32.const 0))
     (set_local $text (call $utf8.utf8_encode (get_local $text)))
-    ;; Do While (f < text.Length)
+    (set_local $lenOfText (call $string.length (get_local $text)))
+    ;; Do While f < lenOfText
     ;; Start Do While Block block_9a020000
     
     (block $block_9a020000 
         (loop $loop_9b020000
     
-                    (br_if $block_9a020000 (i32.eqz (i32.lt_s (get_local $f) (call $string.length (get_local $text)))))
+                    (br_if $block_9a020000 (i32.eqz (i32.lt_s (get_local $f) (get_local $lenOfText))))
             (set_local $n (call $stringHelpers.charCodeAt (get_local $text) (get_local $f)))
             (set_local $f (i32.add (get_local $f) (i32.const 1)))
             (set_local $r (call $stringHelpers.charCodeAt (get_local $text) (get_local $f)))
@@ -240,9 +242,9 @@
             (set_local $i (call $stringHelpers.charCodeAt (get_local $text) (get_local $f)))
             (set_local $f (i32.add (get_local $f) (i32.const 1)))
             (set_local $s (i32.shr_s (get_local $n) (i32.const 2)))
-            (set_local $o (i32.add (i32.shl (i32.mul (get_local $n) (i32.const 3)) (i32.const 4)) (i32.shr_s (get_local $r) (i32.const 4))))
-            (set_local $u (i32.add (i32.shl (i32.mul (get_local $r) (i32.const 15)) (i32.const 2)) (i32.shr_s (get_local $i) (i32.const 6))))
-            (set_local $a (i32.mul (get_local $i) (i32.const 63)))
+            (set_local $o (i32.or (i32.shl (i32.and (get_local $n) (i32.const 3)) (i32.const 4)) (i32.shr_s (get_local $r) (i32.const 4))))
+            (set_local $u (i32.or (i32.shl (i32.and (get_local $r) (i32.const 15)) (i32.const 2)) (i32.shr_s (get_local $i) (i32.const 6))))
+            (set_local $a (i32.and (get_local $i) (i32.const 63)))
             
     (if (call $base64Encoder.isNaN (get_local $r)) 
         (then
@@ -303,9 +305,9 @@
             (set_local $f (i32.add (get_local $f) (i32.const 1)))
             (set_local $a (call $string.indexOf (get_global $base64Encoder.keyStr) (call $stringHelpers.charAt (get_local $base64) (get_local $f))))
             (set_local $f (i32.add (get_local $f) (i32.const 1)))
-            (set_local $n (i32.add (i32.shl (get_local $s) (i32.const 2)) (i32.shr_s (get_local $o) (i32.const 4))))
-            (set_local $r (i32.add (i32.shl (i32.mul (get_local $o) (i32.const 15)) (i32.const 4)) (i32.shr_s (get_local $u) (i32.const 2))))
-            (set_local $i (i32.add (i32.shl (i32.mul (get_local $u) (i32.const 3)) (i32.const 6)) (get_local $a)))
+            (set_local $n (i32.or (i32.shl (get_local $s) (i32.const 2)) (i32.shr_s (get_local $o) (i32.const 4))))
+            (set_local $r (i32.or (i32.shl (i32.and (get_local $o) (i32.const 15)) (i32.const 4)) (i32.shr_s (get_local $u) (i32.const 2))))
+            (set_local $i (i32.or (i32.shl (i32.and (get_local $u) (i32.const 3)) (i32.const 6)) (get_local $a)))
             (set_local $text (call $string.add (get_local $text) (call $stringHelpers.fromCharCode (get_local $n))))
             
     (if (i32.ne (get_local $u) (i32.const 64)) 
@@ -355,9 +357,9 @@
         (then
                     (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (get_local $r))))
         ) (else
-                    (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.add (i32.shr_s (get_local $r) (i32.const 12)) (i32.const 224)))))
-            (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.add (i32.mul (i32.shr_s (get_local $r) (i32.const 6)) (i32.const 63)) (i32.const 128)))))
-            (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.add (i32.mul (get_local $r) (i32.const 63)) (i32.const 128)))))
+                    (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.or (i32.shr_s (get_local $r) (i32.const 12)) (i32.const 224)))))
+            (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.or (i32.and (i32.shr_s (get_local $r) (i32.const 6)) (i32.const 63)) (i32.const 128)))))
+            (drop (call $string_array.push (get_local $chars) (call $stringHelpers.fromCharCode (i32.or (i32.and (get_local $r) (i32.const 63)) (i32.const 128)))))
         )
     )
             ;; For loop control step: (i32.const 1)
@@ -401,7 +403,7 @@
         ) (else
                     (set_local $c2 (call $stringHelpers.charCodeAt (get_local $text) (i32.add (get_local $n) (i32.const 1))))
             (set_local $c3 (call $stringHelpers.charCodeAt (get_local $text) (i32.add (get_local $n) (i32.const 2))))
-            (drop (call $string_array.push (get_local $t) (call $stringHelpers.fromCharCode (i32.add (i32.add (i32.shl (i32.mul (get_local $r) (i32.const 15)) (i32.const 12)) (i32.shl (i32.mul (get_local $c2) (i32.const 63)) (i32.const 6))) (i32.mul (get_local $c3) (i32.const 63))))))
+            (drop (call $string_array.push (get_local $t) (call $stringHelpers.fromCharCode (i32.or (i32.or (i32.shl (i32.and (get_local $r) (i32.const 15)) (i32.const 12)) (i32.shl (i32.and (get_local $c2) (i32.const 63)) (i32.const 6))) (i32.and (get_local $c3) (i32.const 63))))))
             (set_local $n (i32.add (get_local $n) (i32.const 3)))
         )
     )

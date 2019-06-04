@@ -74,9 +74,9 @@ Public Module base64Encoder
 
         text = text.utf8_encode()
 
-        'Call print($"utf8 encode result: {text}")
+        Dim lenOfText = text.Length
 
-        Do While (f < text.Length)
+        Do While f < lenOfText
             n = text.charCodeAt(f)
             f += 1
             r = text.charCodeAt(f)
