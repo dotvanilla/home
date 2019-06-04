@@ -8,7 +8,7 @@
   <canvas id="canvas" style="width: 100vw; height: 100vh; display:block;"></canvas>
 </body>
 <script>
-  vanilla.Wasm.showDebugMessage(false);
+  vanilla.Wasm.showDebugMessage(true);
   vanilla.Wasm.RunAssembly("../vbscripts/Elastic_collision.wasm", {
     run: engine => {
 
@@ -27,6 +27,10 @@
         circleData, 
         circleCount
       );
+
+      WebAssembly.GarbageCollection.summary();
+
+      console.log(WebAssembly.ObjectManager.getObject(1176));
 
       render.run();
     },

@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 6/3/2019 11:42:34 PM
+    ;; build: 6/4/2019 6:56:28 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -46,6 +46,13 @@
 (set_global $global.ObjectManager (i32.add (get_local $offset) (get_local $sizeof)))
 (call $GC.addObject (get_local $offset) (get_local $class_id))
 (return (get_local $offset))
+)
+    (func $global.GetMemorySize  (result i32)
+    ;; Public Function GetMemorySize() As i32
+    
+
+
+(return (get_global $global.ObjectManager))
 )
 
     ;; Memory data for string constant
@@ -120,6 +127,8 @@
 (global $Algorithm.grid (mut i32) (i32.const 0))
 
     ;; Export methods of this module
+    (export "global.GetMemorySize" (func $global.GetMemorySize))
+
     ;; export from VB.NET module: [Algorithm]
     
     (export "Algorithm.getCircleCount" (func $Algorithm.getCircleCount))
