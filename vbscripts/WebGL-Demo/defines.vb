@@ -63,9 +63,9 @@ Public Module defines
     Public Const GRID_HEIGHT = 120
 End Module
 
-Public Class Circle
+Public Structure Circle
     Public x, y, r As Single
-End Class
+End Structure
 
 Public Class CircleV
     Public vx, vy As Single

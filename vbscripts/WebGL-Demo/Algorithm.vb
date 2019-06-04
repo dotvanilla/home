@@ -186,7 +186,7 @@ Module Algorithm
 
     Private Sub detectConflicts()
         For p1 As Integer = 0 To GRID_WIDTH - 1
-            Dim row2 = grid(p1)
+            Dim row2 As CellCircle() = grid(p1)
 
             For q1 As Integer = 0 To GRID_HEIGHT - 1
                 Dim iCellCircle = row2(q1)
