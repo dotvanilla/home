@@ -16,6 +16,7 @@
       var circleCount = engine.Algorithm.getCircleCount();
       var arrayPtr = engine.Algorithm.getCircleDataOffset() + 8;
 
+      console.log(engine);
       console.log(`${arrayPtr}/4=${arrayPtr/4}`)
 
       var circleData = new Float32Array(buffer, arrayPtr, circleCount * 3);
@@ -31,6 +32,7 @@
       WebAssembly.GarbageCollection.summary();
 
       console.log(WebAssembly.ObjectManager.getObject(1176));
+      console.log(engine.GetMemorySize())
 
       render.run();
     },
