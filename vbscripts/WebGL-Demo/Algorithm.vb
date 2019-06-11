@@ -62,8 +62,23 @@ Module Algorithm
     Dim grid As CellCircle()() = New CellCircle(GRID_WIDTH - 1)() {}
 
     Sub New()
+        Dim row As CellCircle()
+
         For i As Integer = 0 To grid.Length - 1
-            grid(i) = New CellCircle(GRID_HEIGHT - 1) {}
+            row = New CellCircle(GRID_HEIGHT - 1) {}
+            grid(i) = row
+
+            For z As Integer = 0 To row.Length - 1
+                row(z) = New CellCircle
+            Next
+        Next
+
+        For j As Integer = 0 To circlevData.Length - 1
+            circlevData(j) = New CircleV
+        Next
+
+        For l As Integer = 0 To cellCircles.Length - 1
+            cellCircles(l) = New CellCircle
         Next
     End Sub
 
@@ -80,6 +95,8 @@ Module Algorithm
     End Function
 
     Public Sub init(displayWidth!, displayHeight!)
+        Call Debugger.println($"array(of circle) = &{circleData}")
+
         For i As Integer = 0 To CIRCLE_COUNT - 1
             Dim collision As Boolean
             Dim x, y, r As Single
@@ -111,6 +128,7 @@ Module Algorithm
             circleData(i).r = r
 
             Call Debugger.println($"circle = #{i} (&{circleData(i)})")
+            Call Debugger.println($"circleV = &{circlevData(i)}")
 
             ' velocity of -0.1 - +0.1 pixels / iteration
             circlevData(i).vx = (VBMath.Rnd - 0.5) * 0.1
