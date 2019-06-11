@@ -8,7 +8,7 @@
   <canvas id="canvas" style="width: 100vw; height: 100vh; display:block;"></canvas>
 </body>
 <script>
-  vanilla.Wasm.showDebugMessage(true);
+  vanilla.Wasm.showDebugMessage(false);
   vanilla.Wasm.RunAssembly("../vbscripts/Elastic_collision.wasm", {
     run: engine => {
 
@@ -19,22 +19,24 @@
       console.log(engine);
       console.log(`${arrayPtr}/4=${arrayPtr/4}`)
 
-      var circleData = new Float32Array(buffer, arrayPtr, circleCount * 3);
-      var canvas = $ts("#canvas");
-      var render = new webgl.render(
-        canvas, 
-        engine.Algorithm.timeStep,
-        engine.Algorithm.init, 
-        circleData, 
-        circleCount
-      );
-
+      //var circleData = new Float32Array(buffer, arrayPtr, circleCount * 3);
+      //var canvas = $ts("#canvas");
+      //var render = new webgl.render(
+       // canvas, 
+       // engine.Algorithm.timeStep,
+       // engine.Algorithm.init, 
+       /// circleData, 
+       // circleCount
+      // );
+		
+		engine.Algorithm.init(1920,1080);
+		
       WebAssembly.GarbageCollection.summary();
 
       console.log(WebAssembly.ObjectManager.getObject(1176));
       console.log(engine.GetMemorySize())
 
-      render.run();
+      // render.run();
     },
     api: { console: true, text: true, array: true }
   });

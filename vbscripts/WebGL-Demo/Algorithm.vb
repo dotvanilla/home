@@ -83,6 +83,7 @@ Module Algorithm
         For i As Integer = 0 To CIRCLE_COUNT - 1
             Dim collision As Boolean
             Dim x, y, r As Single
+
             Do
                 collision = False
                 x = displayWidth * VBMath.Rnd
@@ -108,6 +109,8 @@ Module Algorithm
             circleData(i).x = x
             circleData(i).y = y
             circleData(i).r = r
+
+            Call Debugger.println($"circle = #{i} (&{circleData(i)})")
 
             ' velocity of -0.1 - +0.1 pixels / iteration
             circlevData(i).vx = (VBMath.Rnd - 0.5) * 0.1
