@@ -61,25 +61,45 @@ Module Algorithm
     Dim cellCircles As CellCircle() = New CellCircle(CIRCLE_COUNT * 4 - 1) {}
     Dim grid As CellCircle()() = New CellCircle(GRID_WIDTH - 1)() {}
 
+    Private Function createGridRow() As CellCircle()
+        Return New CellCircle(GRID_HEIGHT - 1) {}
+    End Function
+
+    Private Function createCircle() As CellCircle
+        Return New CellCircle
+    End Function
+
+    Private Function createMoveVector() As CircleV
+        Return New CircleV With {.vx = VBMath.Rnd, .vy = VBMath.Rnd}
+    End Function
+
     Sub New()
         Dim row As CellCircle()
 
+        Call Debugger.println("Initialize application")
+
         For i As Integer = 0 To grid.Length - 1
-            row = New CellCircle(GRID_HEIGHT - 1) {}
+            row = createGridRow()
             grid(i) = row
 
+            Call Debugger.println($"row #{i} = &{row}")
+
             For z As Integer = 0 To row.Length - 1
-                row(z) = New CellCircle
+                row(z) = createCircle()
             Next
         Next
 
         For j As Integer = 0 To circlevData.Length - 1
-            circlevData(j) = New CircleV
+            circlevData(j) = createMoveVector()
         Next
 
+        Call Debugger.println($"circlevdata => &{circlevData}")
+
         For l As Integer = 0 To cellCircles.Length - 1
-            cellCircles(l) = New CellCircle
+            cellCircles(l) = createCircle()
         Next
+
+        Call Debugger.println($"cellcircles => &{cellCircles}")
     End Sub
 
     Public Function getCircleCount() As Integer
