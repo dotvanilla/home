@@ -58,7 +58,7 @@
 
 Public Module defines
     ' reduced to 10000 for init performance
-    Public Const CIRCLE_COUNT = 10000
+    Public Const CIRCLE_COUNT = 100
     Public Const GRID_WIDTH = 70
     Public Const GRID_HEIGHT = 120
 End Module

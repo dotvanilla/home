@@ -97,6 +97,7 @@ Module Algorithm
 
         For l As Integer = 0 To cellCircles.Length - 1
             cellCircles(l) = createCircle()
+            Call Debugger.println($"new cell circle for #{l} at &{cellCircles(l)}")
         Next
 
         Call Debugger.println($"cellcircles => &{cellCircles}")

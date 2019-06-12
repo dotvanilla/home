@@ -5,7 +5,7 @@
     ;; WASM for VisualBasic.NET
     ;; 
     ;; version: 1.3.0.22
-    ;; build: 6/11/2019 11:16:54 PM
+    ;; build: 6/12/2019 7:12:25 PM
     ;; 
     ;; Want to know how it works? please visit https://vanillavb.app/#compiler_design_notes
 
@@ -46,7 +46,7 @@
     ;; A global object manager for create user object in WebAssembly
     ;; Its initialize value is the total size of the string data
     ;; of this webassembly module
-    (global $global.ObjectManager (mut i32) (i32.const 1336))
+    (global $global.ObjectManager (mut i32) (i32.const 1368))
 
     ;; memory allocate in javascript runtime
     (func $global.ObjectManager.Allocate (param $sizeof i32) (param $class_id i32) (result i32)
@@ -107,35 +107,41 @@
     ;; String from 1016 with 16 bytes in memory
     (data (i32.const 1016) "circlevdata => &\00")
     
-    ;; String from 1040 with 16 bytes in memory
-    (data (i32.const 1040) "cellcircles => &\00")
+    ;; String from 1040 with 21 bytes in memory
+    (data (i32.const 1040) "new cell circle for #\00")
     
-    ;; String from 1064 with 10 bytes in memory
-    (data (i32.const 1064) "WebGL-Demo\00")
+    ;; String from 1064 with 5 bytes in memory
+    (data (i32.const 1064) " at &\00")
     
-    ;; String from 1080 with 80 bytes in memory
-    (data (i32.const 1080) "WebAssembly conversion demonstrating the faster-performing grid of linked-lists.\00")
+    ;; String from 1072 with 16 bytes in memory
+    (data (i32.const 1072) "cellcircles => &\00")
     
-    ;; String from 1168 with 3 bytes in memory
-    (data (i32.const 1168) "MIT\00")
+    ;; String from 1096 with 10 bytes in memory
+    (data (i32.const 1096) "WebGL-Demo\00")
     
-    ;; String from 1176 with 10 bytes in memory
-    (data (i32.const 1176) "WebGL-Demo\00")
+    ;; String from 1112 with 80 bytes in memory
+    (data (i32.const 1112) "WebAssembly conversion demonstrating the faster-performing grid of linked-lists.\00")
     
-    ;; String from 1192 with 69 bytes in memory
-    (data (i32.const 1192) "https://github.com/guybedford/wasm-demo/blob/master/native/demo-opt.c\00")
+    ;; String from 1200 with 3 bytes in memory
+    (data (i32.const 1200) "MIT\00")
     
-    ;; String from 1264 with 13 bytes in memory
-    (data (i32.const 1264) "vanillavb.app\00")
+    ;; String from 1208 with 10 bytes in memory
+    (data (i32.const 1208) "WebGL-Demo\00")
     
-    ;; String from 1280 with 36 bytes in memory
-    (data (i32.const 1280) "83ca2b93-4e57-4d44-b2bc-163252a9305d\00")
+    ;; String from 1224 with 69 bytes in memory
+    (data (i32.const 1224) "https://github.com/guybedford/wasm-demo/blob/master/native/demo-opt.c\00")
     
-    ;; String from 1320 with 7 bytes in memory
-    (data (i32.const 1320) "1.0.0.0\00")
+    ;; String from 1296 with 13 bytes in memory
+    (data (i32.const 1296) "vanillavb.app\00")
     
-    ;; String from 1328 with 7 bytes in memory
-    (data (i32.const 1328) "1.0.0.0\00")
+    ;; String from 1312 with 36 bytes in memory
+    (data (i32.const 1312) "83ca2b93-4e57-4d44-b2bc-163252a9305d\00")
+    
+    ;; String from 1352 with 7 bytes in memory
+    (data (i32.const 1352) "1.0.0.0\00")
+    
+    ;; String from 1360 with 7 bytes in memory
+    (data (i32.const 1360) "1.0.0.0\00")
     
     ;; Memory data for user defined class object its meta data
     ;; all of these string is base64 encoded json object
@@ -173,7 +179,7 @@
     ;; Global variables in this module
     (global $defines.GRID_HEIGHT (mut i32) (i32.const 120))
 (global $defines.GRID_WIDTH (mut i32) (i32.const 70))
-(global $defines.CIRCLE_COUNT (mut i32) (i32.const 10000))
+(global $defines.CIRCLE_COUNT (mut i32) (i32.const 100))
 (global $Algorithm.circleData (mut i32) (i32.const 0))
 (global $Algorithm.circlevData (mut i32) (i32.const 0))
 (global $Algorithm.cellCircles (mut i32) (i32.const 0))
@@ -214,60 +220,60 @@
     (func $Algorithm.createGridRow  (result i32)
         ;; Public Function createGridRow() As array(Of intptr)
         
-    (local $arrayOffset_P0000b7C3zV i32)
-    (local $arrayOffset_C0000cN7Jjc i32)
-    (local $arrayOffset_N0000dJN8sU i32)
-    (local $arrayOffset_S0000eEp8Cz i32)
-    (local $arrayOffset_50000fI6n0H i32)
+    (local $arrayOffset_B0000bYYDGH i32)
+    (local $arrayOffset_90000cGV6yg i32)
+    (local $arrayOffset_n0000dOkT2Z i32)
+    (local $arrayOffset_r0000eHEmbQ i32)
+    (local $arrayOffset_S0000fORWkI i32)
     
     
     ;; Save (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1)) array element data to memory:
-    ;; Array memory block begin at location: (get_local $arrayOffset_50000fI6n0H)
-    (set_local $arrayOffset_50000fI6n0H (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+    ;; Array memory block begin at location: (get_local $arrayOffset_S0000fORWkI)
+    (set_local $arrayOffset_S0000fORWkI (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
     ;; class_id/typealias_enum i32 data: (i32.const 272)/array(Of intptr)
-    (i32.store (get_local $arrayOffset_50000fI6n0H) (i32.const 272))
-    (i32.store (i32.add (get_local $arrayOffset_50000fI6n0H) (i32.const 4)) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1)))
+    (i32.store (get_local $arrayOffset_S0000fORWkI) (i32.const 272))
+    (i32.store (i32.add (get_local $arrayOffset_S0000fORWkI) (i32.const 4)) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1)))
     ;; End of byte marks meta data, start write data blocks
     ;; Assign array memory data to another expression
-    (return (get_local $arrayOffset_50000fI6n0H))
+    (return (get_local $arrayOffset_S0000fORWkI))
     )
     
     
     (func $Algorithm.createCircle  (result i32)
         ;; Public Function createCircle() As intptr
         
-    (local $newObject_u0000gUW09O i32)
+    (local $newObject_30000gFc7uB i32)
     
     
     ;; Initialize a object instance of [[272]CellCircle]
-    ;; Object memory block begin at location: (get_local $newObject_u0000gUW09O)
-    (set_local $newObject_u0000gUW09O (call $global.ObjectManager.Allocate (i32.const 8) (i32.const 272)))
+    ;; Object memory block begin at location: (get_local $newObject_30000gFc7uB)
+    (set_local $newObject_30000gFc7uB (call $global.ObjectManager.Allocate (i32.const 8) (i32.const 272)))
     ;; set field [CellCircle::next]
-    (i32.store (i32.add (get_local $newObject_u0000gUW09O) (i32.const 0)) (i32.const 0))
+    (i32.store (i32.add (get_local $newObject_30000gFc7uB) (i32.const 0)) (i32.const 0))
     ;; set field [CellCircle::circleIndex]
-    (i32.store (i32.add (get_local $newObject_u0000gUW09O) (i32.const 4)) (i32.const 0))
+    (i32.store (i32.add (get_local $newObject_30000gFc7uB) (i32.const 4)) (i32.const 0))
     ;; Initialize an object memory block with 8 bytes data
     
-    (return (get_local $newObject_u0000gUW09O))
+    (return (get_local $newObject_30000gFc7uB))
     )
     
     
     (func $Algorithm.createMoveVector  (result i32)
         ;; Public Function createMoveVector() As intptr
         
-    (local $newObject_O0000hTts7d i32)
+    (local $newObject_Z0000hHzHCU i32)
     
     
     ;; Initialize a object instance of [[13]CircleV]
-    ;; Object memory block begin at location: (get_local $newObject_O0000hTts7d)
-    (set_local $newObject_O0000hTts7d (call $global.ObjectManager.Allocate (i32.const 8) (i32.const 13)))
+    ;; Object memory block begin at location: (get_local $newObject_Z0000hHzHCU)
+    (set_local $newObject_Z0000hHzHCU (call $global.ObjectManager.Allocate (i32.const 8) (i32.const 13)))
     ;; set field [CircleV::vx]
-    (f32.store (i32.add (get_local $newObject_O0000hTts7d) (i32.const 0)) (f32.demote/f64 (call $Math.random )))
+    (f32.store (i32.add (get_local $newObject_Z0000hHzHCU) (i32.const 0)) (f32.demote/f64 (call $Math.random )))
     ;; set field [CircleV::vy]
-    (f32.store (i32.add (get_local $newObject_O0000hTts7d) (i32.const 4)) (f32.demote/f64 (call $Math.random )))
+    (f32.store (i32.add (get_local $newObject_Z0000hHzHCU) (i32.const 4)) (f32.demote/f64 (call $Math.random )))
     ;; Initialize an object memory block with 8 bytes data
     
-    (return (get_local $newObject_O0000hTts7d))
+    (return (get_local $newObject_Z0000hHzHCU))
     )
     
     
@@ -303,19 +309,19 @@
     (set_local $i (i32.const 0))
     ;; For i As Integer = 0 To CIRCLE_COUNT - 1
     
-    (block $block_W0000iX3WRV 
-        (loop $loop_F0000jUKBBn
+    (block $block_I0000iJUa54 
+        (loop $loop_e0000j4E0Rw
     
-                    (br_if $block_W0000iX3WRV (i32.gt_s (get_local $i) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1))))
+                    (br_if $block_I0000iJUa54 (i32.gt_s (get_local $i) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1))))
             (set_local $collision (i32.const 0))
             (set_local $x (f32.const 0))
             (set_local $y (f32.const 0))
             (set_local $r (f32.const 0))
             ;; Do ... Loop
-            ;; Start Do While Block block_R0000k3f6oY
+            ;; Start Do While Block block_I0000kpHDxb
             
-    (block $block_R0000k3f6oY 
-        (loop $loop_30000lV8CYD
+    (block $block_I0000kpHDxb 
+        (loop $loop_80000l5vLJJ
     
                     (set_local $collision (i32.const 0))
             (set_local $x (f32.demote/f64 (f64.mul (f64.promote/f32 (get_local $displayWidth)) (call $Math.random ))))
@@ -329,32 +335,32 @@
                     (set_local $j (i32.const 0))
             ;; For j As Integer = 0 To i - 1
             
-    (block $block_R0000mQH82Q 
-        (loop $loop_40000n5ej0M
+    (block $block_G0000mlSBAi 
+        (loop $loop_u0000ntYPB8
     
-                    (br_if $block_R0000mQH82Q (i32.gt_s (get_local $j) (i32.sub (get_local $i) (i32.const 1))))
+                    (br_if $block_G0000mlSBAi (i32.gt_s (get_local $j) (i32.sub (get_local $i) (i32.const 1))))
             
     (if (call $Math.detectCircleCollision (get_local $x) (get_local $y) (get_local $r) (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 12)))) (i32.const 4))) (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 12)))) (i32.const 0))) (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 12)))) (i32.const 8)))) 
         (then
                     (set_local $collision (i32.const 1))
-            (br_if $block_R0000k3f6oY (i32.const 1))
+            (br_if $block_I0000kpHDxb (i32.const 1))
         ) 
     )
             ;; For loop control step: (i32.const 1)
             (set_local $j (i32.add (get_local $j) (i32.const 1)))
-            (br $loop_40000n5ej0M)
-            ;; For Loop Next On loop_40000n5ej0M
+            (br $loop_u0000ntYPB8)
+            ;; For Loop Next On loop_u0000ntYPB8
     
         )
     )
         )
     )
-            (br_if $block_R0000k3f6oY (i32.eqz (get_local $collision)))
-            (br $loop_30000lV8CYD)
+            (br_if $block_I0000kpHDxb (i32.eqz (get_local $collision)))
+            (br $loop_80000l5vLJJ)
     
         )
     )
-            ;; End Loop loop_30000lV8CYD
+            ;; End Loop loop_80000l5vLJJ
             (f32.store (i32.add (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12))) (i32.const 4)) (get_local $x))
             (f32.store (i32.add (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12))) (i32.const 0)) (get_local $y))
             (f32.store (i32.add (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12))) (i32.const 8)) (get_local $r))
@@ -364,8 +370,8 @@
             (f32.store (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circlevData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 4)))) (i32.const 4)) (f32.demote/f64 (f64.mul (f64.sub (call $Math.random ) (f64.const 0.5)) (f64.const 0.1))))
             ;; For loop control step: (i32.const 1)
             (set_local $i (i32.add (get_local $i) (i32.const 1)))
-            (br $loop_F0000jUKBBn)
-            ;; For Loop Next On loop_F0000jUKBBn
+            (br $loop_e0000j4E0Rw)
+            ;; For Loop Next On loop_e0000j4E0Rw
     
         )
     )
@@ -382,30 +388,30 @@
     (set_local $p (i32.const 0))
     ;; For p As Integer = 0 To GRID_WIDTH - 1
     
-    (block $block_Y0000oCmYAw 
-        (loop $loop_q0000pDbUdV
+    (block $block_70000oBEKzL 
+        (loop $loop_G0000pw4eu6
     
-                    (br_if $block_Y0000oCmYAw (i32.gt_s (get_local $p) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1))))
+                    (br_if $block_70000oBEKzL (i32.gt_s (get_local $p) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1))))
             (set_local $row (i32.load (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $p) (i32.const 4)))))
             (set_local $q (i32.const 0))
             ;; For q As Integer = 0 To GRID_HEIGHT - 1
             
-    (block $block_e0000qOmSKA 
-        (loop $loop_c0000rvbEL7
+    (block $block_f0000qafWPc 
+        (loop $loop_80000rp1M8P
     
-                    (br_if $block_e0000qOmSKA (i32.gt_s (get_local $q) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1))))
+                    (br_if $block_f0000qafWPc (i32.gt_s (get_local $q) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1))))
             (i32.store (i32.add (i32.add (get_local $row) (i32.const 8)) (i32.mul (get_local $q) (i32.const 4))) (i32.const 0))
             ;; For loop control step: (i32.const 1)
             (set_local $q (i32.add (get_local $q) (i32.const 1)))
-            (br $loop_c0000rvbEL7)
-            ;; For Loop Next On loop_c0000rvbEL7
+            (br $loop_80000rp1M8P)
+            ;; For Loop Next On loop_80000rp1M8P
     
         )
     )
             ;; For loop control step: (i32.const 1)
             (set_local $p (i32.add (get_local $p) (i32.const 1)))
-            (br $loop_q0000pDbUdV)
-            ;; For Loop Next On loop_q0000pDbUdV
+            (br $loop_G0000pw4eu6)
+            ;; For Loop Next On loop_G0000pw4eu6
     
         )
     )
@@ -435,10 +441,10 @@
     (set_local $i (i32.const 0))
     ;; For i As Integer = 0 To CIRCLE_COUNT - 1
     
-    (block $block_f0000sFx5yd 
-        (loop $loop_G0000ti8XRG
+    (block $block_B0000sgDfAm 
+        (loop $loop_y0000tHveFE
     
-                    (br_if $block_f0000sFx5yd (i32.gt_s (get_local $i) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1))))
+                    (br_if $block_B0000sgDfAm (i32.gt_s (get_local $i) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1))))
             (set_local $xi (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12)))) (i32.const 4))))
             (set_local $yi (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12)))) (i32.const 0))))
             (set_local $ri (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $i) (i32.const 12)))) (i32.const 8))))
@@ -492,18 +498,18 @@
             (set_local $p2 (get_local $leftCol))
             ;; For p2 As Integer = leftCol To rightCol
             
-    (block $block_v0000u3lCX3 
-        (loop $loop_p0000vb4Oj2
+    (block $block_70000u1Pp0j 
+        (loop $loop_K0000v81a81
     
-                    (br_if $block_v0000u3lCX3 (i32.gt_s (get_local $p2) (get_local $rightCol)))
+                    (br_if $block_70000u1Pp0j (i32.gt_s (get_local $p2) (get_local $rightCol)))
             (set_local $row1 (i32.load (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $p2) (i32.const 4)))))
             (set_local $q2 (get_local $topRow))
             ;; For q2 As Integer = topRow To bottomRow
             
-    (block $block_M0000w9j8tO 
-        (loop $loop_U0000x8M90O
+    (block $block_50000w2uK49 
+        (loop $loop_30000x9a5pX
     
-                    (br_if $block_M0000w9j8tO (i32.gt_s (get_local $q2) (get_local $bottomRow)))
+                    (br_if $block_50000w2uK49 (i32.gt_s (get_local $q2) (get_local $bottomRow)))
             (set_local $cellCircle (i32.load (i32.add (i32.add (get_global $Algorithm.cellCircles) (i32.const 8)) (i32.mul (get_local $cellCircleCount) (i32.const 4)))))
             (set_local $cellCircleCount (i32.add (get_local $cellCircleCount) (i32.const 1)))
             (i32.store (i32.add (get_local $cellCircle) (i32.const 4)) (get_local $i))
@@ -511,22 +517,22 @@
             (i32.store (i32.add (i32.add (get_local $row1) (i32.const 8)) (i32.mul (get_local $q2) (i32.const 4))) (get_local $cellCircle))
             ;; For loop control step: (i32.const 1)
             (set_local $q2 (i32.add (get_local $q2) (i32.const 1)))
-            (br $loop_U0000x8M90O)
-            ;; For Loop Next On loop_U0000x8M90O
+            (br $loop_30000x9a5pX)
+            ;; For Loop Next On loop_30000x9a5pX
     
         )
     )
             ;; For loop control step: (i32.const 1)
             (set_local $p2 (i32.add (get_local $p2) (i32.const 1)))
-            (br $loop_p0000vb4Oj2)
-            ;; For Loop Next On loop_p0000vb4Oj2
+            (br $loop_K0000v81a81)
+            ;; For Loop Next On loop_K0000v81a81
     
         )
     )
             ;; For loop control step: (i32.const 1)
             (set_local $i (i32.add (get_local $i) (i32.const 1)))
-            (br $loop_G0000ti8XRG)
-            ;; For Loop Next On loop_G0000ti8XRG
+            (br $loop_y0000tHveFE)
+            ;; For Loop Next On loop_y0000tHveFE
     
         )
     )
@@ -568,26 +574,26 @@
     (set_local $p1 (i32.const 0))
     ;; For p1 As Integer = 0 To GRID_WIDTH - 1
     
-    (block $block_w0000yHCEAV 
-        (loop $loop_a0000znETTn
+    (block $block_S0000y6VEZ4 
+        (loop $loop_i0000z4921R
     
-                    (br_if $block_w0000yHCEAV (i32.gt_s (get_local $p1) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1))))
+                    (br_if $block_S0000y6VEZ4 (i32.gt_s (get_local $p1) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1))))
             (set_local $row2 (i32.load (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $p1) (i32.const 4)))))
             (set_local $q1 (i32.const 0))
             ;; For q1 As Integer = 0 To GRID_HEIGHT - 1
             
-    (block $block_800010a16Lr 
-        (loop $loop_V00011M4P4y
+    (block $block_N00010gMoHr 
+        (loop $loop_C00011La0te
     
-                    (br_if $block_800010a16Lr (i32.gt_s (get_local $q1) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1))))
+                    (br_if $block_N00010gMoHr (i32.gt_s (get_local $q1) (i32.sub (get_global $defines.GRID_HEIGHT) (i32.const 1))))
             (set_local $iCellCircle (i32.load (i32.add (i32.add (get_local $row2) (i32.const 8)) (i32.mul (get_local $q1) (i32.const 4)))))
             ;; Do While Not iCellCircle Is Nothing
-            ;; Start Do While Block block_T0001201Vd1
+            ;; Start Do While Block block_U000125mPLF
             
-    (block $block_T0001201Vd1 
-        (loop $loop_s000136B9XZ
+    (block $block_U000125mPLF 
+        (loop $loop_600013glDNE
     
-                    (br_if $block_T0001201Vd1 (i32.eqz (i32.eqz (i32.eq (get_local $iCellCircle) (i32.const 0)))))
+                    (br_if $block_U000125mPLF (i32.eqz (i32.eqz (i32.eq (get_local $iCellCircle) (i32.const 0)))))
             (set_local $index (i32.load (i32.add (get_local $iCellCircle) (i32.const 4))))
             (set_local $xi (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $index) (i32.const 12)))) (i32.const 4))))
             (set_local $yi (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $index) (i32.const 12)))) (i32.const 0))))
@@ -597,12 +603,12 @@
             (set_local $jCellCircle (get_local $iCellCircle))
             (set_local $jCellCircle (i32.load (i32.add (get_local $jCellCircle) (i32.const 0))))
             ;; Do While Not jCellCircle Is Nothing
-            ;; Start Do While Block block_200014LVtr3
+            ;; Start Do While Block block_s00014FSeJw
             
-    (block $block_200014LVtr3 
-        (loop $loop_B00015nP5UI
+    (block $block_s00014FSeJw 
+        (loop $loop_9000153yFl8
     
-                    (br_if $block_200014LVtr3 (i32.eqz (i32.eqz (i32.eq (get_local $jCellCircle) (i32.const 0)))))
+                    (br_if $block_s00014FSeJw (i32.eqz (i32.eqz (i32.eq (get_local $jCellCircle) (i32.const 0)))))
             (set_local $j (i32.load (i32.add (get_local $jCellCircle) (i32.const 4))))
             (set_local $xj (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 12)))) (i32.const 4))))
             (set_local $yj (f32.load (i32.add (i32.load (i32.add (i32.add (get_global $Algorithm.circleData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 12)))) (i32.const 0))))
@@ -639,28 +645,28 @@
                     (set_local $jCellCircle (i32.load (i32.add (get_local $jCellCircle) (i32.const 0))))
         )
     )
-            (br $loop_B00015nP5UI)
+            (br $loop_9000153yFl8)
     
         )
     )
-            ;; End Loop loop_B00015nP5UI
+            ;; End Loop loop_9000153yFl8
             (set_local $iCellCircle (i32.load (i32.add (get_local $iCellCircle) (i32.const 0))))
-            (br $loop_s000136B9XZ)
+            (br $loop_600013glDNE)
     
         )
     )
-            ;; End Loop loop_s000136B9XZ
+            ;; End Loop loop_600013glDNE
             ;; For loop control step: (i32.const 1)
             (set_local $q1 (i32.add (get_local $q1) (i32.const 1)))
-            (br $loop_V00011M4P4y)
-            ;; For Loop Next On loop_V00011M4P4y
+            (br $loop_C00011La0te)
+            ;; For Loop Next On loop_C00011La0te
     
         )
     )
             ;; For loop control step: (i32.const 1)
             (set_local $p1 (i32.add (get_local $p1) (i32.const 1)))
-            (br $loop_a0000znETTn)
-            ;; For Loop Next On loop_a0000znETTn
+            (br $loop_i0000z4921R)
+            ;; For Loop Next On loop_i0000z4921R
     
         )
     )
@@ -710,7 +716,7 @@
         
     
     
-    (return (i32.const 1064))
+    (return (i32.const 1096))
     )
     
     
@@ -719,7 +725,7 @@
         
     
     
-    (return (i32.const 1080))
+    (return (i32.const 1112))
     )
     
     
@@ -728,7 +734,7 @@
         
     
     
-    (return (i32.const 1168))
+    (return (i32.const 1200))
     )
     
     
@@ -737,7 +743,7 @@
         
     
     
-    (return (i32.const 1176))
+    (return (i32.const 1208))
     )
     
     
@@ -746,7 +752,7 @@
         
     
     
-    (return (i32.const 1192))
+    (return (i32.const 1224))
     )
     
     
@@ -755,7 +761,7 @@
         
     
     
-    (return (i32.const 1264))
+    (return (i32.const 1296))
     )
     
     
@@ -764,7 +770,7 @@
         
     
     
-    (return (i32.const 1280))
+    (return (i32.const 1312))
     )
     
     
@@ -773,7 +779,7 @@
         
     
     
-    (return (i32.const 1320))
+    (return (i32.const 1352))
     )
     
     
@@ -782,7 +788,7 @@
         
     
     
-    (return (i32.const 1328))
+    (return (i32.const 1360))
     )
     
     
@@ -809,51 +815,51 @@
     (func $global.initializer  
     ;; Public Function initializer() As void
     
-(local $arrayOffset_P0000b7C3zV i32)
-(local $arrayOffset_C0000cN7Jjc i32)
-(local $arrayOffset_N0000dJN8sU i32)
-(local $arrayOffset_S0000eEp8Cz i32)
+(local $arrayOffset_B0000bYYDGH i32)
+(local $arrayOffset_90000cGV6yg i32)
+(local $arrayOffset_n0000dOkT2Z i32)
+(local $arrayOffset_r0000eHEmbQ i32)
 
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_local $arrayOffset_P0000b7C3zV)
-(set_local $arrayOffset_P0000b7C3zV (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 12))) (i32.const 7)))
+;; Array memory block begin at location: (get_local $arrayOffset_B0000bYYDGH)
+(set_local $arrayOffset_B0000bYYDGH (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 12))) (i32.const 7)))
 ;; class_id/typealias_enum i32 data: (i32.const 600)/array(Of intptr)
-(i32.store (get_local $arrayOffset_P0000b7C3zV) (i32.const 600))
-(i32.store (i32.add (get_local $arrayOffset_P0000b7C3zV) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
+(i32.store (get_local $arrayOffset_B0000bYYDGH) (i32.const 600))
+(i32.store (i32.add (get_local $arrayOffset_B0000bYYDGH) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
 ;; Assign array memory data to another expression
-(set_global $Algorithm.circleData (get_local $arrayOffset_P0000b7C3zV))
+(set_global $Algorithm.circleData (get_local $arrayOffset_B0000bYYDGH))
 
 ;; Save (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_local $arrayOffset_C0000cN7Jjc)
-(set_local $arrayOffset_C0000cN7Jjc (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; Array memory block begin at location: (get_local $arrayOffset_90000cGV6yg)
+(set_local $arrayOffset_90000cGV6yg (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)) (i32.const 4))) (i32.const 7)))
 ;; class_id/typealias_enum i32 data: (i32.const 13)/array(Of intptr)
-(i32.store (get_local $arrayOffset_C0000cN7Jjc) (i32.const 13))
-(i32.store (i32.add (get_local $arrayOffset_C0000cN7Jjc) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
+(i32.store (get_local $arrayOffset_90000cGV6yg) (i32.const 13))
+(i32.store (i32.add (get_local $arrayOffset_90000cGV6yg) (i32.const 4)) (i32.sub (get_global $defines.CIRCLE_COUNT) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
 ;; Assign array memory data to another expression
-(set_global $Algorithm.circlevData (get_local $arrayOffset_C0000cN7Jjc))
+(set_global $Algorithm.circlevData (get_local $arrayOffset_90000cGV6yg))
 
 ;; Save (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_local $arrayOffset_N0000dJN8sU)
-(set_local $arrayOffset_N0000dJN8sU (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; Array memory block begin at location: (get_local $arrayOffset_n0000dOkT2Z)
+(set_local $arrayOffset_n0000dOkT2Z (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)) (i32.const 4))) (i32.const 7)))
 ;; class_id/typealias_enum i32 data: (i32.const 272)/array(Of intptr)
-(i32.store (get_local $arrayOffset_N0000dJN8sU) (i32.const 272))
-(i32.store (i32.add (get_local $arrayOffset_N0000dJN8sU) (i32.const 4)) (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)))
+(i32.store (get_local $arrayOffset_n0000dOkT2Z) (i32.const 272))
+(i32.store (i32.add (get_local $arrayOffset_n0000dOkT2Z) (i32.const 4)) (i32.sub (i32.mul (get_global $defines.CIRCLE_COUNT) (i32.const 4)) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
 ;; Assign array memory data to another expression
-(set_global $Algorithm.cellCircles (get_local $arrayOffset_N0000dJN8sU))
+(set_global $Algorithm.cellCircles (get_local $arrayOffset_n0000dOkT2Z))
 
 ;; Save (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) array element data to memory:
-;; Array memory block begin at location: (get_local $arrayOffset_S0000eEp8Cz)
-(set_local $arrayOffset_S0000eEp8Cz (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) (i32.const 4))) (i32.const 7)))
+;; Array memory block begin at location: (get_local $arrayOffset_r0000eHEmbQ)
+(set_local $arrayOffset_r0000eHEmbQ (call $global.ObjectManager.Allocate (i32.add (i32.const 8) (i32.mul (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)) (i32.const 4))) (i32.const 7)))
 ;; class_id/typealias_enum i32 data: (i32.const 272)/array(Of intptr)
-(i32.store (get_local $arrayOffset_S0000eEp8Cz) (i32.const 272))
-(i32.store (i32.add (get_local $arrayOffset_S0000eEp8Cz) (i32.const 4)) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)))
+(i32.store (get_local $arrayOffset_r0000eHEmbQ) (i32.const 272))
+(i32.store (i32.add (get_local $arrayOffset_r0000eHEmbQ) (i32.const 4)) (i32.sub (get_global $defines.GRID_WIDTH) (i32.const 1)))
 ;; End of byte marks meta data, start write data blocks
 ;; Assign array memory data to another expression
-(set_global $Algorithm.grid (get_local $arrayOffset_S0000eEp8Cz))
+(set_global $Algorithm.grid (get_local $arrayOffset_r0000eHEmbQ))
 )
 
     (func $defines.constructor  
@@ -878,47 +884,47 @@
 (set_local $i (i32.const 0))
 ;; For i As Integer = 0 To grid.Length - 1
 
-(block $block_b00016C4aDZ 
-    (loop $loop_e00017PJVsW
+(block $block_a00016X4hD7 
+    (loop $loop_N00017E4964
 
-                (br_if $block_b00016C4aDZ (i32.gt_s (get_local $i) (i32.sub (i32.load (i32.add (get_global $Algorithm.grid) (i32.const 4))) (i32.const 1))))
+                (br_if $block_a00016X4hD7 (i32.gt_s (get_local $i) (i32.sub (i32.load (i32.add (get_global $Algorithm.grid) (i32.const 4))) (i32.const 1))))
         (set_local $row (call $Algorithm.createGridRow ))
         (i32.store (i32.add (i32.add (get_global $Algorithm.grid) (i32.const 8)) (i32.mul (get_local $i) (i32.const 4))) (get_local $row))
         (call $Debugger.println (call $string.add (call $string.add (call $string.add (i32.const 1000) (call $i32.toString (get_local $i))) (i32.const 1008)) (call $i32.toString (get_local $row))))
         (set_local $z (i32.const 0))
         ;; For z As Integer = 0 To row.Length - 1
         
-(block $block_Q000180F5j9 
-    (loop $loop_200019ycwj6
+(block $block_g00018xPWvV 
+    (loop $loop_4000195EBIb
 
-                (br_if $block_Q000180F5j9 (i32.gt_s (get_local $z) (i32.sub (i32.load (i32.add (get_local $row) (i32.const 4))) (i32.const 1))))
+                (br_if $block_g00018xPWvV (i32.gt_s (get_local $z) (i32.sub (i32.load (i32.add (get_local $row) (i32.const 4))) (i32.const 1))))
         (i32.store (i32.add (i32.add (get_local $row) (i32.const 8)) (i32.mul (get_local $z) (i32.const 4))) (call $Algorithm.createCircle ))
         ;; For loop control step: (i32.const 1)
         (set_local $z (i32.add (get_local $z) (i32.const 1)))
-        (br $loop_200019ycwj6)
-        ;; For Loop Next On loop_200019ycwj6
+        (br $loop_4000195EBIb)
+        ;; For Loop Next On loop_4000195EBIb
 
     )
 )
         ;; For loop control step: (i32.const 1)
         (set_local $i (i32.add (get_local $i) (i32.const 1)))
-        (br $loop_e00017PJVsW)
-        ;; For Loop Next On loop_e00017PJVsW
+        (br $loop_N00017E4964)
+        ;; For Loop Next On loop_N00017E4964
 
     )
 )
 (set_local $j (i32.const 0))
 ;; For j As Integer = 0 To circlevData.Length - 1
 
-(block $block_R0001aI1Sup 
-    (loop $loop_i0001btFA8l
+(block $block_60001a91WFw 
+    (loop $loop_M0001bkj9X7
 
-                (br_if $block_R0001aI1Sup (i32.gt_s (get_local $j) (i32.sub (i32.load (i32.add (get_global $Algorithm.circlevData) (i32.const 4))) (i32.const 1))))
+                (br_if $block_60001a91WFw (i32.gt_s (get_local $j) (i32.sub (i32.load (i32.add (get_global $Algorithm.circlevData) (i32.const 4))) (i32.const 1))))
         (i32.store (i32.add (i32.add (get_global $Algorithm.circlevData) (i32.const 8)) (i32.mul (get_local $j) (i32.const 4))) (call $Algorithm.createMoveVector ))
         ;; For loop control step: (i32.const 1)
         (set_local $j (i32.add (get_local $j) (i32.const 1)))
-        (br $loop_i0001btFA8l)
-        ;; For Loop Next On loop_i0001btFA8l
+        (br $loop_M0001bkj9X7)
+        ;; For Loop Next On loop_M0001bkj9X7
 
     )
 )
@@ -926,19 +932,20 @@
 (set_local $l (i32.const 0))
 ;; For l As Integer = 0 To cellCircles.Length - 1
 
-(block $block_T0001cnvim9 
-    (loop $loop_y0001dfIiXA
+(block $block_u0001cBZAMD 
+    (loop $loop_v0001dJ8WFN
 
-                (br_if $block_T0001cnvim9 (i32.gt_s (get_local $l) (i32.sub (i32.load (i32.add (get_global $Algorithm.cellCircles) (i32.const 4))) (i32.const 1))))
+                (br_if $block_u0001cBZAMD (i32.gt_s (get_local $l) (i32.sub (i32.load (i32.add (get_global $Algorithm.cellCircles) (i32.const 4))) (i32.const 1))))
         (i32.store (i32.add (i32.add (get_global $Algorithm.cellCircles) (i32.const 8)) (i32.mul (get_local $l) (i32.const 4))) (call $Algorithm.createCircle ))
+        (call $Debugger.println (call $string.add (call $string.add (call $string.add (i32.const 1040) (call $i32.toString (get_local $l))) (i32.const 1064)) (call $i32.toString (i32.load (i32.add (i32.add (get_global $Algorithm.cellCircles) (i32.const 8)) (i32.mul (get_local $l) (i32.const 4)))))))
         ;; For loop control step: (i32.const 1)
         (set_local $l (i32.add (get_local $l) (i32.const 1)))
-        (br $loop_y0001dfIiXA)
-        ;; For Loop Next On loop_y0001dfIiXA
+        (br $loop_v0001dJ8WFN)
+        ;; For Loop Next On loop_v0001dJ8WFN
 
     )
 )
-(call $Debugger.println (call $string.add (i32.const 1040) (call $i32.toString (get_global $Algorithm.cellCircles))))
+(call $Debugger.println (call $string.add (i32.const 1072) (call $i32.toString (get_global $Algorithm.cellCircles))))
 )
 
 (func $Math.constructor  
