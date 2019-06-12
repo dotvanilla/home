@@ -116,6 +116,9 @@ Module Algorithm
     End Function
 
     Public Sub init(displayWidth!, displayHeight!)
+        Dim x1, y1, r1 As Single
+        Dim circle As Circle
+
         Call Debugger.println($"array(of circle) = &{circleData}")
 
         For i As Integer = 0 To CIRCLE_COUNT - 1
@@ -133,9 +136,16 @@ Module Algorithm
                 If (displayWidth - (x + r) < 0) OrElse (x - r < 0) OrElse (displayHeight - (y + r) < 0) OrElse (y - r < 0) Then
                     collision = True
                 Else
+                    Call Debugger.println("ensure no collisions for starting position")
+
                     ' ensure no collisions for starting position
                     For j As Integer = 0 To i - 1
-                        If (detectCircleCollision(x, y, r, circleData(j).x, circleData(j).y, circleData(j).r)) Then
+                        circle = circleData(j)
+                        x1 = circle.x
+                        y1 = circle.y
+                        r1 = circle.r
+
+                        If (detectCircleCollision(x, y, r, x1, y1, r1)) Then
                             collision = True
                             Exit For
                         End If
@@ -154,6 +164,8 @@ Module Algorithm
             ' velocity of -0.1 - +0.1 pixels / iteration
             circlevData(i).vx = (VBMath.Rnd - 0.5) * 0.1
             circlevData(i).vy = (VBMath.Rnd - 0.5) * 0.1
+
+            Call Debugger.println("Loop for next...")
         Next
     End Sub
 
