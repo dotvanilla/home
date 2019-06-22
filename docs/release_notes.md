@@ -1,5 +1,11 @@
 # Release history
 
+### 2019-06-22 *v0.7.233-alpha*
+
+More details about current release, pleast read this article:
+
+> [WebAssembly Compiler Development Progress #2019-06-22#](#progress20190622)
+
 ### 2019-04-30 *v0.7.154-alpha*
 
 ##### Release Object Builder
