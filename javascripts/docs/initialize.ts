@@ -154,6 +154,8 @@ namespace vanillavb.app {
                 $ts("#previous-article-title").display(a);
                 $ts("#goback").show();
             }
+
+            history.push(frame);
         }
 
         if (isNullOrUndefined(url)) {
