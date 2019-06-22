@@ -6,6 +6,11 @@ namespace vanillavb.app {
     let vbcodeStyle: vscode.CSS = vscode.VisualStudio;
     let language: string = lang();
 
+    /**
+     * A stack for enable back to previous article
+    */
+    let history: NamedValue<string>[] = [];
+
     function lang() {
         let folder = $ts.location.path;
 
@@ -77,7 +82,10 @@ namespace vanillavb.app {
         app.renderDocument(getTargetFile());
     }
 
-    export function updateArticle(html: string) {
+    /**
+     * This function returns title of the article
+    */
+    export function updateArticle(html: string): string {
         let h1: HTMLHeadingElement;
 
         // update article content
@@ -90,6 +98,8 @@ namespace vanillavb.app {
         if (!isNullOrUndefined(h1)) {
             document.title = h1.innerText;
         }
+
+        return h1.innerText;
     }
 
     /**
@@ -129,7 +139,21 @@ namespace vanillavb.app {
                 html = marked(markdown, config);
             }
 
-            vanillavb.app.updateArticle(html);
+            let title: string = vanillavb.app.updateArticle(html);
+            // push stack
+            let frame = new NamedValue<string>(title, $ts.location.hash(<Internal.hashArgument>{
+                trimprefix: false
+            }));
+
+            if (history.length == 0) {
+                $ts("#goback").hide();
+            } else {
+                let back = history[history.length - 1];
+                let a = $ts("<a>", { href: back.value, title: back.name }).display(back.name);
+
+                $ts("#previous-article-title").display(a);
+                $ts("#goback").show();
+            }
         }
 
         if (isNullOrUndefined(url)) {

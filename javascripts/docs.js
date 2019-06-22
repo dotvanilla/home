@@ -61,6 +61,10 @@ var vanillavb;
         let config = markedjs.option.Defaults;
         let vbcodeStyle = vscode.VisualStudio;
         let language = lang();
+        /**
+         * A stack for enable back to previous article
+        */
+        let history = [];
         function lang() {
             let folder = $ts.location.path;
             if (Strings.Empty(folder) || folder == "/") {
@@ -128,6 +132,9 @@ var vanillavb;
             app.renderDocument(getTargetFile());
         }
         app.loadDocument = loadDocument;
+        /**
+         * This function returns title of the article
+        */
         function updateArticle(html) {
             let h1;
             // update article content
@@ -138,6 +145,7 @@ var vanillavb;
             if (!isNullOrUndefined(h1)) {
                 document.title = h1.innerText;
             }
+            return h1.innerText;
         }
         app.updateArticle = updateArticle;
         /**
@@ -177,7 +185,20 @@ var vanillavb;
                 else {
                     html = marked(markdown, config);
                 }
-                vanillavb.app.updateArticle(html);
+                let title = vanillavb.app.updateArticle(html);
+                // push stack
+                let frame = new NamedValue(title, $ts.location.hash({
+                    trimprefix: false
+                }));
+                if (history.length == 0) {
+                    $ts("#goback").hide();
+                }
+                else {
+                    let back = history[history.length - 1];
+                    let a = $ts("<a>", { href: back.value, title: back.name }).display(back.name);
+                    $ts("#previous-article-title").display(a);
+                    $ts("#goback").show();
+                }
             };
             if (isNullOrUndefined(url)) {
                 // stop render when path is nothing
