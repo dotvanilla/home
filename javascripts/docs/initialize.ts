@@ -149,7 +149,21 @@ namespace vanillavb.app {
                 $ts("#goback").hide();
             } else {
                 let back = history[history.length - 1];
-                let a = $ts("<a>", { href: back.value, title: back.name }).display(back.name);
+                let a = $ts("<a>", {
+                    title: back.name,
+                    href: executeJavaScript,
+                    onclick: function () {
+                        if (history.length > 0) {
+                            history.pop();
+                        }
+
+                        if (back.value == window.location.hash) {
+                            $ts("goback").hide();
+                        } else {
+                            window.location.hash = back.value;
+                        }
+                    }
+                }).display(back.name);
 
                 $ts("#previous-article-title").display(a);
                 $ts("#goback").show();
