@@ -85,8 +85,9 @@ namespace vanillavb.app {
     /**
      * This function returns title of the article
     */
-    export function updateArticle(html: string): string {
+    export function updateArticle(html: string, time: Date): string {
         let h1: HTMLHeadingElement;
+        let dateTag: HTMLElement;
 
         // update article content
         $ts("#article").innerHTML = html;
@@ -94,9 +95,25 @@ namespace vanillavb.app {
         vscode.highlightVB(vbcodeStyle);
 
         h1 = $ts("#article").getElementsByTagName("h1")[0];
+        dateTag = $ts("<span>", {
+            style: "color: grey; font-size: 0.8em;"
+        }).display("#" + time.toLocaleDateString() + "#")
+
+        let diff = Date.now() - time.getTime();
+        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
         if (!isNullOrUndefined(h1)) {
             document.title = h1.innerText;
+            h1.insertAdjacentElement("afterend", dateTag);
+
+            if (days > 30) {
+                let warn = $ts("<p>", {
+                    style: "color: lightgrey; background-color: yellow;"
+                }).display(`This article is posted ${days} days before, information in this article may be obsolete...`);
+                                
+                dateTag.insertAdjacentElement("afterend", warn);
+                dateTag.insertAdjacentElement("afterend", $ts("<br>"));
+            }
         }
 
         return h1.innerText;
@@ -139,7 +156,9 @@ namespace vanillavb.app {
                 html = marked(markdown, config);
             }
 
-            let title: string = vanillavb.app.updateArticle(html);
+            let date: string = markdown.match(/[<][!][-]{2,}\s+\d+([-]\d+){2}\s+[-]{2,}>/g)[0];
+            let time: Date = new Date(Date.parse(date.match(/\d+([-]\d+){2}/g)[0]));
+            let title: string = vanillavb.app.updateArticle(html, time);
             // push stack
             let frame = new NamedValue<string>(title, $ts.location.hash(<Internal.hashArgument>{
                 trimprefix: false

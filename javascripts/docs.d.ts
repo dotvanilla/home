@@ -17,7 +17,7 @@ declare namespace vanillavb.app {
     /**
      * This function returns title of the article
     */
-    function updateArticle(html: string): string;
+    function updateArticle(html: string, time: Date): string;
     /**
      * Render a given markdown document to html and display on the document body
      *

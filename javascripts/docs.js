@@ -135,15 +135,29 @@ var vanillavb;
         /**
          * This function returns title of the article
         */
-        function updateArticle(html) {
+        function updateArticle(html, time) {
             let h1;
+            let dateTag;
             // update article content
             $ts("#article").innerHTML = html;
             // and then highligh vb code block
             vscode.highlightVB(vbcodeStyle);
             h1 = $ts("#article").getElementsByTagName("h1")[0];
+            dateTag = $ts("<span>", {
+                style: "color: grey; font-size: 0.8em;"
+            }).display("#" + time.toLocaleDateString() + "#");
+            let diff = Date.now() - time.getTime();
+            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
             if (!isNullOrUndefined(h1)) {
                 document.title = h1.innerText;
+                h1.insertAdjacentElement("afterend", dateTag);
+                if (days > 30) {
+                    let warn = $ts("<p>", {
+                        style: "color: lightgrey; background-color: yellow;"
+                    }).display(`This article is posted ${days} days before, information in this article may be obsolete...`);
+                    dateTag.insertAdjacentElement("afterend", warn);
+                    dateTag.insertAdjacentElement("afterend", $ts("<br>"));
+                }
             }
             return h1.innerText;
         }
@@ -185,7 +199,9 @@ var vanillavb;
                 else {
                     html = marked(markdown, config);
                 }
-                let title = vanillavb.app.updateArticle(html);
+                let date = markdown.match(/[<][!][-]{2,}\s+\d+([-]\d+){2}\s+[-]{2,}>/g)[0];
+                let time = new Date(Date.parse(date.match(/\d+([-]\d+){2}/g)[0]));
+                let title = vanillavb.app.updateArticle(html, time);
                 // push stack
                 let frame = new NamedValue(title, $ts.location.hash({
                     trimprefix: false
