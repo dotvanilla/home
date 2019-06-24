@@ -1,5 +1,7 @@
 # Welcome to .vanilla Framework
 
+<!-- 2019-06-01 -->
+
 Wanna run your VisualBasic.NET application in a browser? Please follow this quick **hello world** example:
 
 First you should have a VisualBasic.NET project for compile into WebAssembly. You can create a standard vbproj in VisualStudio and should target .NET Framework 4.0 at least, and then copy this ``HelloWorld`` demo, and then save it. 

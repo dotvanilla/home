@@ -1,5 +1,7 @@
 # 欢迎使用.vanilla框架
 
+<!-- 2019-06-13 -->
+
 希望能够让你的VisualBasic.NET应用程序运行在一个现代的浏览器之中么？请通过下面的一个简单的**hello world**例子来学习吧：
 
 首先，你应当拥有一个VisualBasic.NET应用程序源代码项目来编译为WebAssembly应用程序。你可以在VisualStudio之中创建一个标准的桌面应用程序，并且这个项目应该至少需求.NET Framework 4.0版本。然后复制下面的``HelloWorld``示例代码，然后在VisualStudio之中进行保存。 

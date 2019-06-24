@@ -1,5 +1,7 @@
 # Vanilla compiler design note
 
+<!-- 2019-06-01 -->
+
 Due to the reason of WebAssembly is aim at high intensity computing on client side, and just have 4 primitive type for build a math algorithm application currently. So in Vanilla compiler must introduce some type alias for abstract high level programing feature in VisualBasic.NET programming.
 
 ## Data types in Vanilla compiler
