@@ -1,5 +1,7 @@
 # Class implementation in WebAssembly
 
+<!-- 2019-05-01 -->
+
 WebAssembly only have 4 primitive type that available to its users. The class object in VisualBasic is an kind of highlevel type, and the class object in VisualBasic.NET is looks like a kind of WebAssembly module instance.
 
 ## Class memory structure
